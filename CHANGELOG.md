@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [11.23.1](https://github.com/outline/rich-markdown-editor/compare/v11.23.0...v11.23.1) (2022-06-15)
+
+
+### Bug Fixes
+
+* add prerelease hook ([8b1b422](https://github.com/outline/rich-markdown-editor/commit/8b1b42239485a15493b5021d6e17ddedc772d930))
+
 ## [11.23.0](https://github.com/outline/rich-markdown-editor/compare/v11.17.2...v11.23.0) (2022-06-15)
 
 
