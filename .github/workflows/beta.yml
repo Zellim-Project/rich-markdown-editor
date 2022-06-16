@@ -1,0 +1,46 @@
+name: Pre Release beta version
+on:
+  push:
+    branches:
+      - beta
+
+jobs:
+  release_version:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+
+      - uses: actions/cache@v3
+        with:
+          path: "node_modules"
+          key: ${{ runner.os }}-modules-${{ hashFiles('yarn.lock') }}
+
+      - name: Use Node.js 16.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+          cache: "yarn"
+
+      - name: Setup SSH
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Setup Git
+        run: |
+          git config --global user.email "c.christiancuri@gmail.com"
+          git config --global user.name "Christian Curi"
+          git remote set-url origin git@github.com:Zellim-Project/${{ github.event.repository.name }}.git
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Generate version
+        run: yarn run release --prerelease ${GITHUB_REF#refs/heads/} --no-verify
+
+      - name: Update bump
+        run: |
+          rm -rf dist/
+          git add .
+          git commit -m "chore(release): push release [ci skip]" --no-verify
+          git push --follow-tags origin HEAD:${GITHUB_REF#refs/heads/} --no-verify
