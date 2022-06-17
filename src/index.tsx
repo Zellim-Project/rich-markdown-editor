@@ -33,6 +33,8 @@ import { StyledEditor } from "./styles/editor";
 // nodes
 import ReactNode from "./nodes/ReactNode";
 import Doc from "./nodes/Doc";
+import HardBreak from "./nodes/HardBreak";
+import Paragraph from "./nodes/Paragraph";
 /* import Text from "./nodes/Text";
 import Blockquote from "./nodes/Blockquote";
 import BulletList from "./nodes/BulletList";
@@ -42,7 +44,6 @@ import CheckboxList from "./nodes/CheckboxList";
 import Emoji from "./nodes/Emoji";
 import CheckboxItem from "./nodes/CheckboxItem";
 import Embed from "./nodes/Embed";
-import HardBreak from "./nodes/HardBreak";
 import Heading from "./nodes/Heading";
 import HorizontalRule from "./nodes/HorizontalRule";
 import Image from "./nodes/Image";
@@ -50,7 +51,6 @@ import ListItem from "./nodes/ListItem";
 import Notice from "./nodes/Notice";
 import FileDoc from "./nodes/FileDoc";
 import OrderedList from "./nodes/OrderedList";
-import Paragraph from "./nodes/Paragraph";
 import Table from "./nodes/Table";
 import TableCell from "./nodes/TableCell";
 import TableHeadCell from "./nodes/TableHeadCell";
@@ -318,9 +318,9 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       [
         ...[
           new Doc(),
-          /* new HardBreak(),
+          new HardBreak(),
           new Paragraph(),
-          new Blockquote(),
+          /* new Blockquote(),
           new CodeBlock({
             dictionary,
             onShowToast: this.props.onShowToast,
