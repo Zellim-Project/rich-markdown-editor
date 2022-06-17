@@ -4,7 +4,7 @@ import render from "./lib/renderToHtml";
 
 // nodes
 import Doc from "./nodes/Doc";
-import Text from "./nodes/Text";
+/* import Text from "./nodes/Text";
 import Blockquote from "./nodes/Blockquote";
 import Emoji from "./nodes/Emoji";
 import BulletList from "./nodes/BulletList";
@@ -35,11 +35,11 @@ import Italic from "./marks/Italic";
 import Link from "./marks/Link";
 import Strikethrough from "./marks/Strikethrough";
 import TemplatePlaceholder from "./marks/Placeholder";
-import Underline from "./marks/Underline";
+import Underline from "./marks/Underline"; */
 
 const extensions = new ExtensionManager([
   new Doc(),
-  new Text(),
+  /* new Text(),
   new HardBreak(),
   new Paragraph(),
   new Blockquote(),
@@ -68,7 +68,7 @@ const extensions = new ExtensionManager([
   new Strikethrough(),
   new TemplatePlaceholder(),
   new Underline(),
-  new OrderedList(),
+  new OrderedList(), */
 ]);
 
 export const schema = new Schema({

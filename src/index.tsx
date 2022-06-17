@@ -33,7 +33,7 @@ import { StyledEditor } from "./styles/editor";
 // nodes
 import ReactNode from "./nodes/ReactNode";
 import Doc from "./nodes/Doc";
-import Text from "./nodes/Text";
+/* import Text from "./nodes/Text";
 import Blockquote from "./nodes/Blockquote";
 import BulletList from "./nodes/BulletList";
 import CodeBlock from "./nodes/CodeBlock";
@@ -76,7 +76,7 @@ import MaxLength from "./plugins/MaxLength";
 import Placeholder from "./plugins/Placeholder";
 import SmartText from "./plugins/SmartText";
 import TrailingNode from "./plugins/TrailingNode";
-import PasteHandler from "./plugins/PasteHandler";
+import PasteHandler from "./plugins/PasteHandler"; */
 import { PluginSimple } from "markdown-it";
 
 export { schema, parser, serializer, renderToHtml } from "./server";
@@ -311,14 +311,14 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   createExtensions() {
-    const dictionary = this.dictionary(this.props.dictionary);
+    // const dictionary = this.dictionary(this.props.dictionary);
 
     // adding nodes here? Update schema.ts for serialization on the server
     return new ExtensionManager(
       [
         ...[
           new Doc(),
-          new HardBreak(),
+          /* new HardBreak(),
           new Paragraph(),
           new Blockquote(),
           new CodeBlock({
@@ -412,7 +412,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           }),
           new MaxLength({
             maxLength: this.props.maxLength,
-          }),
+          }), */
         ].filter(extension => {
           // Optionaly disable extensions
           if (this.props.disableExtensions) {
