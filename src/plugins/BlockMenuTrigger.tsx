@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { PlusIcon } from "outline-icons";
 import { InputRule } from "prosemirror-inputrules";
 import { EditorState, Plugin } from "prosemirror-state";
