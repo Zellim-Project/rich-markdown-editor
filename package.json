@@ -38,6 +38,7 @@
     "markdown-it-container": "^3.0.0",
     "markdown-it-emoji": "^2.0.0",
     "outline-icons": "^1.42.0",
+    "polished": "^3.7.2",
     "prosemirror-commands": "^1.2.1",
     "prosemirror-dropcursor": "^1.4.0",
     "prosemirror-gapcursor": "^1.2.1",
