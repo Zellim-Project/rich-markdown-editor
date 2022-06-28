@@ -35,6 +35,7 @@ import solidity from "refractor/lang/solidity";
 import sql from "refractor/lang/sql";
 import typescript from "refractor/lang/typescript";
 import yaml from "refractor/lang/yaml";
+import baseDictionary from "../dictionary";
 
 import toggleBlockType from "../commands/toggleBlockType";
 import { MarkdownSerializerState } from "../lib/markdown/serializer";
@@ -42,7 +43,6 @@ import Prism, { LANGUAGES } from "../plugins/Prism";
 import isInCode from "../queries/isInCode";
 import { Dispatch } from "../types";
 import Node from "./Node";
-import baseDictionary from "../dictionary";
 
 const PERSISTENCE_KEY = "rme-code-language";
 const DEFAULT_LANGUAGE = "javascript";

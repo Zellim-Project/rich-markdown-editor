@@ -121,7 +121,7 @@ export default class Table extends Node {
       Tab: goToNextCell(1),
       "Shift-Tab": goToNextCell(-1),
       Enter: (state: EditorState, dispatch: Dispatch) => {
-        if (!isInTable(state as any)) {
+        if (!isInTable(state)) {
           return false;
         }
 
@@ -144,7 +144,7 @@ export default class Table extends Node {
     return { block: "table" };
   }
 
-  get plugins(): any {
+  get plugins() {
     return [
       tableEditing(),
       new Plugin({

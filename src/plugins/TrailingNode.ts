@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { NodeType } from "prosemirror-model";
 import { Plugin, PluginKey } from "prosemirror-state";
 import Extension from "../lib/Extension";
 
@@ -17,7 +19,7 @@ export default class TrailingNode extends Extension {
     const plugin = new PluginKey(this.name);
     const disabledNodes = Object.entries(this.editor.schema.nodes)
       .map(([, value]) => value)
-      .filter(node => this.options.notAfter.includes(node.name));
+      .filter((node: NodeType) => this.options.notAfter.includes(node.name));
 
     return [
       new Plugin({

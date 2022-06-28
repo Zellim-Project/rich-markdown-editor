@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/explicit-module-boundary-types */
-import React from "react";
 import Token from "markdown-it/lib/token";
 import { OpenIcon } from "outline-icons";
 import { toggleMark } from "prosemirror-commands";
@@ -13,6 +12,7 @@ import {
 } from "prosemirror-model";
 import { EditorState, Plugin } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
+import * as React from "react";
 import ReactDOM from "react-dom";
 import { isExternalUrl } from "../utils/urls";
 import findLinkNodes from "../queries/findLinkNodes";

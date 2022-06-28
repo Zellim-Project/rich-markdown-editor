@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { Plugin, Transaction } from "prosemirror-state";
 import Extension from "../lib/Extension";
 

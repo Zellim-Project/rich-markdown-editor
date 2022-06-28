@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import copy from "copy-to-clipboard";
 import { textblockTypeInputRule } from "prosemirror-inputrules";
 import {

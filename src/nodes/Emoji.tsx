@@ -84,23 +84,14 @@ export default class Emoji extends Node {
               // and any characters removed, before we evaluate the rule.
               setTimeout(() => {
                 const { pos } = view.state.selection.$from;
-                return run(
-                  view,
-                  pos,
-                  pos,
-                  OPEN_REGEX,
-                  (_state: any, match: any) => {
-                    if (match) {
-                      this.editor.events.emit(
-                        EventType.emojiMenuOpen,
-                        match[1]
-                      );
-                    } else {
-                      this.editor.events.emit(EventType.emojiMenuClose);
-                    }
-                    return null;
+                return run(view, pos, pos, OPEN_REGEX, (state, match) => {
+                  if (match) {
+                    this.editor.events.emit(EventType.emojiMenuOpen, match[1]);
+                  } else {
+                    this.editor.events.emit(EventType.emojiMenuClose);
                   }
-                );
+                  return null;
+                });
               });
             }
 
@@ -114,16 +105,10 @@ export default class Emoji extends Node {
             ) {
               const { pos } = view.state.selection.$from;
 
-              return run(
-                view,
-                pos,
-                pos,
-                OPEN_REGEX,
-                (_state: any, match: any) => {
-                  // just tell Prosemirror we handled it and not to do anything
-                  return match ? true : null;
-                }
-              );
+              return run(view, pos, pos, OPEN_REGEX, (state, match) => {
+                // just tell Prosemirror we handled it and not to do anything
+                return match ? true : null;
+              });
             }
 
             return false;

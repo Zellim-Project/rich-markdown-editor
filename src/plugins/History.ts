@@ -1,5 +1,6 @@
-import { undoInputRule } from "prosemirror-inputrules";
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { history, undo, redo } from "prosemirror-history";
+import { undoInputRule } from "prosemirror-inputrules";
 import Extension from "../lib/Extension";
 
 export default class History extends Extension {
@@ -17,6 +18,6 @@ export default class History extends Extension {
   }
 
   get plugins() {
-    return [history()] as any;
+    return [history()];
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { NodeSpec, NodeType, Node as ProsemirrorNode } from "prosemirror-model";
 import {
   splitListItem,
