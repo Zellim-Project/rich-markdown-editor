@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import * as React from "react";
 import scrollIntoView from "smooth-scroll-into-view-if-needed";
-import styled, { withTheme } from "styled-components";
-import theme from "../styles/theme";
+import styled from "styled-components";
 
 export type Props = {
   selected: boolean;
   disabled?: boolean;
   onClick: () => void;
-  theme: typeof theme;
   icon?: typeof React.Component | React.FC<any>;
   title: React.ReactNode;
   shortcut?: string;
@@ -30,7 +29,7 @@ function BlockMenuItem({
       if (selected && node) {
         scrollIntoView(node, {
           scrollMode: "if-needed",
-          block: "center",
+          block: "nearest",
           boundary: parent => {
             // All the parent elements of your target are checked until they
             // reach the #block-menu-container. Prevents body and other parent
@@ -51,11 +50,7 @@ function BlockMenuItem({
     >
       {Icon && (
         <>
-          <Icon
-            color={
-              selected ? theme.blockToolbarIconSelected : theme.blockToolbarIcon
-            }
-          />
+          <Icon color="currentColor" />
           &nbsp;&nbsp;
         </>
       )}
@@ -64,6 +59,12 @@ function BlockMenuItem({
     </MenuItem>
   );
 }
+
+const Shortcut = styled.span`
+  color: ${props => props.theme.textTertiary};
+  flex-grow: 1;
+  text-align: right;
+`;
 
 const MenuItem = styled.button<{
   selected: boolean;
@@ -80,32 +81,19 @@ const MenuItem = styled.button<{
   border: none;
   opacity: ${props => (props.disabled ? ".5" : "1")};
   color: ${props =>
-    props.selected
-      ? props.theme.blockToolbarTextSelected
-      : props.theme.blockToolbarText};
-  background: ${props =>
-    props.selected
-      ? props.theme.blockToolbarSelectedBackground ||
-        props.theme.blockToolbarTrigger
-      : "none"};
+    props.selected ? props.theme.white : props.theme.textSecondary};
+  background: ${props => (props.selected ? props.theme.primary : "none")};
   padding: 0 16px;
   outline: none;
 
-  &:hover,
   &:active {
-    color: ${props => props.theme.blockToolbarTextSelected};
-    background: ${props =>
-      props.selected
-        ? props.theme.blockToolbarSelectedBackground ||
-          props.theme.blockToolbarTrigger
-        : props.theme.blockToolbarHoverBackground};
+    color: ${props => props.theme.white};
+    background: ${props => (props.selected ? props.theme.primary : "none")};
+
+    ${Shortcut} {
+      color: ${props => props.theme.textSecondary};
+    }
   }
 `;
 
-const Shortcut = styled.span`
-  color: ${props => props.theme.textSecondary};
-  flex-grow: 1;
-  text-align: right;
-`;
-
-export default withTheme(BlockMenuItem);
+export default BlockMenuItem;

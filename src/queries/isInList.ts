@@ -1,4 +1,7 @@
-export default function isInList(state) {
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { EditorState } from "prosemirror-state";
+
+export default function isInList(state: EditorState) {
   const $head = state.selection.$head;
   for (let d = $head.depth; d > 0; d--) {
     if (

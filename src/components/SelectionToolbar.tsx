@@ -1,59 +1,71 @@
-import * as React from "react";
-import { Portal } from "react-portal";
-import some from "lodash/some";
+import { some } from "lodash";
+import { NodeSelection, TextSelection } from "prosemirror-state";
+import { CellSelection } from "prosemirror-tables";
 import { EditorView } from "prosemirror-view";
-import { TextSelection } from "prosemirror-state";
-import getTableColMenuItems from "../menus/tableCol";
-import getTableRowMenuItems from "../menus/tableRow";
-import getTableMenuItems from "../menus/table";
+import * as React from "react";
+import createAndInsertLink from "../commands/createAndInsertLink";
+import { CommandFactory } from "../lib/Extension";
+import filterExcessSeparators from "../lib/filterExcessSeparators";
+import getColumnIndex from "../queries/getColumnIndex";
+import getMarkRange from "../queries/getMarkRange";
+import getRowIndex from "../queries/getRowIndex";
+import isMarkActive from "../queries/isMarkActive";
+import isNodeActive from "../queries/isNodeActive";
+import { MenuItem } from "../types";
+import getDividerMenuItems from "../menus/divider";
 import getFormattingMenuItems from "../menus/formatting";
 import getImageMenuItems from "../menus/image";
-import getDividerMenuItems from "../menus/divider";
+import getTableMenuItems from "../menus/table";
+import getTableColMenuItems from "../menus/tableCol";
+import getTableRowMenuItems from "../menus/tableRow";
 import FloatingToolbar from "./FloatingToolbar";
 import LinkEditor, { SearchResult } from "./LinkEditor";
 import ToolbarMenu from "./ToolbarMenu";
-import filterExcessSeparators from "../lib/filterExcessSeparators";
-import isMarkActive from "../queries/isMarkActive";
-import getMarkRange from "../queries/getMarkRange";
-import isNodeActive from "../queries/isNodeActive";
-import getColumnIndex from "../queries/getColumnIndex";
-import getRowIndex from "../queries/getRowIndex";
-import createAndInsertLink from "../commands/createAndInsertLink";
-import { MenuItem } from "../types";
 import baseDictionary from "../dictionary";
 
 type Props = {
   dictionary: typeof baseDictionary;
-  tooltip: typeof React.Component | React.FC<any>;
   rtl: boolean;
   isTemplate: boolean;
-  commands: Record<string, any>;
+  commands: Record<string, CommandFactory>;
   onOpen: () => void;
   onClose: () => void;
   onSearchLink?: (term: string) => Promise<SearchResult[]>;
-  onClickLink: (href: string, event: MouseEvent) => void;
+  onClickLink: (
+    href: string,
+    event: MouseEvent | React.MouseEvent<HTMLButtonElement>
+  ) => void;
   onCreateLink?: (title: string) => Promise<string>;
-  onShowToast?: (msg: string, code: string) => void;
+  onShowToast: (message: string) => void;
   view: EditorView;
 };
 
-function isVisible(props) {
+function isVisible(props: Props) {
   const { view } = props;
   const { selection } = view.state;
 
-  if (!selection) return false;
-  if (selection.empty) return false;
-  if (selection.node && selection.node.type.name === "hr") {
+  if (isMarkActive(view.state.schema.marks.link)(view.state)) {
     return true;
   }
-  if (selection.node && selection.node.type.name === "image") {
+  if (!selection || selection.empty) {
+    return false;
+  }
+  if (selection instanceof NodeSelection && selection.node.type.name === "hr") {
     return true;
   }
-  if (selection.node) return false;
+  if (
+    selection instanceof NodeSelection &&
+    selection.node.type.name === "image"
+  ) {
+    return true;
+  }
+  if (selection instanceof NodeSelection) {
+    return false;
+  }
 
   const slice = selection.content();
   const fragment = slice.content;
-  const nodes = fragment.content;
+  const nodes = (fragment as any).content;
 
   return some(nodes, n => n.content.size);
 }
@@ -84,7 +96,7 @@ export default class SelectionToolbar extends React.Component<Props> {
 
   handleClickOutside = (ev: MouseEvent): void => {
     if (
-      ev.target instanceof Node &&
+      ev.target instanceof HTMLElement &&
       this.menuRef.current &&
       this.menuRef.current.contains(ev.target)
     ) {
@@ -172,13 +184,14 @@ export default class SelectionToolbar extends React.Component<Props> {
       return null;
     }
 
-    const colIndex = getColumnIndex(state.selection);
-    const rowIndex = getRowIndex(state.selection);
+    const colIndex = getColumnIndex(
+      (state.selection as unknown) as CellSelection
+    );
+    const rowIndex = getRowIndex((state.selection as unknown) as CellSelection);
     const isTableSelection = colIndex !== undefined && rowIndex !== undefined;
     const link = isMarkActive(state.schema.marks.link)(state);
     const range = getMarkRange(selection.$from, state.schema.marks.link);
-    const isImageSelection =
-      selection.node && selection.node.type.name === "image";
+    const isImageSelection = selection.node?.type?.name === "image";
     let isTextSelection = false;
 
     let items: MenuItem[] = [];
@@ -199,8 +212,12 @@ export default class SelectionToolbar extends React.Component<Props> {
 
     // Some extensions may be disabled, remove corresponding items
     items = items.filter(item => {
-      if (item.name === "separator") return true;
-      if (item.name && !this.props.commands[item.name]) return false;
+      if (item.name === "separator") {
+        return true;
+      }
+      if (item.name && !this.props.commands[item.name]) {
+        return false;
+      }
       return true;
     });
 
@@ -214,32 +231,31 @@ export default class SelectionToolbar extends React.Component<Props> {
       state.selection.to
     ).textContent;
 
-    if (isTextSelection && !selectionText) {
+    if (isTextSelection && !selectionText && !link) {
       return null;
     }
 
     return (
-      <Portal>
-        <FloatingToolbar
-          view={view}
-          active={isVisible(this.props)}
-          ref={this.menuRef}
-        >
-          {link && range ? (
-            <LinkEditor
-              dictionary={dictionary}
-              mark={range.mark}
-              from={range.from}
-              to={range.to}
-              onCreateLink={onCreateLink ? this.handleOnCreateLink : undefined}
-              onSelectLink={this.handleOnSelectLink}
-              {...rest}
-            />
-          ) : (
-            <ToolbarMenu items={items} {...rest} />
-          )}
-        </FloatingToolbar>
-      </Portal>
+      <FloatingToolbar
+        view={view}
+        active={isVisible(this.props)}
+        ref={this.menuRef}
+      >
+        {link && range ? (
+          <LinkEditor
+            key={`${range.from}-${range.to}`}
+            dictionary={dictionary}
+            mark={range.mark}
+            from={range.from}
+            to={range.to}
+            onCreateLink={onCreateLink ? this.handleOnCreateLink : undefined}
+            onSelectLink={this.handleOnSelectLink}
+            {...rest}
+          />
+        ) : (
+          <ToolbarMenu items={items} {...rest} />
+        )}
+      </FloatingToolbar>
     );
   }
 }

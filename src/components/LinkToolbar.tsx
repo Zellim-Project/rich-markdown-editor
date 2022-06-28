@@ -1,19 +1,22 @@
-import * as React from "react";
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { EditorView } from "prosemirror-view";
-import LinkEditor, { SearchResult } from "./LinkEditor";
-import FloatingToolbar from "./FloatingToolbar";
+import * as React from "react";
 import createAndInsertLink from "../commands/createAndInsertLink";
 import baseDictionary from "../dictionary";
+import FloatingToolbar from "./FloatingToolbar";
+import LinkEditor, { SearchResult } from "./LinkEditor";
 
 type Props = {
   isActive: boolean;
   view: EditorView;
-  tooltip: typeof React.Component | React.FC<any>;
   dictionary: typeof baseDictionary;
   onCreateLink?: (title: string) => Promise<string>;
   onSearchLink?: (term: string) => Promise<SearchResult[]>;
-  onClickLink: (href: string, event: MouseEvent) => void;
-  onShowToast?: (msg: string, code: string) => void;
+  onClickLink: (
+    href: string,
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => void;
+  onShowToast: (message: string) => void;
   onClose: () => void;
 };
 
@@ -45,11 +48,11 @@ export default class LinkToolbar extends React.Component<Props> {
     window.removeEventListener("mousedown", this.handleClickOutside);
   }
 
-  handleClickOutside = ev => {
+  handleClickOutside = (event: Event) => {
     if (
-      ev.target &&
+      event.target instanceof HTMLElement &&
       this.menuRef.current &&
-      this.menuRef.current.contains(ev.target)
+      this.menuRef.current.contains(event.target)
     ) {
       return;
     }
@@ -135,6 +138,7 @@ export default class LinkToolbar extends React.Component<Props> {
       <FloatingToolbar ref={this.menuRef} active={active} {...rest}>
         {active && (
           <LinkEditor
+            key={`${selection.from}-${selection.to}`}
             from={selection.from}
             to={selection.to}
             onCreateLink={onCreateLink ? this.handleOnCreateLink : undefined}

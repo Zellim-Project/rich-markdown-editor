@@ -1,35 +1,49 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { Node as ProsemirrorNode } from "prosemirror-model";
+import { EditorView, Decoration } from "prosemirror-view";
 import * as React from "react";
 import ReactDOM from "react-dom";
 import { ThemeProvider } from "styled-components";
-import { EditorView, Decoration } from "prosemirror-view";
 import Extension from "../lib/Extension";
-import Node from "../nodes/Node";
-import { light as lightTheme, dark as darkTheme } from "../styles/theme";
+import { ComponentProps } from "../types";
 import Editor from "../";
 
-type Component = (options: {
-  node: Node;
-  theme: typeof lightTheme;
-  isSelected: boolean;
-  isEditable: boolean;
-  getPos: () => number;
-}) => React.ReactElement;
+type Component = (props: ComponentProps) => React.ReactElement;
 
 export default class ComponentView {
   component: Component;
   editor: Editor;
   extension: Extension;
-  node: Node;
+  node: ProsemirrorNode;
   view: EditorView;
   getPos: () => number;
-  decorations: Decoration<{ [key: string]: any }>[];
+  decorations: Decoration<{
+    [key: string]: any;
+  }>[];
+
   isSelected = false;
   dom: HTMLElement | null;
 
   // See https://prosemirror.net/docs/ref/#view.NodeView
   constructor(
-    component,
-    { editor, extension, node, view, getPos, decorations }
+    component: Component,
+    {
+      editor,
+      extension,
+      node,
+      view,
+      getPos,
+      decorations,
+    }: {
+      editor: Editor;
+      extension: Extension;
+      node: ProsemirrorNode;
+      view: EditorView;
+      getPos: () => number;
+      decorations: Decoration<{
+        [key: string]: any;
+      }>[];
+    }
   ) {
     this.component = component;
     this.editor = editor;
@@ -42,12 +56,14 @@ export default class ComponentView {
       ? document.createElement("span")
       : document.createElement("div");
 
+    this.dom.classList.add(`component-${node.type.name}`);
+
     this.renderElement();
+    window.addEventListener("theme-changed", this.renderElement);
   }
 
-  renderElement() {
-    const { dark } = this.editor.props;
-    const theme = this.editor.props.theme || (dark ? darkTheme : lightTheme);
+  renderElement = () => {
+    const { theme } = this.editor.props;
 
     const children = this.component({
       theme,
@@ -61,9 +77,9 @@ export default class ComponentView {
       <ThemeProvider theme={theme}>{children}</ThemeProvider>,
       this.dom
     );
-  }
+  };
 
-  update(node) {
+  update(node: ProsemirrorNode) {
     if (node.type !== this.node.type) {
       return false;
     }
@@ -87,13 +103,14 @@ export default class ComponentView {
     }
   }
 
-  stopEvent() {
-    return true;
+  stopEvent(event: Event) {
+    return event.type !== "mousedown" && !event.type.startsWith("drag");
   }
 
   destroy() {
     if (this.dom) {
       ReactDOM.unmountComponentAtNode(this.dom);
+      window.removeEventListener("theme-changed", this.renderElement);
     }
     this.dom = null;
   }

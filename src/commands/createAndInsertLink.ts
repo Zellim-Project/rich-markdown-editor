@@ -1,11 +1,10 @@
+import { Node } from "prosemirror-model";
 import { EditorView } from "prosemirror-view";
-import baseDictionary from "../dictionary";
-import { ToastType } from "../types";
 
-function findPlaceholderLink(doc, href) {
-  let result;
+function findPlaceholderLink(doc: Node, href: string) {
+  let result: { pos: number; node: Node } | undefined;
 
-  function findLinks(node, pos = 0) {
+  function findLinks(node: Node, pos = 0) {
     // get text nodes
     if (node.type.name === "text") {
       // get marks for text nodes
@@ -15,7 +14,6 @@ function findPlaceholderLink(doc, href) {
           // any of the links to other docs?
           if (mark.attrs.href === href) {
             result = { node, pos };
-            if (result) return false;
           }
         }
       });
@@ -37,9 +35,9 @@ const createAndInsertLink = async function(
   title: string,
   href: string,
   options: {
-    dictionary: typeof baseDictionary;
+    dictionary: any;
     onCreateLink: (title: string) => Promise<string>;
-    onShowToast?: (message: string, code: string) => void;
+    onShowToast: (message: string) => void;
   }
 ) {
   const { dispatch, state } = view;
@@ -49,7 +47,9 @@ const createAndInsertLink = async function(
     const url = await onCreateLink(title);
     const result = findPlaceholderLink(view.state.doc, href);
 
-    if (!result) return;
+    if (!result) {
+      return;
+    }
 
     dispatch(
       view.state.tr
@@ -66,7 +66,9 @@ const createAndInsertLink = async function(
     );
   } catch (err) {
     const result = findPlaceholderLink(view.state.doc, href);
-    if (!result) return;
+    if (!result) {
+      return;
+    }
 
     dispatch(
       view.state.tr.removeMark(
@@ -76,10 +78,7 @@ const createAndInsertLink = async function(
       )
     );
 
-    // let the user know
-    if (onShowToast) {
-      onShowToast(options.dictionary.createLinkError, ToastType.Error);
-    }
+    onShowToast(options.dictionary.createLinkError);
   }
 };
 

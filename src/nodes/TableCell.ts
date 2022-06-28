@@ -1,10 +1,15 @@
-import { DecorationSet, Decoration } from "prosemirror-view";
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import Token from "markdown-it/lib/token";
+import { NodeSpec } from "prosemirror-model";
 import { Plugin } from "prosemirror-state";
 import {
   isTableSelected,
   isRowSelected,
   getCellsInColumn,
+  selectRow,
+  selectTable,
 } from "prosemirror-utils";
+import { DecorationSet, Decoration } from "prosemirror-view";
 import Node from "./Node";
 
 export default class TableCell extends Node {
@@ -12,7 +17,7 @@ export default class TableCell extends Node {
     return "td";
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       content: "paragraph+",
       tableRole: "cell",
@@ -42,7 +47,7 @@ export default class TableCell extends Node {
   parseMarkdown() {
     return {
       block: "td",
-      getAttrs: tok => ({ alignment: tok.info }),
+      getAttrs: (tok: Token) => ({ alignment: tok.info }),
     };
   }
 
@@ -70,7 +75,7 @@ export default class TableCell extends Node {
                       grip.addEventListener("mousedown", event => {
                         event.preventDefault();
                         event.stopImmediatePropagation();
-                        this.options.onSelectTable(state);
+                        this.editor.view.dispatch(selectTable(state.tr));
                       });
                       return grip;
                     })
@@ -95,7 +100,7 @@ export default class TableCell extends Node {
                     grip.addEventListener("mousedown", event => {
                       event.preventDefault();
                       event.stopImmediatePropagation();
-                      this.options.onSelectRow(index, state);
+                      this.editor.view.dispatch(selectRow(index)(state.tr));
                     });
                     return grip;
                   })

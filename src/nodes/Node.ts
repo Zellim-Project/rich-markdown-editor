@@ -1,23 +1,47 @@
-import { MarkdownSerializerState } from "prosemirror-markdown";
-import { Node as ProsemirrorNode } from "prosemirror-model";
-import Extension from "../lib/Extension";
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { InputRule } from "prosemirror-inputrules";
+import {
+  Node as ProsemirrorNode,
+  NodeSpec,
+  NodeType,
+  Schema,
+} from "prosemirror-model";
+import Extension, { Command, CommandFactory } from "../lib/Extension";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 
 export default abstract class Node extends Extension {
   get type() {
     return "node";
   }
 
-  abstract get schema();
+  get schema(): NodeSpec {
+    return {};
+  }
 
   get markdownToken(): string {
     return "";
   }
 
-  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
+  inputRules(_options: { type: NodeType; schema: Schema }): InputRule[] {
+    return [];
+  }
+
+  keys(_options: { type: NodeType; schema: Schema }): Record<string, Command> {
+    return {};
+  }
+
+  commands(_options: {
+    type: NodeType;
+    schema: Schema;
+  }): Record<string, CommandFactory> | CommandFactory {
+    return {};
+  }
+
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode): void {
     console.error("toMarkdown not implemented", state, node);
   }
 
-  parseMarkdown() {
-    return;
+  parseMarkdown(): any | void {
+    return undefined;
   }
 }

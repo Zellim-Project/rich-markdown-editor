@@ -1,8 +1,24 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import copy from "copy-to-clipboard";
+import Token from "markdown-it/lib/token";
+import { textblockTypeInputRule } from "prosemirror-inputrules";
+import {
+  NodeSpec,
+  NodeType,
+  Schema,
+  Node as ProsemirrorNode,
+} from "prosemirror-model";
+import {
+  EditorState,
+  Selection,
+  TextSelection,
+  Transaction,
+} from "prosemirror-state";
 import refractor from "refractor/core";
 import bash from "refractor/lang/bash";
-import css from "refractor/lang/css";
 import clike from "refractor/lang/clike";
 import csharp from "refractor/lang/csharp";
+import css from "refractor/lang/css";
 import go from "refractor/lang/go";
 import java from "refractor/lang/java";
 import javascript from "refractor/lang/javascript";
@@ -11,22 +27,22 @@ import markup from "refractor/lang/markup";
 import objectivec from "refractor/lang/objectivec";
 import perl from "refractor/lang/perl";
 import php from "refractor/lang/php";
-import python from "refractor/lang/python";
 import powershell from "refractor/lang/powershell";
+import python from "refractor/lang/python";
 import ruby from "refractor/lang/ruby";
 import rust from "refractor/lang/rust";
+import solidity from "refractor/lang/solidity";
 import sql from "refractor/lang/sql";
 import typescript from "refractor/lang/typescript";
 import yaml from "refractor/lang/yaml";
 
-import { Selection, TextSelection, Transaction } from "prosemirror-state";
-import { textblockTypeInputRule } from "prosemirror-inputrules";
-import copy from "copy-to-clipboard";
-import Prism, { LANGUAGES } from "../plugins/Prism";
 import toggleBlockType from "../commands/toggleBlockType";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
+import Prism, { LANGUAGES } from "../plugins/Prism";
 import isInCode from "../queries/isInCode";
+import { Dispatch } from "../types";
 import Node from "./Node";
-import { ToastType } from "../types";
+import baseDictionary from "../dictionary";
 
 const PERSISTENCE_KEY = "rme-code-language";
 const DEFAULT_LANGUAGE = "javascript";
@@ -49,11 +65,19 @@ const DEFAULT_LANGUAGE = "javascript";
   ruby,
   rust,
   sql,
+  solidity,
   typescript,
   yaml,
 ].forEach(refractor.register);
 
 export default class CodeFence extends Node {
+  constructor(options: {
+    dictionary: typeof baseDictionary;
+    onShowToast: (message: string) => void;
+  }) {
+    super(options);
+  }
+
   get languageOptions() {
     return Object.entries(LANGUAGES);
   }
@@ -62,7 +86,7 @@ export default class CodeFence extends Node {
     return "code_fence";
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       attrs: {
         language: {
@@ -76,6 +100,7 @@ export default class CodeFence extends Node {
       defining: true,
       draggable: false,
       parseDOM: [
+        { tag: "code" },
         { tag: "pre", preserveWhitespace: "full" },
         {
           tag: ".code-block",
@@ -97,6 +122,11 @@ export default class CodeFence extends Node {
         const select = document.createElement("select");
         select.addEventListener("change", this.handleLanguageChange);
 
+        const actions = document.createElement("div");
+        actions.className = "code-actions";
+        actions.appendChild(select);
+        actions.appendChild(button);
+
         this.languageOptions.forEach(([key, label]) => {
           const option = document.createElement("option");
           const value = key === "none" ? "" : key;
@@ -109,26 +139,28 @@ export default class CodeFence extends Node {
         return [
           "div",
           { class: "code-block", "data-language": node.attrs.language },
-          ["div", { contentEditable: false }, select, button],
-          ["pre", ["code", { spellCheck: false }, 0]],
+          ["div", { contentEditable: "false" }, actions],
+          ["pre", ["code", { spellCheck: "false" }, 0]],
         ];
       },
     };
   }
 
-  commands({ type, schema }) {
-    return attrs =>
+  commands({ type, schema }: { type: NodeType; schema: Schema }) {
+    return (attrs: Record<string, any>) =>
       toggleBlockType(type, schema.nodes.paragraph, {
         language: localStorage?.getItem(PERSISTENCE_KEY) || DEFAULT_LANGUAGE,
         ...attrs,
       });
   }
 
-  keys({ type, schema }) {
+  keys({ type, schema }: { type: NodeType; schema: Schema }) {
     return {
       "Shift-Ctrl-\\": toggleBlockType(type, schema.nodes.paragraph),
-      "Shift-Enter": (state, dispatch) => {
-        if (!isInCode(state)) return false;
+      "Shift-Enter": (state: EditorState, dispatch: Dispatch) => {
+        if (!isInCode(state)) {
+          return false;
+        }
         const {
           tr,
           selection,
@@ -148,8 +180,10 @@ export default class CodeFence extends Node {
         dispatch(tr.insertText(newText, selection.from, selection.to));
         return true;
       },
-      Tab: (state, dispatch) => {
-        if (!isInCode(state)) return false;
+      Tab: (state: EditorState, dispatch: Dispatch) => {
+        if (!isInCode(state)) {
+          return false;
+        }
 
         const { tr, selection } = state;
         dispatch(tr.insertText("  ", selection.from, selection.to));
@@ -158,9 +192,12 @@ export default class CodeFence extends Node {
     };
   }
 
-  handleCopyToClipboard = event => {
+  handleCopyToClipboard = (event: MouseEvent) => {
     const { view } = this.editor;
     const element = event.target;
+    if (!(element instanceof HTMLButtonElement)) {
+      return;
+    }
     const { top, left } = element.getBoundingClientRect();
     const result = view.posAtCoords({ top, left });
 
@@ -168,20 +205,19 @@ export default class CodeFence extends Node {
       const node = view.state.doc.nodeAt(result.pos);
       if (node) {
         copy(node.textContent);
-        if (this.options.onShowToast) {
-          this.options.onShowToast(
-            this.options.dictionary.codeCopied,
-            ToastType.Info
-          );
-        }
+        this.options.onShowToast(this.options.dictionary.codeCopied);
       }
     }
   };
 
-  handleLanguageChange = event => {
+  handleLanguageChange = (event: InputEvent) => {
     const { view } = this.editor;
     const { tr } = view.state;
-    const element = event.target;
+    const element = event.currentTarget;
+    if (!(element instanceof HTMLSelectElement)) {
+      return;
+    }
+
     const { top, left } = element.getBoundingClientRect();
     const result = view.posAtCoords({ top, left });
 
@@ -203,11 +239,11 @@ export default class CodeFence extends Node {
     return [Prism({ name: this.name })];
   }
 
-  inputRules({ type }) {
+  inputRules({ type }: { type: NodeType }) {
     return [textblockTypeInputRule(/^```$/, type)];
   }
 
-  toMarkdown(state, node) {
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
     state.write("```" + (node.attrs.language || "") + "\n");
     state.text(node.textContent, false);
     state.ensureNewLine();
@@ -222,7 +258,7 @@ export default class CodeFence extends Node {
   parseMarkdown() {
     return {
       block: "code_block",
-      getAttrs: tok => ({ language: tok.info }),
+      getAttrs: (tok: Token) => ({ language: tok.info }),
     };
   }
 }

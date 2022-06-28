@@ -1,9 +1,9 @@
-import refractor from "refractor/core";
-import flattenDeep from "lodash/flattenDeep";
-import { Plugin, PluginKey, Transaction } from "prosemirror-state";
+import { flattenDeep } from "lodash";
 import { Node } from "prosemirror-model";
-import { Decoration, DecorationSet } from "prosemirror-view";
+import { Plugin, PluginKey, Transaction } from "prosemirror-state";
 import { findBlockNodes } from "prosemirror-utils";
+import { Decoration, DecorationSet } from "prosemirror-view";
+import refractor from "refractor/core";
 
 export const LANGUAGES = {
   none: "None", // additional entry to disable highlighting
@@ -24,6 +24,7 @@ export const LANGUAGES = {
   ruby: "Ruby",
   rust: "Rust",
   sql: "SQL",
+  solidity: "Solidity",
   typescript: "TypeScript",
   yaml: "YAML",
 };
@@ -106,7 +107,7 @@ function getDecorations({ doc, name }: { doc: Node; name: string }) {
   return DecorationSet.create(doc, decorations);
 }
 
-export default function Prism({ name }) {
+export default function Prism({ name }: { name: string }) {
   let highlighted = false;
 
   return new Plugin({

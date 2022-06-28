@@ -1,36 +1,45 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { wrappingInputRule } from "prosemirror-inputrules";
-import Node from "./Node";
+import { NodeSpec, Node as ProsemirrorNode, NodeType } from "prosemirror-model";
+import { EditorState } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 import isNodeActive from "../queries/isNodeActive";
+import { Dispatch } from "../types";
+import Node from "./Node";
 
 export default class Blockquote extends Node {
   get name() {
     return "blockquote";
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       content: "block+",
       group: "block",
       defining: true,
-      parseDOM: [{ tag: "blockquote" }],
+      parseDOM: [
+        { tag: "blockquote" },
+        // Dropbox Paper parsing, yes their quotes are actually lists
+        { tag: "ul.listtype-quote", contentElement: "li" },
+      ],
       toDOM: () => ["blockquote", 0],
     };
   }
 
-  inputRules({ type }) {
+  inputRules({ type }: { type: NodeType }) {
     return [wrappingInputRule(/^\s*>\s$/, type)];
   }
 
-  commands({ type }) {
+  commands({ type }: { type: NodeType }) {
     return () => toggleWrap(type);
   }
 
-  keys({ type }) {
+  keys({ type }: { type: NodeType }) {
     return {
       "Ctrl->": toggleWrap(type),
       "Mod-]": toggleWrap(type),
-      "Shift-Enter": (state, dispatch) => {
+      "Shift-Enter": (state: EditorState, dispatch: Dispatch) => {
         if (!isNodeActive(type)(state)) {
           return false;
         }
@@ -42,8 +51,8 @@ export default class Blockquote extends Node {
     };
   }
 
-  toMarkdown(state, node) {
-    state.wrapBlock("> ", null, node, () => state.renderContent(node));
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
+    state.wrapBlock("> ", undefined, node, () => state.renderContent(node));
   }
 
   parseMarkdown() {

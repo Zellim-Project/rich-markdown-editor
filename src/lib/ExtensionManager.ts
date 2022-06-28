@@ -1,25 +1,43 @@
-import { Schema } from "prosemirror-model";
-import { keymap } from "prosemirror-keymap";
-import { MarkdownParser } from "prosemirror-markdown";
-import { MarkdownSerializer } from "./markdown/serializer";
-import Editor from "../";
-import Extension from "./Extension";
-import makeRules from "./markdown/rules";
-import Node from "../nodes/Node";
-import Mark from "../marks/Mark";
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { PluginSimple } from "markdown-it";
+import { keymap } from "prosemirror-keymap";
+import { MarkdownParser, TokenConfig } from "prosemirror-markdown";
+import { Schema } from "prosemirror-model";
+import { EditorView } from "prosemirror-view";
+import Editor from "../../src/";
+import Mark from "../marks/Mark";
+import Node from "../nodes/Node";
+import Extension, { CommandFactory } from "./Extension";
+import makeRules from "./markdown/rules";
+import { MarkdownSerializer } from "./markdown/serializer";
 
 export default class ExtensionManager {
-  extensions: Extension[];
+  extensions: (Node | Mark | Extension)[] = [];
 
-  constructor(extensions: Extension[] = [], editor?: Editor) {
-    if (editor) {
-      extensions.forEach(extension => {
+  constructor(
+    extensions: (
+      | Extension
+      | typeof Node
+      | typeof Mark
+      | typeof Extension
+    )[] = [],
+    editor?: Editor
+  ) {
+    extensions.forEach((ext: any) => {
+      let extension;
+
+      if (typeof ext === "function") {
+        extension = new ext(editor?.props);
+      } else {
+        extension = ext;
+      }
+
+      if (editor) {
         extension.bindEditor(editor);
-      });
-    }
+      }
 
-    this.extensions = extensions;
+      this.extensions.push(extension);
+    });
   }
 
   get nodes() {
@@ -63,17 +81,19 @@ export default class ExtensionManager {
     rules,
     plugins,
   }: {
-    schema: any;
+    schema: Schema;
     rules?: Record<string, any>;
     plugins?: PluginSimple[];
   }): MarkdownParser {
-    const tokens: Record<string, any> = this.extensions
+    const tokens: Record<string, TokenConfig> = this.extensions
       .filter(
         extension => extension.type === "mark" || extension.type === "node"
       )
       .reduce((nodes, extension: Node | Mark) => {
         const md = extension.parseMarkdown();
-        if (!md) return nodes;
+        if (!md) {
+          return nodes;
+        }
 
         return {
           ...nodes,
@@ -115,32 +135,25 @@ export default class ExtensionManager {
   }
 
   keymaps({ schema }: { schema: Schema }) {
-    const extensionKeymaps = this.extensions
-      .filter(extension => ["extension"].includes(extension.type))
-      .filter(extension => extension.keys)
-      .map(extension => extension.keys({ schema }));
-
-    const nodeMarkKeymaps = this.extensions
-      .filter(extension => ["node", "mark"].includes(extension.type))
+    const keymaps = this.extensions
       .filter(extension => extension.keys)
       .map(extension =>
-        extension.keys({
-          type: schema[`${extension.type}s`][extension.name],
-          schema,
-        })
+        ["node", "mark"].includes(extension.type)
+          ? extension.keys({
+              type: schema[`${extension.type}s`][extension.name],
+              schema,
+            })
+          : (extension as Extension).keys({ schema })
       );
 
-    return [
-      ...extensionKeymaps,
-      ...nodeMarkKeymaps,
-    ].map((keys: Record<string, any>) => keymap(keys));
+    return keymaps.map(keymap);
   }
 
   inputRules({ schema }: { schema: Schema }) {
     const extensionInputRules = this.extensions
       .filter(extension => ["extension"].includes(extension.type))
       .filter(extension => extension.inputRules)
-      .map(extension => extension.inputRules({ schema }));
+      .map((extension: Extension) => extension.inputRules({ schema }));
 
     const nodeMarkInputRules = this.extensions
       .filter(extension => ["node", "mark"].includes(extension.type))
@@ -158,12 +171,14 @@ export default class ExtensionManager {
     );
   }
 
-  commands({ schema, view }) {
+  commands({ schema, view }: { schema: Schema; view: EditorView }) {
     return this.extensions
       .filter(extension => extension.commands)
       .reduce((allCommands, extension) => {
         const { name, type } = extension;
         const commands = {};
+
+        // @ts-expect-error FIXME
         const value = extension.commands({
           schema,
           ...(["node", "mark"].includes(type)
@@ -173,7 +188,10 @@ export default class ExtensionManager {
             : {}),
         });
 
-        const apply = (callback, attrs) => {
+        const apply = (
+          callback: CommandFactory,
+          attrs: Record<string, any>
+        ) => {
           if (!view.editable) {
             return false;
           }
@@ -181,12 +199,13 @@ export default class ExtensionManager {
           return callback(attrs)(view.state, view.dispatch, view);
         };
 
-        const handle = (_name, _value) => {
+        const handle = (_name: string, _value: CommandFactory) => {
           if (Array.isArray(_value)) {
-            commands[_name] = attrs =>
+            commands[_name] = (attrs: Record<string, any>) =>
               _value.forEach(callback => apply(callback, attrs));
           } else if (typeof _value === "function") {
-            commands[_name] = attrs => apply(_value, attrs);
+            commands[_name] = (attrs: Record<string, any>) =>
+              apply(_value, attrs);
           }
         };
 

@@ -1,7 +1,12 @@
-export default function getRowIndex(selection) {
-  const isRowSelection = selection.isRowSelection && selection.isRowSelection();
-  if (!isRowSelection) return undefined;
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { CellSelection } from "prosemirror-tables";
 
-  const path = selection.$from.path;
+export default function getRowIndex(selection: CellSelection) {
+  const isRowSelection = selection.isRowSelection && selection.isRowSelection();
+  if (!isRowSelection) {
+    return undefined;
+  }
+
+  const path = (selection.$from as any).path;
   return path[path.length - 8];
 }

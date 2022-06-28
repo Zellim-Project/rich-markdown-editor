@@ -1,58 +1,51 @@
 import * as React from "react";
-import { EditorView } from "prosemirror-view";
-import styled, { withTheme } from "styled-components";
+import styled from "styled-components";
+import { MenuItem } from "../types";
+import { useEditor } from "./EditorContext";
 import ToolbarButton from "./ToolbarButton";
 import ToolbarSeparator from "./ToolbarSeparator";
-import theme from "../styles/theme";
-import { MenuItem } from "../types";
+import Tooltip from "./Tooltip";
 
 type Props = {
-  tooltip: typeof React.Component | React.FC<any>;
-  commands: Record<string, any>;
-  view: EditorView;
-  theme: typeof theme;
   items: MenuItem[];
 };
 
 const FlexibleWrapper = styled.div`
+  color: ${props => props.theme.toolbarItem};
   display: flex;
+  gap: 8px;
 `;
 
-class ToolbarMenu extends React.Component<Props> {
-  render() {
-    const { view, items } = this.props;
-    const { state } = view;
-    const Tooltip = this.props.tooltip;
+function ToolbarMenu(props: Props) {
+  const { commands, view } = useEditor();
+  const { items } = props;
+  const { state } = view;
 
-    return (
-      <FlexibleWrapper>
-        {items.map((item, index) => {
-          if (item.name === "separator" && item.visible !== false) {
-            return <ToolbarSeparator key={index} />;
-          }
-          if (item.visible === false || !item.icon) {
-            return null;
-          }
-          const Icon = item.icon;
-          const isActive = item.active ? item.active(state) : false;
+  return (
+    <FlexibleWrapper>
+      {items.map((item, index) => {
+        if (item.name === "separator" && item.visible !== false) {
+          return <ToolbarSeparator key={index} />;
+        }
+        if (item.visible === false || !item.icon) {
+          return null;
+        }
+        const Icon = item.icon;
+        const isActive = item.active ? item.active(state) : false;
 
-          return (
+        return (
+          <Tooltip tooltip={item.tooltip || ""} key={index}>
             <ToolbarButton
-              key={index}
-              onClick={() =>
-                item.name && this.props.commands[item.name](item.attrs)
-              }
+              onClick={() => item.name && commands[item.name](item.attrs)}
               active={isActive}
             >
-              <Tooltip tooltip={item.tooltip} placement="top">
-                <Icon color={this.props.theme.toolbarItem} />
-              </Tooltip>
+              <Icon color="currentColor" />
             </ToolbarButton>
-          );
-        })}
-      </FlexibleWrapper>
-    );
-  }
+          </Tooltip>
+        );
+      })}
+    </FlexibleWrapper>
+  );
 }
 
-export default withTheme(ToolbarMenu);
+export default ToolbarMenu;

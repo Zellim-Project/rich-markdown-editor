@@ -1,12 +1,23 @@
-import * as React from "react";
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import Token from "markdown-it/lib/token";
 import { DownloadIcon } from "outline-icons";
-import { Plugin, TextSelection, NodeSelection } from "prosemirror-state";
 import { InputRule } from "prosemirror-inputrules";
-import styled from "styled-components";
+import { Node as ProsemirrorNode, NodeSpec, NodeType } from "prosemirror-model";
+import {
+  Plugin,
+  TextSelection,
+  NodeSelection,
+  EditorState,
+} from "prosemirror-state";
+import * as React from "react";
 import ImageZoom from "react-medium-image-zoom";
-import getDataTransferFiles from "../lib/getDataTransferFiles";
+import styled from "styled-components";
+import { supportedImageMimeTypes } from "../utils/files";
+import getDataTransferFiles from "../utils/getDataTransferFiles";
+import insertFiles, { Options } from "../commands/insertFiles";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 import uploadPlaceholderPlugin from "../lib/uploadPlaceholder";
-import insertFiles from "../commands/insertFiles";
+import { ComponentProps, Dispatch } from "../types";
 import Node from "./Node";
 
 /**
@@ -19,27 +30,32 @@ import Node from "./Node";
  */
 const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 
-const uploadPlugin = options =>
+const uploadPlugin = (options: Options) =>
   new Plugin({
     props: {
       handleDOMEvents: {
         paste(view, event: ClipboardEvent): boolean {
           if (
             (view.props.editable && !view.props.editable(view.state)) ||
-            !options.uploadImage
+            !options.uploadFile
           ) {
             return false;
           }
 
-          if (!event.clipboardData) return false;
+          if (!event.clipboardData) {
+            return false;
+          }
 
           // check if we actually pasted any files
           const files = Array.prototype.slice
             .call(event.clipboardData.items)
-            .map(dt => dt.getAsFile())
-            .filter(file => file);
+            .filter((dt: DataTransferItem) => dt.kind !== "string")
+            .map((dt: DataTransferItem) => dt.getAsFile())
+            .filter(Boolean);
 
-          if (files.length === 0) return false;
+          if (files.length === 0) {
+            return false;
+          }
 
           const { tr } = view.state;
           if (!tr.selection.empty) {
@@ -53,14 +69,14 @@ const uploadPlugin = options =>
         drop(view, event: DragEvent): boolean {
           if (
             (view.props.editable && !view.props.editable(view.state)) ||
-            !options.uploadImage
+            !options.uploadFile
           ) {
             return false;
           }
 
           // filter to only include image files
-          const files = getDataTransferFiles(event).filter(file =>
-            /image/i.test(file.type)
+          const files = getDataTransferFiles(event).filter(
+            (dt: any) => dt.kind !== "string"
           );
           if (files.length === 0) {
             return false;
@@ -84,7 +100,8 @@ const uploadPlugin = options =>
   });
 
 const IMAGE_CLASSES = ["right-50", "left-50"];
-const getLayoutAndTitle = tokenTitle => {
+
+const getLayoutAndTitle = (tokenTitle: string | null) => {
   if (!tokenTitle) return {};
   if (IMAGE_CLASSES.includes(tokenTitle)) {
     return {
@@ -97,7 +114,7 @@ const getLayoutAndTitle = tokenTitle => {
   }
 };
 
-const downloadImageNode = async node => {
+const downloadImageNode = async (node: ProsemirrorNode) => {
   const image = await fetch(node.attrs.src);
   const imageBlob = await image.blob();
   const imageURL = URL.createObjectURL(imageBlob);
@@ -116,11 +133,13 @@ const downloadImageNode = async node => {
 };
 
 export default class Image extends Node {
-  get name() {
+  options: Options;
+
+  get name(): string {
     return "image";
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       inline: true,
       attrs: {
@@ -179,14 +198,20 @@ export default class Image extends Node {
           {
             class: className,
           },
-          ["img", { ...node.attrs, contentEditable: false }],
+          ["img", { ...node.attrs, contentEditable: "false" }],
           ["p", { class: "caption" }, 0],
         ];
       },
     };
   }
 
-  handleKeyDown = ({ node, getPos }) => event => {
+  handleKeyDown = ({
+    node,
+    getPos,
+  }: {
+    node: ProsemirrorNode;
+    getPos: () => number;
+  }) => (event: React.KeyboardEvent<HTMLSpanElement>) => {
     // Pressing Enter in the caption field should move the cursor/selection
     // below the image
     if (event.key === "Enter") {
@@ -203,7 +228,7 @@ export default class Image extends Node {
 
     // Pressing Backspace in an an empty caption field should remove the entire
     // image, leaving an empty paragraph
-    if (event.key === "Backspace" && event.target.innerText === "") {
+    if (event.key === "Backspace" && event.currentTarget.innerText === "") {
       const { view } = this.editor;
       const $pos = view.state.doc.resolve(getPos());
       const tr = view.state.tr.setSelection(new NodeSelection($pos));
@@ -213,11 +238,19 @@ export default class Image extends Node {
     }
   };
 
-  handleBlur = ({ node, getPos }) => event => {
-    const alt = event.target.innerText;
+  handleBlur = ({
+    node,
+    getPos,
+  }: {
+    node: ProsemirrorNode;
+    getPos: () => number;
+  }) => (event: React.FocusEvent<HTMLSpanElement>) => {
+    const alt = event.currentTarget.innerText;
     const { src, title, layoutClass } = node.attrs;
 
-    if (alt === node.attrs.alt) return;
+    if (alt === node.attrs.alt) {
+      return;
+    }
 
     const { view } = this.editor;
     const { tr } = view.state;
@@ -233,7 +266,9 @@ export default class Image extends Node {
     view.dispatch(transaction);
   };
 
-  handleSelect = ({ getPos }) => event => {
+  handleSelect = ({ getPos }: { getPos: () => number }) => (
+    event: React.MouseEvent
+  ) => {
     event.preventDefault();
 
     const { view } = this.editor;
@@ -242,46 +277,33 @@ export default class Image extends Node {
     view.dispatch(transaction);
   };
 
-  handleDownload = ({ node }) => event => {
+  handleDownload = ({ node }: { node: ProsemirrorNode }) => (
+    event: React.MouseEvent
+  ) => {
     event.preventDefault();
     event.stopPropagation();
     downloadImageNode(node);
   };
 
-  component = props => {
-    const { theme, isSelected } = props;
-    const { alt, src, title, layoutClass } = props.node.attrs;
-    const className = layoutClass ? `image image-${layoutClass}` : "image";
+  handleMouseDown = (ev: React.MouseEvent<HTMLParagraphElement>) => {
+    if (document.activeElement !== ev.currentTarget) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      ev.currentTarget.focus();
+    }
+  };
 
+  component = (props: ComponentProps) => {
     return (
-      <div contentEditable={false} className={className}>
-        <ImageWrapper
-          className={isSelected ? "ProseMirror-selectednode" : ""}
-          onClick={this.handleSelect(props)}
-        >
-          <Button>
-            <DownloadIcon
-              color="currentColor"
-              onClick={this.handleDownload(props)}
-            />
-          </Button>
-          <ImageZoom
-            image={{
-              src,
-              alt,
-              title,
-            }}
-            defaultStyles={{
-              overlay: {
-                backgroundColor: theme.background,
-              },
-            }}
-            shouldRespectMaxDimension
-          />
-        </ImageWrapper>
+      <ImageComponent
+        {...props}
+        onClick={this.handleSelect(props)}
+        onDownload={this.handleDownload(props)}
+      >
         <Caption
           onKeyDown={this.handleKeyDown(props)}
           onBlur={this.handleBlur(props)}
+          onMouseDown={this.handleMouseDown}
           className="caption"
           tabIndex={-1}
           role="textbox"
@@ -289,22 +311,22 @@ export default class Image extends Node {
           suppressContentEditableWarning
           data-caption={this.options.dictionary.imageCaptionPlaceholder}
         >
-          {alt}
+          {props.node.attrs.alt}
         </Caption>
-      </div>
+      </ImageComponent>
     );
   };
 
-  toMarkdown(state, node) {
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
     let markdown =
       " ![" +
-      state.esc((node.attrs.alt || "").replace("\n", "") || "") +
+      state.esc((node.attrs.alt || "").replace("\n", "") || "", false) +
       "](" +
-      state.esc(node.attrs.src);
+      state.esc(node.attrs.src || "", false);
     if (node.attrs.layoutClass) {
-      markdown += ' "' + state.esc(node.attrs.layoutClass) + '"';
+      markdown += ' "' + state.esc(node.attrs.layoutClass, false) + '"';
     } else if (node.attrs.title) {
-      markdown += ' "' + state.esc(node.attrs.title) + '"';
+      markdown += ' "' + state.esc(node.attrs.title, false) + '"';
     }
     markdown += ")";
     state.write(markdown);
@@ -313,19 +335,26 @@ export default class Image extends Node {
   parseMarkdown() {
     return {
       node: "image",
-      getAttrs: token => {
+      getAttrs: (token: Token) => {
         return {
           src: token.attrGet("src"),
-          alt: (token.children[0] && token.children[0].content) || null,
-          ...getLayoutAndTitle(token.attrGet("title")),
+          alt:
+            (token?.children &&
+              token.children[0] &&
+              token.children[0].content) ||
+            null,
+          ...getLayoutAndTitle(token?.attrGet("title")),
         };
       },
     };
   }
 
-  commands({ type }) {
+  commands({ type }: { type: NodeType }) {
     return {
-      downloadImage: () => async state => {
+      downloadImage: () => (state: EditorState) => {
+        if (!(state.selection instanceof NodeSelection)) {
+          return false;
+        }
         const { node } = state.selection;
 
         if (node.type.name !== "image") {
@@ -336,11 +365,14 @@ export default class Image extends Node {
 
         return true;
       },
-      deleteImage: () => (state, dispatch) => {
+      deleteImage: () => (state: EditorState, dispatch: Dispatch) => {
         dispatch(state.tr.deleteSelection());
         return true;
       },
-      alignRight: () => (state, dispatch) => {
+      alignRight: () => (state: EditorState, dispatch: Dispatch) => {
+        if (!(state.selection instanceof NodeSelection)) {
+          return false;
+        }
         const attrs = {
           ...state.selection.node.attrs,
           title: null,
@@ -350,7 +382,10 @@ export default class Image extends Node {
         dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
         return true;
       },
-      alignLeft: () => (state, dispatch) => {
+      alignLeft: () => (state: EditorState, dispatch: Dispatch) => {
+        if (!(state.selection instanceof NodeSelection)) {
+          return false;
+        }
         const attrs = {
           ...state.selection.node.attrs,
           title: null,
@@ -360,47 +395,59 @@ export default class Image extends Node {
         dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
         return true;
       },
-      replaceImage: () => state => {
+      replaceImage: () => (state: EditorState) => {
         const { view } = this.editor;
         const {
-          uploadImage,
-          onImageUploadStart,
-          onImageUploadStop,
+          uploadFile,
+          onFileUploadStart,
+          onFileUploadStop,
           onShowToast,
         } = this.editor.props;
 
-        if (!uploadImage) {
-          throw new Error("uploadImage prop is required to replace images");
+        if (!uploadFile) {
+          throw new Error("uploadFile prop is required to replace images");
         }
 
         // create an input element and click to trigger picker
         const inputElement = document.createElement("input");
         inputElement.type = "file";
-        inputElement.accept = "image/*";
+        inputElement.accept = supportedImageMimeTypes.join(", ");
         inputElement.onchange = (event: Event) => {
           const files = getDataTransferFiles(event);
           insertFiles(view, event, state.selection.from, files, {
-            uploadImage,
-            onImageUploadStart,
-            onImageUploadStop,
+            uploadFile,
+            onFileUploadStart,
+            onFileUploadStop,
             onShowToast,
             dictionary: this.options.dictionary,
             replaceExisting: true,
           });
         };
         inputElement.click();
+        return true;
       },
-      alignCenter: () => (state, dispatch) => {
+      alignCenter: () => (state: EditorState, dispatch: Dispatch) => {
+        if (!(state.selection instanceof NodeSelection)) {
+          return false;
+        }
         const attrs = { ...state.selection.node.attrs, layoutClass: null };
         const { selection } = state;
         dispatch(state.tr.setNodeMarkup(selection.from, undefined, attrs));
         return true;
       },
-      createImage: attrs => (state, dispatch) => {
+      createImage: (attrs: Record<string, any>) => (
+        state: EditorState,
+        dispatch: Dispatch
+      ) => {
         const { selection } = state;
-        const position = selection.$cursor
-          ? selection.$cursor.pos
-          : selection.$to.pos;
+        const position =
+          selection instanceof TextSelection
+            ? selection.$cursor?.pos
+            : selection.$to.pos;
+        if (position === undefined) {
+          return false;
+        }
+
         const node = type.create(attrs);
         const transaction = state.tr.insert(position, node);
         dispatch(transaction);
@@ -409,7 +456,7 @@ export default class Image extends Node {
     };
   }
 
-  inputRules({ type }) {
+  inputRules({ type }: { type: NodeType }) {
     return [
       new InputRule(IMAGE_INPUT_REGEX, (state, match, start, end) => {
         const [okay, alt, src, matchedTitle] = match;
@@ -436,6 +483,53 @@ export default class Image extends Node {
     return [uploadPlaceholderPlugin, uploadPlugin(this.options)];
   }
 }
+
+const ImageComponent = (
+  props: ComponentProps & {
+    onClick: (event: React.MouseEvent<HTMLDivElement>) => void;
+    onDownload: (event: React.MouseEvent<HTMLButtonElement>) => void;
+    children: React.ReactNode;
+  }
+) => {
+  const { theme, isSelected, node } = props;
+  const { alt, src, layoutClass } = node.attrs;
+  const className = layoutClass ? `image image-${layoutClass}` : "image";
+  const [width, setWidth] = React.useState(0);
+
+  return (
+    <div contentEditable={false} className={className}>
+      <ImageWrapper
+        className={isSelected ? "ProseMirror-selectednode" : ""}
+        onClick={props.onClick}
+        style={{ width }}
+      >
+        <Button onClick={props.onDownload}>
+          <DownloadIcon color="currentColor" />
+        </Button>
+        <ImageZoom
+          image={{
+            src,
+            alt,
+            // @ts-expect-error type is incorrect, allows spreading all img props
+            onLoad: ev => {
+              // For some SVG's Firefox does not provide the naturalWidth, in this
+              // rare case we need to provide a default so that the image can be
+              // seen and is not sized to 0px
+              setWidth(ev.target.naturalWidth || "50%");
+            },
+          }}
+          defaultStyles={{
+            overlay: {
+              backgroundColor: theme.background,
+            },
+          }}
+          shouldRespectMaxDimension
+        />
+      </ImageWrapper>
+      {props.children}
+    </div>
+  );
+};
 
 const Button = styled.button`
   position: absolute;

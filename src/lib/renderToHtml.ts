@@ -1,17 +1,17 @@
-import createMarkdown from "./markdown/rules";
 import { PluginSimple } from "markdown-it";
-import markRule from "../rules/mark";
+import createMarkdown from "../lib/markdown/rules";
+import attachmentsRule from "../rules/attachments";
+import breakRule from "../rules/breaks";
 import checkboxRule from "../rules/checkboxes";
 import embedsRule from "../rules/embeds";
-import breakRule from "../rules/breaks";
-import tablesRule from "../rules/tables";
-import noticesRule from "../rules/notices";
-import filesRule from "../rules/files";
-import underlinesRule from "../rules/underlines";
 import emojiRule from "../rules/emoji";
+import markRule from "../rules/mark";
+import noticesRule from "../rules/notices";
+import tablesRule from "../rules/tables";
+import underlinesRule from "../rules/underlines";
 
 const defaultRules = [
-  embedsRule,
+  embedsRule([]),
   breakRule,
   checkboxRule,
   markRule({ delim: "==", mark: "highlight" }),
@@ -19,7 +19,7 @@ const defaultRules = [
   underlinesRule,
   tablesRule,
   noticesRule,
-  filesRule,
+  attachmentsRule,
   emojiRule,
 ];
 
