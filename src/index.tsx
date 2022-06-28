@@ -290,6 +290,7 @@ class RichMarkdownEditor extends React.PureComponent<
   }
 
   createPlugins() {
+    console.log(this.extensions.plugins);
     return this.extensions.plugins;
   }
 
