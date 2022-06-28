@@ -1,14 +1,16 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { MarkSpec } from "prosemirror-model";
 import { Plugin, TextSelection } from "prosemirror-state";
 import getMarkRange from "../queries/getMarkRange";
-import Mark from "./Mark";
 import markRule from "../rules/mark";
+import Mark from "./Mark";
 
 export default class Placeholder extends Mark {
   get name() {
     return "placeholder";
   }
 
-  get schema() {
+  get schema(): MarkSpec {
     return {
       parseDOM: [{ tag: "span.template-placeholder" }],
       toDOM: () => ["span", { class: "template-placeholder" }],
@@ -19,7 +21,7 @@ export default class Placeholder extends Mark {
     return [markRule({ delim: "!!", mark: "placeholder" })];
   }
 
-  get toMarkdown() {
+  toMarkdown() {
     return {
       open: "!!",
       close: "!!",
@@ -45,7 +47,9 @@ export default class Placeholder extends Mark {
             const $from = state.doc.resolve(from);
 
             const range = getMarkRange($from, state.schema.marks.placeholder);
-            if (!range) return false;
+            if (!range) {
+              return false;
+            }
 
             const selectionStart = Math.min(from, range.from);
             const selectionEnd = Math.max(to, range.to);
@@ -87,7 +91,9 @@ export default class Placeholder extends Mark {
                 state.doc.resolve(Math.max(0, state.selection.from - 1)),
                 state.schema.marks.placeholder
               );
-              if (!range) return false;
+              if (!range) {
+                return false;
+              }
 
               dispatch(
                 state.tr
@@ -106,7 +112,9 @@ export default class Placeholder extends Mark {
                 state.doc.resolve(Math.max(0, state.selection.from - 1)),
                 state.schema.marks.placeholder
               );
-              if (!range) return false;
+              if (!range) {
+                return false;
+              }
 
               const startOfMark = state.doc.resolve(range.from);
               dispatch(state.tr.setSelection(TextSelection.near(startOfMark)));
@@ -118,7 +126,9 @@ export default class Placeholder extends Mark {
                 state.selection.$from,
                 state.schema.marks.placeholder
               );
-              if (!range) return false;
+              if (!range) {
+                return false;
+              }
 
               const endOfMark = state.doc.resolve(range.to);
               dispatch(state.tr.setSelection(TextSelection.near(endOfMark)));
@@ -144,7 +154,9 @@ export default class Placeholder extends Mark {
                 state.selection.$from,
                 state.schema.marks.placeholder
               );
-              if (!range) return false;
+              if (!range) {
+                return false;
+              }
 
               event.stopPropagation();
               event.preventDefault();

@@ -1,6 +1,6 @@
 import customFence from "markdown-it-container";
 
-export default function file(md): void {
+export default function file(md: any): void {
   return customFence(md, "file", {
     marker: "@",
     validate: () => true,

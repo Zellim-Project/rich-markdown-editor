@@ -1,12 +1,13 @@
+import { PlusIcon } from "outline-icons";
 import { InputRule } from "prosemirror-inputrules";
-import ReactDOM from "react-dom";
-import * as React from "react";
-import { Plugin } from "prosemirror-state";
+import { EditorState, Plugin } from "prosemirror-state";
 import { isInTable } from "prosemirror-tables";
 import { findParentNode } from "prosemirror-utils";
-import { PlusIcon } from "outline-icons";
-import { Decoration, DecorationSet } from "prosemirror-view";
+import { Decoration, DecorationSet, EditorView } from "prosemirror-view";
+import * as React from "react";
+import ReactDOM from "react-dom";
 import Extension from "../lib/Extension";
+import { EventType } from "../types";
 
 const MAX_MATCH = 500;
 const OPEN_REGEX = /^\/(\w+)?$/;
@@ -14,7 +15,18 @@ const CLOSE_REGEX = /(^(?!\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
 
 // based on the input rules code in Prosemirror, here:
 // https://github.com/ProseMirror/prosemirror-inputrules/blob/master/src/inputrules.js
-export function run(view, from, to, regex, handler) {
+export function run(
+  view: EditorView,
+  from: number,
+  to: number,
+  regex: RegExp,
+  handler: (
+    state: EditorState,
+    match: RegExpExecArray | null,
+    from?: number,
+    to?: number
+  ) => boolean | null
+) {
   if (view.composing) {
     return false;
   }
@@ -27,13 +39,15 @@ export function run(view, from, to, regex, handler) {
   const textBefore = $from.parent.textBetween(
     Math.max(0, $from.parentOffset - MAX_MATCH),
     $from.parentOffset,
-    null,
+    undefined,
     "\ufffc"
   );
 
   const match = regex.exec(textBefore);
   const tr = handler(state, match, match ? from - match[0].length : from, to);
-  if (!tr) return false;
+  if (!tr) {
+    return false;
+  }
   return true;
 }
 
@@ -52,7 +66,7 @@ export default class BlockMenuTrigger extends Extension {
       new Plugin({
         props: {
           handleClick: () => {
-            this.options.onClose();
+            this.editor.events.emit(EventType.blockMenuClose);
             return false;
           },
           handleKeyDown: (view, event) => {
@@ -66,9 +80,9 @@ export default class BlockMenuTrigger extends Extension {
                 const { pos } = view.state.selection.$from;
                 return run(view, pos, pos, OPEN_REGEX, (state, match) => {
                   if (match) {
-                    this.options.onOpen(match[1]);
+                    this.editor.events.emit(EventType.blockMenuOpen, match[1]);
                   } else {
-                    this.options.onClose();
+                    this.editor.events.emit(EventType.blockMenuClose);
                   }
                   return null;
                 });
@@ -102,22 +116,33 @@ export default class BlockMenuTrigger extends Extension {
               return;
             }
 
-            const decorations: Decoration[] = [];
-            const isEmpty = parent && parent.node.content.size === 0;
-            const isSlash = parent && parent.node.textContent === "/";
             const isTopLevel = state.selection.$from.depth === 1;
+            if (!isTopLevel) {
+              return;
+            }
 
-            if (isTopLevel) {
-              if (isEmpty) {
-                decorations.push(
-                  Decoration.widget(parent.pos, () => {
+            const decorations: Decoration[] = [];
+            const isEmptyNode = parent && parent.node.content.size === 0;
+            const isSlash = parent && parent.node.textContent === "/";
+
+            if (isEmptyNode) {
+              decorations.push(
+                Decoration.widget(
+                  parent.pos,
+                  () => {
                     button.addEventListener("click", () => {
-                      this.options.onOpen("");
+                      this.editor.events.emit(EventType.blockMenuOpen, "");
                     });
                     return button;
-                  })
-                );
+                  },
+                  {
+                    key: "block-trigger",
+                  }
+                )
+              );
 
+              const isEmptyDoc = state.doc.textContent === "";
+              if (!isEmptyDoc) {
                 decorations.push(
                   Decoration.node(
                     parent.pos,
@@ -129,24 +154,16 @@ export default class BlockMenuTrigger extends Extension {
                   )
                 );
               }
-
-              if (isSlash) {
-                decorations.push(
-                  Decoration.node(
-                    parent.pos,
-                    parent.pos + parent.node.nodeSize,
-                    {
-                      class: "placeholder",
-                      "data-empty-text": `  ${this.options.dictionary.newLineWithSlash}`,
-                    }
-                  )
-                );
-              }
-
-              return DecorationSet.create(state.doc, decorations);
+            } else if (isSlash) {
+              decorations.push(
+                Decoration.node(parent.pos, parent.pos + parent.node.nodeSize, {
+                  class: "placeholder",
+                  "data-empty-text": `  ${this.options.dictionary.newLineWithSlash}`,
+                })
+              );
             }
 
-            return;
+            return DecorationSet.create(state.doc, decorations);
           },
         },
       }),
@@ -163,7 +180,7 @@ export default class BlockMenuTrigger extends Extension {
           state.selection.$from.parent.type.name === "paragraph" &&
           !isInTable(state)
         ) {
-          this.options.onOpen(match[1]);
+          this.editor.events.emit(EventType.blockMenuOpen, match[1]);
         }
         return null;
       }),
@@ -173,7 +190,7 @@ export default class BlockMenuTrigger extends Extension {
       // /word<space>
       new InputRule(CLOSE_REGEX, (state, match) => {
         if (match) {
-          this.options.onClose();
+          this.editor.events.emit(EventType.blockMenuClose);
         }
         return null;
       }),

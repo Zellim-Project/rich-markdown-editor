@@ -609,8 +609,8 @@ export const StyledEditor = styled("div")<{
 
     select,
     button {
-      background: ${props => props.theme.blockToolbarBackground};
-      color: ${props => props.theme.blockToolbarItem};
+      background: ${props => props.theme.toolbarBackground};
+      color: ${props => props.theme.toolbarItem};
       border-width: 1px;
       font-size: 13px;
       display: none;

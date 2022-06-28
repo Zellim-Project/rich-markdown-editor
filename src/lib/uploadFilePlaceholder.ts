@@ -1,20 +1,19 @@
-import { Plugin } from "prosemirror-state";
+import { EditorState, Plugin } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
-
 // based on the example at: https://prosemirror.net/examples/upload/
 const uploadFilePlaceholder = new Plugin({
   state: {
     init() {
       return DecorationSet.empty;
     },
-    apply(tr, set) {
+    apply(tr, set: DecorationSet) {
       // Adjust decoration positions to changes made by the transaction
       set = set.map(tr.mapping, tr.doc);
 
       // See if the transaction adds or removes any placeholders
       const action = tr.getMeta(this);
 
-      if (action && action.add) {
+      if (action?.add) {
         const element = document.createElement("div");
         element.className = "loader";
 
@@ -24,7 +23,7 @@ const uploadFilePlaceholder = new Plugin({
         set = set.add(tr.doc, [deco]);
       } else if (action && action.remove) {
         set = set.remove(
-          set.find(null, null, spec => spec.id === action.remove.id)
+          set.find(undefined, undefined, spec => spec.id === action.remove.id)
         );
       }
       return set;
@@ -39,8 +38,11 @@ const uploadFilePlaceholder = new Plugin({
 
 export default uploadFilePlaceholder;
 
-export function findPlaceholder(state, id) {
-  const decos = uploadFilePlaceholder.getState(state);
-  const found = decos.find(null, null, spec => spec.id === id);
-  return found.length ? found[0].from : null;
+export function findPlaceholder(
+  state: EditorState,
+  id: string
+): [number, number] | null {
+  const decos: DecorationSet = uploadFilePlaceholder.getState(state);
+  const found = decos.find(undefined, undefined, spec => spec.id === id);
+  return found.length ? [found[0].from, found[0].to] : null;
 }

@@ -1,5 +1,14 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import Token from "markdown-it/lib/token";
 import { wrappingInputRule } from "prosemirror-inputrules";
+import {
+  NodeSpec,
+  NodeType,
+  Schema,
+  Node as ProsemirrorNode,
+} from "prosemirror-model";
 import toggleList from "../commands/toggleList";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 import Node from "./Node";
 
 export default class OrderedList extends Node {
@@ -7,7 +16,7 @@ export default class OrderedList extends Node {
     return "ordered_list";
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       attrs: {
         order: {
@@ -33,17 +42,17 @@ export default class OrderedList extends Node {
     };
   }
 
-  commands({ type, schema }) {
+  commands({ type, schema }: { type: NodeType; schema: Schema }) {
     return () => toggleList(type, schema.nodes.list_item);
   }
 
-  keys({ type, schema }) {
+  keys({ type, schema }: { type: NodeType; schema: Schema }) {
     return {
       "Shift-Ctrl-9": toggleList(type, schema.nodes.list_item),
     };
   }
 
-  inputRules({ type }) {
+  inputRules({ type }: { type: NodeType }) {
     return [
       wrappingInputRule(
         /^(\d+)\.\s$/,
@@ -54,15 +63,15 @@ export default class OrderedList extends Node {
     ];
   }
 
-  toMarkdown(state, node) {
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
     state.write("\n");
 
     const start = node.attrs.order !== undefined ? node.attrs.order : 1;
     const maxW = `${start + node.childCount - 1}`.length;
     const space = state.repeat(" ", maxW + 2);
 
-    state.renderList(node, space, i => {
-      const nStr = `${start + i}`;
+    state.renderList(node, space, (index: number) => {
+      const nStr = `${start + index}`;
       return state.repeat(" ", maxW - nStr.length) + nStr + ". ";
     });
   }
@@ -70,7 +79,7 @@ export default class OrderedList extends Node {
   parseMarkdown() {
     return {
       block: "ordered_list",
-      getAttrs: tok => ({
+      getAttrs: (tok: Token) => ({
         order: parseInt(tok.attrGet("start") || "1", 10),
       }),
     };

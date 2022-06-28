@@ -1,35 +1,50 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { toggleMark } from "prosemirror-commands";
+import { InputRule } from "prosemirror-inputrules";
+import { MarkSpec, MarkType } from "prosemirror-model";
 import markInputRule from "../lib/markInputRule";
 import Mark from "./Mark";
+
+const heavyWeightRegex = /^(bold(er)?|[5-9]\d{2,})$/;
+const normalWeightRegex = /^(normal|[1-4]\d{2,})$/;
 
 export default class Bold extends Mark {
   get name() {
     return "strong";
   }
 
-  get schema() {
+  get schema(): MarkSpec {
     return {
       parseDOM: [
-        { tag: "b" },
+        {
+          tag: "b",
+          // Google Docs includes <b> tags with font-weight: normal so we need
+          // to account for this case specifically as not becoming bold when pasted.
+          getAttrs: (dom: HTMLElement) =>
+            normalWeightRegex.test(dom.style.fontWeight) ? false : null,
+        },
         { tag: "strong" },
-        { style: "font-style", getAttrs: value => value === "bold" },
+        {
+          style: "font-weight",
+          getAttrs: (style: string) => heavyWeightRegex.test(style) && null,
+        },
       ],
       toDOM: () => ["strong"],
     };
   }
 
-  inputRules({ type }) {
+  inputRules({ type }: { type: MarkType }): InputRule[] {
     return [markInputRule(/(?:\*\*)([^*]+)(?:\*\*)$/, type)];
   }
 
-  keys({ type }) {
+  keys({ type }: { type: MarkType }) {
     return {
       "Mod-b": toggleMark(type),
       "Mod-B": toggleMark(type),
     };
   }
 
-  get toMarkdown() {
+  toMarkdown() {
     return {
       open: "**",
       close: "**",

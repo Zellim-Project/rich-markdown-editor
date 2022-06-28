@@ -1,15 +1,14 @@
-import Node from "./Node";
-import { Decoration, DecorationSet } from "prosemirror-view";
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { NodeSpec, Node as ProsemirrorNode, Schema } from "prosemirror-model";
+import { EditorState, Plugin, TextSelection } from "prosemirror-state";
 import {
   addColumnAfter,
   addColumnBefore,
   deleteColumn,
   deleteRow,
   deleteTable,
-  fixTables,
   goToNextCell,
   isInTable,
-  setCellAttr,
   tableEditing,
   toggleHeaderCell,
   toggleHeaderColumn,
@@ -21,15 +20,18 @@ import {
   getCellsInColumn,
   moveRow,
 } from "prosemirror-utils";
-import { Plugin, TextSelection } from "prosemirror-state";
+import { Decoration, DecorationSet } from "prosemirror-view";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 import tablesRule from "../rules/tables";
+import { Dispatch } from "../types";
+import Node from "./Node";
 
 export default class Table extends Node {
   get name() {
     return "table";
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       content: "tr+",
       tableRole: "table",
@@ -54,9 +56,15 @@ export default class Table extends Node {
     return [tablesRule];
   }
 
-  commands({ schema }) {
+  commands({ schema }: { schema: Schema }) {
     return {
-      createTable: ({ rowsCount, colsCount }) => (state, dispatch) => {
+      createTable: ({
+        rowsCount,
+        colsCount,
+      }: {
+        rowsCount: number;
+        colsCount: number;
+      }) => (state: EditorState, dispatch: Dispatch) => {
         const offset = state.tr.selection.anchor + 1;
         const nodes = createTable(schema, rowsCount, colsCount);
         const tr = state.tr.replaceSelectionWith(nodes).scrollIntoView();
@@ -64,21 +72,32 @@ export default class Table extends Node {
 
         tr.setSelection(TextSelection.near(resolvedPos));
         dispatch(tr);
+        return true;
       },
-      setColumnAttr: ({ index, alignment }) => (state, dispatch) => {
+      setColumnAttr: ({
+        index,
+        alignment,
+      }: {
+        index: number;
+        alignment: string;
+      }) => (state: EditorState, dispatch: Dispatch) => {
         const cells = getCellsInColumn(index)(state.selection) || [];
         let transaction = state.tr;
         cells.forEach(({ pos }) => {
-          transaction = transaction.setNodeMarkup(pos, null, {
+          transaction = transaction.setNodeMarkup(pos, undefined, {
             alignment,
           });
         });
         dispatch(transaction);
+        return true;
       },
       addColumnBefore: () => addColumnBefore,
       addColumnAfter: () => addColumnAfter,
       deleteColumn: () => deleteColumn,
-      addRowAfter: ({ index }) => (state, dispatch) => {
+      addRowAfter: ({ index }: { index: number }) => (
+        state: EditorState,
+        dispatch: Dispatch
+      ) => {
         if (index === 0) {
           // A little hack to avoid cloning the heading row by cloning the row
           // beneath and then moving it to the right index.
@@ -87,14 +106,13 @@ export default class Table extends Node {
         } else {
           dispatch(addRowAt(index + 1, true)(state.tr));
         }
+        return true;
       },
       deleteRow: () => deleteRow,
       deleteTable: () => deleteTable,
       toggleHeaderColumn: () => toggleHeaderColumn,
       toggleHeaderRow: () => toggleHeaderRow,
       toggleHeaderCell: () => toggleHeaderCell,
-      setCellAttr: () => setCellAttr,
-      fixTables: () => fixTables,
     };
   }
 
@@ -102,8 +120,10 @@ export default class Table extends Node {
     return {
       Tab: goToNextCell(1),
       "Shift-Tab": goToNextCell(-1),
-      Enter: (state, dispatch) => {
-        if (!isInTable(state)) return false;
+      Enter: (state: EditorState, dispatch: Dispatch) => {
+        if (!isInTable(state as any)) {
+          return false;
+        }
 
         // TODO: Adding row at the end for now, can we find the current cell
         // row index and add the row below that?
@@ -115,7 +135,7 @@ export default class Table extends Node {
     };
   }
 
-  toMarkdown(state, node) {
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
     state.renderTable(node);
     state.closeBlock(node);
   }
@@ -124,7 +144,7 @@ export default class Table extends Node {
     return { block: "table" };
   }
 
-  get plugins() {
+  get plugins(): any {
     return [
       tableEditing(),
       new Plugin({
@@ -135,11 +155,15 @@ export default class Table extends Node {
             let index = 0;
 
             doc.descendants((node, pos) => {
-              if (node.type.name !== this.name) return;
+              if (node.type.name !== this.name) {
+                return;
+              }
 
               const elements = document.getElementsByClassName("rme-table");
               const table = elements[index];
-              if (!table) return;
+              if (!table) {
+                return;
+              }
 
               const element = table.parentElement;
               const shadowRight = !!(
@@ -148,11 +172,17 @@ export default class Table extends Node {
 
               if (shadowRight) {
                 decorations.push(
-                  Decoration.widget(pos + 1, () => {
-                    const shadow = document.createElement("div");
-                    shadow.className = "scrollable-shadow right";
-                    return shadow;
-                  })
+                  Decoration.widget(
+                    pos + 1,
+                    () => {
+                      const shadow = document.createElement("div");
+                      shadow.className = "scrollable-shadow right";
+                      return shadow;
+                    },
+                    {
+                      key: "table-shadow-right",
+                    }
+                  )
                 );
               }
               index++;

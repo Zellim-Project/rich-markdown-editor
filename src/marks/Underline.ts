@@ -1,20 +1,22 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { toggleMark } from "prosemirror-commands";
+import { MarkSpec, MarkType } from "prosemirror-model";
 import markInputRule from "../lib/markInputRule";
-import Mark from "./Mark";
 import underlinesRule from "../rules/underlines";
+import Mark from "./Mark";
 
 export default class Underline extends Mark {
   get name() {
     return "underline";
   }
 
-  get schema() {
+  get schema(): MarkSpec {
     return {
       parseDOM: [
         { tag: "u" },
         {
           style: "text-decoration",
-          getAttrs: value => value === "underline",
+          getAttrs: value => (value === "underline" ? null : false),
         },
       ],
       toDOM: () => ["u", 0],
@@ -25,17 +27,17 @@ export default class Underline extends Mark {
     return [underlinesRule];
   }
 
-  inputRules({ type }) {
+  inputRules({ type }: { type: MarkType }) {
     return [markInputRule(/(?:__)([^_]+)(?:__)$/, type)];
   }
 
-  keys({ type }) {
+  keys({ type }: { type: MarkType }) {
     return {
       "Mod-u": toggleMark(type),
     };
   }
 
-  get toMarkdown() {
+  toMarkdown() {
     return {
       open: "__",
       close: "__",

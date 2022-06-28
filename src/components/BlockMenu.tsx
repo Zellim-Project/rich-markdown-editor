@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import React from "react";
 import { findParentNode } from "prosemirror-utils";
 import CommandMenu, { Props } from "./CommandMenu";

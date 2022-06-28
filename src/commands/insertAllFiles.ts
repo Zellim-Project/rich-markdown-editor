@@ -1,9 +1,25 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import { EditorView } from "prosemirror-view";
 import uploadFilePlaceholderPlugin, {
   findPlaceholder,
 } from "../lib/uploadFilePlaceholder";
 import { ToastType } from "../types";
 
-const insertAllFiles = function(view, event, pos, files, options) {
+export type Options = {
+  uploadFile: any;
+  onFileUploadStart: any;
+  onFileUploadStop: any;
+  onShowToast: any;
+  dictionary: any;
+};
+
+const insertAllFiles = function(
+  view: EditorView<any>,
+  event: ClipboardEvent | DragEvent,
+  pos: number,
+  files: string | any[],
+  options: Options
+) {
   if (files.length === 0) return;
 
   const {
@@ -49,8 +65,8 @@ const insertAllFiles = function(view, event, pos, files, options) {
     // to allow all placeholders to be entered at once with the uploads
     // happening in the background in parallel.
     uploadFile(file)
-      .then(src => {
-        const pos = findPlaceholder(view.state, id);
+      .then((src: any) => {
+        const pos = findPlaceholder(view.state, id as string);
 
         // if the content around the placeholder has been deleted
         // then forget about inserting this file
@@ -58,15 +74,15 @@ const insertAllFiles = function(view, event, pos, files, options) {
 
         const transaction = view.state.tr
           .replaceWith(
-            pos,
-            pos,
+            pos as any,
+            pos as any,
             schema.nodes.container_file.create({ src, alt: file.name })
           )
           .setMeta(uploadFilePlaceholderPlugin, { remove: { id } });
 
         view.dispatch(transaction);
       })
-      .catch(error => {
+      .catch((error: any) => {
         console.error(error);
 
         // cleanup the placeholder if there is a failure

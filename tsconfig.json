@@ -1,32 +1,36 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
-    "strict": false,
-    "strictNullChecks": true,
-    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "alwaysStrict": true,
     "esModuleInterop": true,
-    "allowJs": true,
-    "resolveJsonModule": true,
-    "module": "commonjs",
-    "target": "es2017",
-    "lib": ["dom", "es2018"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "baseUrl": ".",
     "jsx": "react",
-    "types": [
-      "react",
-      "jest"
-    ],
-    "rootDir": "src",
-    "outDir": "dist",
-    "stripInternal": true,
-    "removeComments": true,
-    "declarationMap": true,
-    "declaration": true,
+    "lib": ["dom", "es2020", "dom.iterable", "esnext.asynciterable"],
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noImplicitOverride": false,
+    "noImplicitReturns": true,
+    "noImplicitThis": false,
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "strictNullChecks": true,
+    "noEmit": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "target": "es2020",
+    "paths": {
+      "@server/*": ["./server/*"],
+      "@shared/*": ["./shared/*"],
+      "~/*": ["./app/*"]
+    }
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
-    "dist",
-    "node_modules"
+    "node_modules",
+    "build",
+    "server/migrations"
   ]
 }

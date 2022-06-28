@@ -1,11 +1,14 @@
 // Adapted from:
 // https://github.com/markdown-it/markdown-it-mark/blob/master/index.js
 
+import MarkdownIt from "markdown-it";
+import StateInline from "markdown-it/lib/rules_inline/state_inline";
+
 export default function(options: { delim: string; mark: string }) {
   const delimCharCode = options.delim.charCodeAt(0);
 
-  return function emphasisPlugin(md) {
-    function tokenize(state, silent) {
+  return function emphasisPlugin(md: MarkdownIt) {
+    function tokenize(state: StateInline, silent: boolean) {
       let i, token;
 
       const start = state.pos,
@@ -58,8 +61,15 @@ export default function(options: { delim: string; mark: string }) {
 
     // Walk through delimiter list and replace text tokens with tags
     //
-    function postProcess(state, delimiters) {
-      let i, j, startDelim, endDelim, token;
+    function postProcess(
+      state: StateInline,
+      delimiters: StateInline.Delimiter[]
+    ) {
+      let i = 0,
+        j,
+        startDelim,
+        endDelim,
+        token;
       const loneMarkers: number[] = [],
         max = delimiters.length;
 
@@ -105,7 +115,7 @@ export default function(options: { delim: string; mark: string }) {
       //
       // So, we have to move all those markers after subsequent s_close tags.
       while (loneMarkers.length) {
-        i = loneMarkers.pop();
+        i = loneMarkers.pop() as number;
         j = i + 1;
 
         while (
@@ -134,10 +144,13 @@ export default function(options: { delim: string; mark: string }) {
       postProcess(state, state.delimiters);
 
       for (curr = 0; curr < max; curr++) {
-        if (tokensMeta[curr] && tokensMeta[curr].delimiters) {
-          postProcess(state, tokensMeta[curr].delimiters);
+        const delimiters = tokensMeta[curr]?.delimiters;
+        if (tokensMeta[curr] && delimiters) {
+          postProcess(state, delimiters);
         }
       }
+
+      return false;
     });
   };
 }
