@@ -1,0 +1,1 @@
+{"version":3,"file":"backspaceToParagraph.d.ts","sourceRoot":"","sources":["../../src/commands/backspaceToParagraph.ts"],"names":[],"mappings":"AAEA,OAAO,EAAE,QAAQ,EAAE,MAAM,mBAAmB,CAAC;AAC7C,OAAO,EAAE,WAAW,EAAE,MAAM,mBAAmB,CAAC;AAChD,OAAO,EAAE,QAAQ,EAAE,MAAM,UAAU,CAAC;AAEpC,MAAM,CAAC,OAAO,UAAU,oBAAoB,CAAC,IAAI,EAAE,QAAQ,WAC1C,WAAW,YAAY,QAAQ,iBA2B/C"}
