@@ -1,0 +1,111 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const prosemirror_commands_1 = require("prosemirror-commands");
+const prosemirror_state_1 = require("prosemirror-state");
+const moveLeft_1 = __importDefault(require("../commands/moveLeft"));
+const moveRight_1 = __importDefault(require("../commands/moveRight"));
+const markInputRule_1 = __importDefault(require("../lib/markInputRule"));
+const Mark_1 = __importDefault(require("./Mark"));
+function backticksFor(node, side) {
+    const ticks = /`+/g;
+    let match;
+    let len = 0;
+    if (node.isText) {
+        while ((match = ticks.exec(node.text || ""))) {
+            len = Math.max(len, match[0].length);
+        }
+    }
+    let result = len > 0 && side > 0 ? " `" : "`";
+    for (let i = 0; i < len; i++) {
+        result += "`";
+    }
+    if (len > 0 && side < 0) {
+        result += " ";
+    }
+    return result;
+}
+class Code extends Mark_1.default {
+    get name() {
+        return "code_inline";
+    }
+    get schema() {
+        return {
+            excludes: "_",
+            parseDOM: [{ tag: "code.inline", preserveWhitespace: true }],
+            toDOM: () => ["code", { class: "inline", spellCheck: "false" }],
+        };
+    }
+    inputRules({ type }) {
+        return [(0, markInputRule_1.default)(/(?:^|[^`])(`([^`]+)`)$/, type)];
+    }
+    keys({ type }) {
+        return {
+            "Mod`": (0, prosemirror_commands_1.toggleMark)(type),
+            ArrowLeft: (0, moveLeft_1.default)(),
+            ArrowRight: (0, moveRight_1.default)(),
+        };
+    }
+    get plugins() {
+        return [
+            new prosemirror_state_1.Plugin({
+                props: {
+                    handleTextInput: (view, from, to, text) => {
+                        const { state } = view;
+                        if (from === 0 || to === state.doc.nodeSize - 1 || text === "`") {
+                            return false;
+                        }
+                        if (from === to &&
+                            state.doc.textBetween(from - 1, from) === "`" &&
+                            state.doc.textBetween(to, to + 1) === "`") {
+                            const start = from - 1;
+                            const end = to + 1;
+                            view.dispatch(state.tr
+                                .delete(start, end)
+                                .insertText(text, start)
+                                .addMark(start, start + text.length, state.schema.marks.code_inline.create()));
+                            return true;
+                        }
+                        return false;
+                    },
+                    handlePaste: (view, _event, slice) => {
+                        const { state } = view;
+                        const { from, to } = state.selection;
+                        if (from === 0 || to === state.doc.nodeSize - 1) {
+                            return false;
+                        }
+                        const start = from - 1;
+                        const end = to + 1;
+                        if (from === to &&
+                            state.doc.textBetween(start, from) === "`" &&
+                            state.doc.textBetween(to, end) === "`") {
+                            view.dispatch(state.tr
+                                .replaceRange(start, end, slice)
+                                .addMark(start, start + slice.size, state.schema.marks.code_inline.create()));
+                            return true;
+                        }
+                        return false;
+                    },
+                },
+            }),
+        ];
+    }
+    toMarkdown() {
+        return {
+            open(_state, _mark, parent, index) {
+                return backticksFor(parent.child(index), -1);
+            },
+            close(_state, _mark, parent, index) {
+                return backticksFor(parent.child(index - 1), 1);
+            },
+            escape: false,
+        };
+    }
+    parseMarkdown() {
+        return { mark: "code_inline" };
+    }
+}
+exports.default = Code;
+//# sourceMappingURL=Code.js.map
