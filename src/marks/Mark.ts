@@ -1,26 +1,47 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { toggleMark } from "prosemirror-commands";
-import Extension from "../lib/Extension";
+import { InputRule } from "prosemirror-inputrules";
+import { TokenConfig } from "prosemirror-markdown";
+import {
+  MarkSpec,
+  MarkType,
+  Node as ProsemirrorNode,
+  Schema,
+} from "prosemirror-model";
+import Extension, { Command, CommandFactory } from "../lib/Extension";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 
 export default abstract class Mark extends Extension {
   get type() {
     return "mark";
   }
 
-  abstract get schema();
+  get schema(): MarkSpec {
+    return {};
+  }
 
   get markdownToken(): string {
     return "";
   }
 
-  get toMarkdown(): Record<string, any> {
+  keys(_options: { type: MarkType; schema: Schema }): Record<string, Command> {
     return {};
   }
 
-  parseMarkdown() {
-    return {};
+  inputRules(_options: { type: MarkType; schema: Schema }): InputRule[] {
+    return [];
   }
 
-  commands({ type }) {
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
+    console.error("toMarkdown not implemented", state, node);
+  }
+
+  parseMarkdown(): TokenConfig | void {
+    return undefined;
+  }
+
+  commands({ type }: { type: MarkType; schema: Schema }): CommandFactory {
     return () => toggleMark(type);
   }
 }

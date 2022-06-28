@@ -1,17 +1,21 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import Token from "markdown-it/lib/token";
+import { NodeSpec, Node as ProsemirrorNode, NodeType } from "prosemirror-model";
 import {
   splitListItem,
   sinkListItem,
   liftListItem,
 } from "prosemirror-schema-list";
-import Node from "./Node";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 import checkboxRule from "../rules/checkboxes";
+import Node from "./Node";
 
 export default class CheckboxItem extends Node {
   get name() {
     return "checkbox_item";
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       attrs: {
         checked: {
@@ -30,14 +34,12 @@ export default class CheckboxItem extends Node {
         },
       ],
       toDOM: node => {
-        const input = document.createElement("input");
-        input.type = "checkbox";
+        const input = document.createElement("span");
         input.tabIndex = -1;
-        input.addEventListener("change", this.handleChange);
-
-        if (node.attrs.checked) {
-          input.checked = true;
-        }
+        input.className = "checkbox";
+        input.setAttribute("aria-checked", node.attrs.checked.toString());
+        input.setAttribute("role", "checkbox");
+        input.addEventListener("click", this.handleClick);
 
         return [
           "li",
@@ -48,7 +50,7 @@ export default class CheckboxItem extends Node {
           [
             "span",
             {
-              contentEditable: false,
+              contentEditable: "false",
             },
             input,
           ],
@@ -62,7 +64,11 @@ export default class CheckboxItem extends Node {
     return [checkboxRule];
   }
 
-  handleChange = event => {
+  handleClick = (event: Event) => {
+    if (!(event.target instanceof HTMLSpanElement)) {
+      return;
+    }
+
     const { view } = this.editor;
     const { tr } = view.state;
     const { top, left } = event.target.getBoundingClientRect();
@@ -70,13 +76,13 @@ export default class CheckboxItem extends Node {
 
     if (result) {
       const transaction = tr.setNodeMarkup(result.inside, undefined, {
-        checked: event.target.checked,
+        checked: event.target.getAttribute("aria-checked") !== "true",
       });
       view.dispatch(transaction);
     }
   };
 
-  keys({ type }) {
+  keys({ type }: { type: NodeType }) {
     return {
       Enter: splitListItem(type),
       Tab: sinkListItem(type),
@@ -86,7 +92,7 @@ export default class CheckboxItem extends Node {
     };
   }
 
-  toMarkdown(state, node) {
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
     state.write(node.attrs.checked ? "[x] " : "[ ] ");
     state.renderContent(node);
   }
@@ -94,7 +100,7 @@ export default class CheckboxItem extends Node {
   parseMarkdown() {
     return {
       block: "checkbox_item",
-      getAttrs: tok => ({
+      getAttrs: (tok: Token) => ({
         checked: tok.attrGet("checked") ? true : undefined,
       }),
     };

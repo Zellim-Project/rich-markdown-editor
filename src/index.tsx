@@ -1,23 +1,31 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 /* global window File Promise */
 import * as React from "react";
 import memoize from "lodash/memoize";
-import { EditorState, Selection, Plugin } from "prosemirror-state";
+import { EditorState, Selection, Plugin, Transaction } from "prosemirror-state";
 import { dropCursor } from "prosemirror-dropcursor";
 import { gapCursor } from "prosemirror-gapcursor";
-import { MarkdownParser, MarkdownSerializer } from "prosemirror-markdown";
-import { EditorView } from "prosemirror-view";
-import { Schema, NodeSpec, MarkSpec, Slice } from "prosemirror-model";
+import { MarkdownParser } from "prosemirror-markdown";
+import { MarkdownSerializer } from "./lib/markdown/serializer";
+import { Decoration, EditorView } from "prosemirror-view";
+import {
+  Schema,
+  NodeSpec,
+  MarkSpec,
+  Node as ProsemirrorNode,
+} from "prosemirror-model";
 import { inputRules, InputRule } from "prosemirror-inputrules";
 import { keymap } from "prosemirror-keymap";
 import { baseKeymap } from "prosemirror-commands";
 import { selectColumn, selectRow, selectTable } from "prosemirror-utils";
-import { ThemeProvider } from "styled-components";
-import { light as lightTheme, dark as darkTheme } from "./styles/theme";
+import { DefaultTheme, ThemeProps } from "styled-components";
+import { light as lightTheme } from "./styles/theme";
 import baseDictionary from "./dictionary";
 import Flex from "./components/Flex";
 import { SearchResult } from "./components/LinkEditor";
-import { EmbedDescriptor, ToastType } from "./types";
+import { EmbedDescriptor } from "./types";
 import SelectionToolbar from "./components/SelectionToolbar";
+import Mark from "./marks/Mark";
 import BlockMenu from "./components/BlockMenu";
 import EmojiMenu from "./components/EmojiMenu";
 import LinkToolbar from "./components/LinkToolbar";
@@ -26,57 +34,13 @@ import Extension from "./lib/Extension";
 import ExtensionManager from "./lib/ExtensionManager";
 import ComponentView from "./lib/ComponentView";
 import headingToSlug from "./lib/headingToSlug";
+import fullExtensionsPackage from "./extensions/full";
 
 // styles
 import { StyledEditor } from "./styles/editor";
 
 // nodes
 import ReactNode from "./nodes/ReactNode";
-import Doc from "./nodes/Doc";
-import HardBreak from "./nodes/HardBreak";
-import Paragraph from "./nodes/Paragraph";
-/* import Text from "./nodes/Text";
-import Blockquote from "./nodes/Blockquote";
-import BulletList from "./nodes/BulletList";
-import CodeBlock from "./nodes/CodeBlock";
-import CodeFence from "./nodes/CodeFence";
-import CheckboxList from "./nodes/CheckboxList";
-import Emoji from "./nodes/Emoji";
-import CheckboxItem from "./nodes/CheckboxItem";
-import Embed from "./nodes/Embed";
-import Heading from "./nodes/Heading";
-import HorizontalRule from "./nodes/HorizontalRule";
-import Image from "./nodes/Image";
-import ListItem from "./nodes/ListItem";
-import Notice from "./nodes/Notice";
-import FileDoc from "./nodes/FileDoc";
-import OrderedList from "./nodes/OrderedList";
-import Table from "./nodes/Table";
-import TableCell from "./nodes/TableCell";
-import TableHeadCell from "./nodes/TableHeadCell";
-import TableRow from "./nodes/TableRow";
-
-// marks
-import Bold from "./marks/Bold";
-import Code from "./marks/Code";
-import Highlight from "./marks/Highlight";
-import Italic from "./marks/Italic";
-import Link from "./marks/Link";
-import Strikethrough from "./marks/Strikethrough";
-import TemplatePlaceholder from "./marks/Placeholder";
-import Underline from "./marks/Underline";
-
-// plugins
-import BlockMenuTrigger from "./plugins/BlockMenuTrigger";
-import EmojiTrigger from "./plugins/EmojiTrigger";
-import Folding from "./plugins/Folding";
-import History from "./plugins/History";
-import Keys from "./plugins/Keys";
-import MaxLength from "./plugins/MaxLength";
-import Placeholder from "./plugins/Placeholder";
-import SmartText from "./plugins/SmartText";
-import TrailingNode from "./plugins/TrailingNode";
-import PasteHandler from "./plugins/PasteHandler"; */
 import { PluginSimple } from "markdown-it";
 
 export { schema, parser, serializer, renderToHtml } from "./server";
@@ -86,94 +50,96 @@ export { default as Extension } from "./lib/Extension";
 export const theme = lightTheme;
 
 export type Props = {
+  /** An optional identifier for the editor context. It is used to persist local settings */
   id?: string;
+  /** The editor content, should only be changed if you wish to reset the content */
   value?: string;
+  /** The initial editor content */
   defaultValue: string;
+  /** Placeholder displayed when the editor is empty */
   placeholder: string;
-  extensions?: Extension[];
-  disableExtensions?: (
-    | "strong"
-    | "code_inline"
-    | "highlight"
-    | "em"
-    | "link"
-    | "placeholder"
-    | "strikethrough"
-    | "underline"
-    | "blockquote"
-    | "bullet_list"
-    | "checkbox_item"
-    | "checkbox_list"
-    | "code_block"
-    | "code_fence"
-    | "embed"
-    | "br"
-    | "heading"
-    | "hr"
-    | "image"
-    | "list_item"
-    | "container_notice"
-    | "ordered_list"
-    | "paragraph"
-    | "table"
-    | "td"
-    | "th"
-    | "tr"
-    | "emoji"
-  )[];
+  /** Extensions to load into the editor */
+  extensions?: (typeof Node | typeof Mark | typeof Extension | Extension)[];
+  /** If the editor should be focused on mount */
   autoFocus?: boolean;
+  /** If the editor should not allow editing */
   readOnly?: boolean;
+  /** If the editor should still allow editing checkboxes when it is readOnly */
   readOnlyWriteCheckboxes?: boolean;
-  dictionary?: Partial<typeof baseDictionary>;
-  dark?: boolean;
-  dir?: string;
-  theme?: typeof theme;
+  /** A dictionary of translated strings used in the editor */
+  dictionary: typeof baseDictionary;
+  /** The reading direction of the text content, if known */
+  dir?: "rtl" | "ltr";
+  /** If the editor should vertically grow to fill available space */
+  grow?: boolean;
+  /** If the editor should display template options such as inserting placeholders */
   template?: boolean;
-  headingsOffset?: number;
+  /** An enforced maximum content length */
   maxLength?: number;
+  /** Heading id to scroll to when the editor has loaded */
   scrollTo?: string;
-  handleDOMEvents?: {
-    [name: string]: (view: EditorView, event: Event) => boolean;
-  };
-  uploadImage?: (file: File) => Promise<string>;
+  /** Callback for handling uploaded images, should return the url of uploaded file */
   uploadFile?: (file: File) => Promise<string>;
+  /** Callback when editor is blurred, as native input */
   onBlur?: () => void;
+  /** Callback when editor is focused, as native input */
   onFocus?: () => void;
-  onSave?: ({ done: boolean }) => void;
+  /** Callback when user uses save key combo */
+  onSave?: (options: { done: boolean }) => void;
+  /** Callback when user uses cancel key combo */
   onCancel?: () => void;
-  onChange?: (value: () => string) => void;
-  onImageUploadStart?: () => void;
-  onImageUploadStop?: () => void;
+  /** Callback when user changes editor content */
+  onChange?: (value: () => string | undefined) => void;
+  /** Callback when a file upload begins */
   onFileUploadStart?: () => void;
+  /** Callback when a file upload ends */
   onFileUploadStop?: () => void;
+  /** Callback when a link is created, should return url to created document */
   onCreateLink?: (title: string) => Promise<string>;
+  /** Callback when user searches for documents from link insert interface */
   onSearchLink?: (term: string) => Promise<SearchResult[]>;
-  onClickLink: (href: string, event: MouseEvent) => void;
+  /** Callback when user clicks on any link in the document */
+  onClickLink: (
+    href: string,
+    event: MouseEvent | React.MouseEvent<HTMLButtonElement>
+  ) => void;
+  /** Callback when user hovers on any link in the document */
   onHoverLink?: (event: MouseEvent) => boolean;
+  /** Callback when user clicks on any hashtag in the document */
   onClickHashtag?: (tag: string, event: MouseEvent) => void;
+  /** Callback when user presses any key with document focused */
   onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+  /** Collection of embed types to render in the document */
   embeds: EmbedDescriptor[];
-  onShowToast?: (message: string, code: ToastType) => void;
-  tooltip: typeof React.Component | React.FC<any>;
+  /** Whether embeds should be rendered without an iframe */
+  embedsDisabled?: boolean;
+  /** Callback when a toast message is triggered (eg "link copied") */
+  onShowToast: (message: string) => void;
   className?: string;
   style?: React.CSSProperties;
 };
 
 type State = {
+  /** If the document text has been detected as using RTL script */
   isRTL: boolean;
+  /** If the editor is currently focused */
   isEditorFocused: boolean;
+  /** If the toolbar for a text selection is visible */
   selectionMenuOpen: boolean;
+  /** If the block insert menu is visible (triggered with /) */
   blockMenuOpen: boolean;
+  /** If the insert link toolbar is visible */
   linkMenuOpen: boolean;
+  /** The search term currently filtering the block menu */
   blockMenuSearch: string;
+  /** If the emoji insert menu is visible */
   emojiMenuOpen: boolean;
 };
 
-type Step = {
-  slice?: Slice;
-};
-
-class RichMarkdownEditor extends React.PureComponent<Props, State> {
+class RichMarkdownEditor extends React.PureComponent<
+  Props & ThemeProps<DefaultTheme>,
+  State
+> {
   static defaultProps = {
     defaultValue: "",
     dir: "auto",
@@ -184,7 +150,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     onImageUploadStop: () => {
       // no default behavior
     },
-    onClickLink: href => {
+    onClickLink: (href: string): void => {
       window.open(href, "_blank");
     },
     embeds: [],
@@ -204,7 +170,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   isBlurred: boolean;
   extensions: ExtensionManager;
-  element?: HTMLElement | null;
+  element = React.createRef<HTMLDivElement>();
   view: EditorView;
   schema: Schema;
   serializer: MarkdownSerializer;
@@ -214,12 +180,20 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   keymaps: Plugin[];
   inputRules: InputRule[];
   nodeViews: {
-    [name: string]: (node, view, getPos, decorations) => ComponentView;
+    [name: string]: (
+      node: ProsemirrorNode,
+      view: EditorView,
+      getPos: () => number,
+      decorations: Decoration<{
+        [key: string]: any;
+      }>[]
+    ) => ComponentView;
   };
   nodes: { [name: string]: NodeSpec };
   marks: { [name: string]: MarkSpec };
   commands: Record<string, any>;
   rulePlugins: PluginSimple[];
+  events: any;
 
   componentDidMount() {
     this.init();
@@ -311,121 +285,8 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   createExtensions() {
-    // const dictionary = this.dictionary(this.props.dictionary);
-
     // adding nodes here? Update schema.ts for serialization on the server
-    return new ExtensionManager(
-      [
-        ...[
-          new Doc(),
-          new HardBreak(),
-          new Paragraph(),
-          /* new Blockquote(),
-          new CodeBlock({
-            dictionary,
-            onShowToast: this.props.onShowToast,
-          }),
-          new CodeFence({
-            dictionary,
-            onShowToast: this.props.onShowToast,
-          }),
-          new Emoji(),
-          new Text(),
-          new CheckboxList(),
-          new CheckboxItem(),
-          new BulletList(),
-          new Embed({ embeds: this.props.embeds }),
-          new ListItem(),
-          new Notice({
-            dictionary,
-          }),
-          new FileDoc({
-            dictionary,
-            uploadFile: this.props.uploadFile,
-            onFileUploadStart: this.props.onFileUploadStart,
-            onFileUploadStop: this.props.onFileUploadStop,
-            onShowToast: this.props.onShowToast,
-          }),
-          new Heading({
-            dictionary,
-            onShowToast: this.props.onShowToast,
-            offset: this.props.headingsOffset,
-          }),
-          new HorizontalRule(),
-          new Image({
-            dictionary,
-            uploadImage: this.props.uploadImage,
-            onImageUploadStart: this.props.onImageUploadStart,
-            onImageUploadStop: this.props.onImageUploadStop,
-            onShowToast: this.props.onShowToast,
-          }),
-          new Table(),
-          new TableCell({
-            onSelectTable: this.handleSelectTable,
-            onSelectRow: this.handleSelectRow,
-          }),
-          new TableHeadCell({
-            onSelectColumn: this.handleSelectColumn,
-          }),
-          new TableRow(),
-          new Bold(),
-          new Code(),
-          new Highlight(),
-          new Italic(),
-          new TemplatePlaceholder(),
-          new Underline(),
-          new Link({
-            onKeyboardShortcut: this.handleOpenLinkMenu,
-            onClickLink: this.props.onClickLink,
-            onClickHashtag: this.props.onClickHashtag,
-            onHoverLink: this.props.onHoverLink,
-          }),
-          new Strikethrough(),
-          new OrderedList(),
-          new History(),
-          new Folding(),
-          new SmartText(),
-          new TrailingNode(),
-          new PasteHandler(),
-          new Keys({
-            onBlur: this.handleEditorBlur,
-            onFocus: this.handleEditorFocus,
-            onSave: this.handleSave,
-            onSaveAndExit: this.handleSaveAndExit,
-            onCancel: this.props.onCancel,
-          }),
-          new BlockMenuTrigger({
-            dictionary,
-            onOpen: this.handleOpenBlockMenu,
-            onClose: this.handleCloseBlockMenu,
-          }),
-          new EmojiTrigger({
-            onOpen: (search: string) => {
-              this.setState({ emojiMenuOpen: true, blockMenuSearch: search });
-            },
-            onClose: () => {
-              this.setState({ emojiMenuOpen: false });
-            },
-          }),
-          new Placeholder({
-            placeholder: this.props.placeholder,
-          }),
-          new MaxLength({
-            maxLength: this.props.maxLength,
-          }), */
-        ].filter(extension => {
-          // Optionaly disable extensions
-          if (this.props.disableExtensions) {
-            return !(this.props.disableExtensions as string[]).includes(
-              extension.name
-            );
-          }
-          return true;
-        }),
-        ...(this.props.extensions || []),
-      ],
-      this
-    );
+    return new ExtensionManager(fullExtensionsPackage as any, this);
   }
 
   createPlugins() {
@@ -452,7 +313,14 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     return this.extensions.extensions
       .filter((extension: ReactNode) => extension.component)
       .reduce((nodeViews, extension: ReactNode) => {
-        const nodeView = (node, view, getPos, decorations) => {
+        const nodeView = (
+          node: ProsemirrorNode,
+          view: EditorView,
+          getPos: () => number,
+          decorations: Decoration<{
+            [key: string]: any;
+          }>[]
+        ) => {
           return new ComponentView(extension.component, {
             editor: this,
             extension,
@@ -520,7 +388,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       plugins: [
         ...this.plugins,
         ...this.keymaps,
-        dropCursor({ color: this.theme().cursor }),
+        dropCursor({ color: this.props.theme.cursor }),
         gapCursor(),
         inputRules({
           rules: this.inputRules,
@@ -534,24 +402,28 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     return this.parser.parse(content);
   }
 
-  createView() {
-    if (!this.element) {
+  private createView() {
+    if (!this.element.current) {
       throw new Error("createView called before ref available");
     }
-    const isEditingCheckbox = tr => {
+
+    const isEditingCheckbox = (tr: Transaction) => {
       return tr.steps.some(
-        (step: Step) =>
+        (step: any) =>
           step.slice?.content?.firstChild?.type.name ===
           this.schema.nodes.checkbox_item.name
       );
     };
 
     const self = this; // eslint-disable-line
-    const view = new EditorView(this.element, {
+    const view = new EditorView(this.element.current, {
+      handleDOMEvents: {
+        blur: this.handleEditorBlur,
+        focus: this.handleEditorFocus,
+      },
       state: this.createState(this.props.value),
       editable: () => !this.props.readOnly,
       nodeViews: this.nodeViews,
-      handleDOMEvents: this.props.handleDOMEvents,
       dispatchTransaction: function(transaction) {
         // callback is bound to have the view instance as its this binding
         const { state, transactions } = this.state.applyTransaction(
@@ -600,12 +472,14 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     }
   }
 
-  calculateDir = () => {
-    if (!this.element) return;
+  private calculateDir = () => {
+    if (!this.element.current) {
+      return;
+    }
 
     const isRTL =
       this.props.dir === "rtl" ||
-      getComputedStyle(this.element).direction === "rtl";
+      getComputedStyle(this.element.current).direction === "rtl";
 
     if (this.state.isRTL !== isRTL) {
       this.setState({ isRTL });
@@ -638,12 +512,14 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     }
   };
 
-  handleEditorBlur = () => {
+  private handleEditorBlur = () => {
     this.setState({ isEditorFocused: false });
+    return false;
   };
 
-  handleEditorFocus = () => {
+  private handleEditorFocus = () => {
     this.setState({ isEditorFocused: true });
+    return false;
   };
 
   handleOpenSelectionMenu = () => {
@@ -729,10 +605,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     return headings;
   };
 
-  theme = () => {
-    return this.props.theme || (this.props.dark ? darkTheme : lightTheme);
-  };
-
   dictionary = memoize(
     (providedDictionary?: Partial<typeof baseDictionary>) => {
       return { ...baseDictionary, ...providedDictionary };
@@ -745,7 +617,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       readOnly,
       readOnlyWriteCheckboxes,
       style,
-      tooltip,
       className,
       onKeyDown,
     } = this.props;
@@ -762,72 +633,69 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         dir={dir}
         column
       >
-        <ThemeProvider theme={this.theme()}>
-          <React.Fragment>
-            <StyledEditor
-              dir={dir}
-              rtl={isRTL}
-              readOnly={readOnly}
-              readOnlyWriteCheckboxes={readOnlyWriteCheckboxes}
-              ref={ref => (this.element = ref)}
-            />
-            {!readOnly && this.view && (
-              <React.Fragment>
-                <SelectionToolbar
-                  view={this.view}
-                  dictionary={dictionary}
-                  commands={this.commands}
-                  rtl={isRTL}
-                  isTemplate={this.props.template === true}
-                  onOpen={this.handleOpenSelectionMenu}
-                  onClose={this.handleCloseSelectionMenu}
-                  onSearchLink={this.props.onSearchLink}
-                  onClickLink={this.props.onClickLink}
-                  onCreateLink={this.props.onCreateLink}
-                  tooltip={tooltip}
-                />
-                <LinkToolbar
-                  view={this.view}
-                  dictionary={dictionary}
-                  isActive={this.state.linkMenuOpen}
-                  onCreateLink={this.props.onCreateLink}
-                  onSearchLink={this.props.onSearchLink}
-                  onClickLink={this.props.onClickLink}
-                  onShowToast={this.props.onShowToast}
-                  onClose={this.handleCloseLinkMenu}
-                  tooltip={tooltip}
-                />
-                <EmojiMenu
-                  view={this.view}
-                  commands={this.commands}
-                  dictionary={dictionary}
-                  rtl={isRTL}
-                  isActive={this.state.emojiMenuOpen}
-                  search={this.state.blockMenuSearch}
-                  onClose={() => this.setState({ emojiMenuOpen: false })}
-                />
-                <BlockMenu
-                  view={this.view}
-                  commands={this.commands}
-                  dictionary={dictionary}
-                  rtl={isRTL}
-                  isActive={this.state.blockMenuOpen}
-                  search={this.state.blockMenuSearch}
-                  onClose={this.handleCloseBlockMenu}
-                  uploadImage={this.props.uploadImage}
-                  uploadFile={this.props.uploadFile}
-                  onLinkToolbarOpen={this.handleOpenLinkMenu}
-                  onImageUploadStart={this.props.onImageUploadStart}
-                  onImageUploadStop={this.props.onImageUploadStop}
-                  onFileUploadStart={this.props.onFileUploadStart}
-                  onFileUploadStop={this.props.onFileUploadStop}
-                  onShowToast={this.props.onShowToast}
-                  embeds={this.props.embeds}
-                />
-              </React.Fragment>
-            )}
-          </React.Fragment>
-        </ThemeProvider>
+        <React.Fragment>
+          <StyledEditor
+            dir={dir}
+            rtl={isRTL}
+            readOnly={readOnly}
+            readOnlyWriteCheckboxes={readOnlyWriteCheckboxes}
+            ref={this.element}
+          />
+          {!readOnly && this.view && (
+            <React.Fragment>
+              <SelectionToolbar
+                view={this.view}
+                dictionary={dictionary}
+                commands={this.commands}
+                rtl={isRTL}
+                isTemplate={this.props.template === true}
+                onOpen={this.handleOpenSelectionMenu}
+                onClose={this.handleCloseSelectionMenu}
+                onSearchLink={this.props.onSearchLink}
+                onClickLink={this.props.onClickLink}
+                onCreateLink={this.props.onCreateLink}
+                onShowToast={this.props.onShowToast}
+              />
+              <LinkToolbar
+                view={this.view}
+                dictionary={dictionary}
+                isActive={this.state.linkMenuOpen}
+                onCreateLink={this.props.onCreateLink}
+                onSearchLink={this.props.onSearchLink}
+                onClickLink={this.props.onClickLink}
+                onShowToast={this.props.onShowToast}
+                onClose={this.handleCloseLinkMenu}
+              />
+              <EmojiMenu
+                view={this.view}
+                commands={this.commands}
+                dictionary={dictionary}
+                rtl={isRTL}
+                isActive={this.state.emojiMenuOpen}
+                search={this.state.blockMenuSearch}
+                onClose={() => this.setState({ emojiMenuOpen: false })}
+              />
+              <BlockMenu
+                view={this.view}
+                commands={this.commands}
+                dictionary={dictionary}
+                rtl={isRTL}
+                isActive={this.state.blockMenuOpen}
+                search={this.state.blockMenuSearch}
+                onClose={this.handleCloseBlockMenu}
+                uploadImage={this.props.uploadFile}
+                uploadFile={this.props.uploadFile}
+                onLinkToolbarOpen={this.handleOpenLinkMenu}
+                onImageUploadStart={this.props.onFileUploadStart}
+                onImageUploadStop={this.props.onFileUploadStop}
+                onFileUploadStart={this.props.onFileUploadStart}
+                onFileUploadStop={this.props.onFileUploadStop}
+                onShowToast={this.props.onShowToast}
+                embeds={this.props.embeds}
+              />
+            </React.Fragment>
+          )}
+        </React.Fragment>
       </Flex>
     );
   }

@@ -7,7 +7,7 @@ export default function useMediaQuery(query: string): boolean {
     if (window.matchMedia) {
       const media = window.matchMedia(query);
       if (media.matches !== matches) {
-        setMatches(media.matches);
+        return setMatches(media.matches);
       }
       const listener = () => {
         setMatches(media.matches);
@@ -15,6 +15,8 @@ export default function useMediaQuery(query: string): boolean {
       media.addListener(listener);
       return () => media.removeListener(listener);
     }
+
+    return undefined;
   }, [matches, query]);
 
   return matches;

@@ -1,10 +1,12 @@
+import MarkdownIt from "markdown-it";
 import customFence from "markdown-it-container";
+import Token from "markdown-it/lib/token";
 
-export default function notice(md): void {
+export default function notice(md: MarkdownIt): void {
   return customFence(md, "notice", {
     marker: ":",
     validate: () => true,
-    render: function(tokens, idx) {
+    render: function(tokens: Token[], idx: number) {
       const { info } = tokens[idx];
 
       if (tokens[idx].nesting === 1) {

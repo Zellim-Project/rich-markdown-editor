@@ -1,15 +1,20 @@
-import { Plugin, Selection } from "prosemirror-state";
 import copy from "copy-to-clipboard";
-import { Decoration, DecorationSet } from "prosemirror-view";
-import { Node as ProsemirrorNode, NodeType } from "prosemirror-model";
 import { textblockTypeInputRule } from "prosemirror-inputrules";
-import { MarkdownSerializerState } from "prosemirror-markdown";
+import {
+  Node as ProsemirrorNode,
+  NodeSpec,
+  NodeType,
+  Schema,
+} from "prosemirror-model";
+import { Plugin, Selection } from "prosemirror-state";
+import { Decoration, DecorationSet } from "prosemirror-view";
 import backspaceToParagraph from "../commands/backspaceToParagraph";
-import toggleBlockType from "../commands/toggleBlockType";
 import splitHeading from "../commands/splitHeading";
+import toggleBlockType from "../commands/toggleBlockType";
+import { Command } from "../lib/Extension";
 import headingToSlug, { headingToPersistenceKey } from "../lib/headingToSlug";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 import Node from "./Node";
-import { ToastType } from "../types";
 
 export default class Heading extends Node {
   className = "heading-name";
@@ -25,7 +30,7 @@ export default class Heading extends Node {
     };
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       attrs: {
         level: {
@@ -39,7 +44,7 @@ export default class Heading extends Node {
       group: "block",
       defining: true,
       draggable: false,
-      parseDOM: this.options.levels.map(level => ({
+      parseDOM: this.options.levels.map((level: number) => ({
         tag: `h${level}`,
         attrs: { level },
         contentElement: ".heading-content",
@@ -68,7 +73,7 @@ export default class Heading extends Node {
           [
             "span",
             {
-              contentEditable: false,
+              contentEditable: "false",
               class: `heading-actions ${
                 node.attrs.collapsed ? "collapsed" : ""
               }`,
@@ -103,19 +108,22 @@ export default class Heading extends Node {
     };
   }
 
-  commands({ type, schema }) {
+  commands({ type, schema }: { type: NodeType; schema: Schema }) {
     return (attrs: Record<string, any>) => {
       return toggleBlockType(type, schema.nodes.paragraph, attrs);
     };
   }
 
-  handleFoldContent = event => {
+  handleFoldContent = (event: MouseEvent) => {
     event.preventDefault();
+    if (!(event.currentTarget instanceof HTMLButtonElement)) {
+      return;
+    }
 
     const { view } = this.editor;
     const hadFocus = view.hasFocus();
     const { tr } = view.state;
-    const { top, left } = event.target.getBoundingClientRect();
+    const { top, left } = event.currentTarget.getBoundingClientRect();
     const result = view.posAtCoords({ top, left });
 
     if (result) {
@@ -153,11 +161,15 @@ export default class Heading extends Node {
     }
   };
 
-  handleCopyLink = event => {
+  handleCopyLink = (event: MouseEvent) => {
     // this is unfortunate but appears to be the best way to grab the anchor
     // as it's added directly to the dom by a decoration.
-    const anchor = event.currentTarget.parentNode.parentNode.previousSibling;
-    if (!anchor.className.includes(this.className)) {
+    const anchor =
+      event.currentTarget instanceof HTMLButtonElement &&
+      (event.currentTarget.parentNode?.parentNode
+        ?.previousSibling as HTMLElement);
+
+    if (!anchor || !anchor.className.includes(this.className)) {
       throw new Error("Did not find anchor as previous sibling of heading");
     }
     const hash = `#${anchor.id}`;
@@ -167,17 +179,12 @@ export default class Heading extends Node {
     const urlWithoutHash = window.location.href.split("#")[0];
     copy(urlWithoutHash + hash);
 
-    if (this.options.onShowToast) {
-      this.options.onShowToast(
-        this.options.dictionary.linkCopied,
-        ToastType.Info
-      );
-    }
+    this.options.onShowToast(this.options.dictionary.linkCopied);
   };
 
-  keys({ type, schema }) {
+  keys({ type, schema }: { type: NodeType; schema: Schema }) {
     const options = this.options.levels.reduce(
-      (items, level) => ({
+      (items: Record<string, Command>, level: number) => ({
         ...items,
         ...{
           [`Shift-Ctrl-${level}`]: toggleBlockType(
@@ -198,12 +205,14 @@ export default class Heading extends Node {
   }
 
   get plugins() {
-    const getAnchors = doc => {
+    const getAnchors = (doc: ProsemirrorNode) => {
       const decorations: Decoration[] = [];
       const previouslySeen = {};
 
       doc.descendants((node, pos) => {
-        if (node.type.name !== this.name) return;
+        if (node.type.name !== this.name) {
+          return;
+        }
 
         // calculate the optimal id
         const slug = headingToSlug(node);
@@ -240,7 +249,7 @@ export default class Heading extends Node {
       return DecorationSet.create(doc, decorations);
     };
 
-    const plugin = new Plugin({
+    const plugin: Plugin = new Plugin({
       state: {
         init: (config, state) => {
           return getAnchors(state.doc);
@@ -258,7 +267,7 @@ export default class Heading extends Node {
   }
 
   inputRules({ type }: { type: NodeType }) {
-    return this.options.levels.map(level =>
+    return this.options.levels.map((level: number) =>
       textblockTypeInputRule(new RegExp(`^(#{1,${level}})\\s$`), type, () => ({
         level,
       }))

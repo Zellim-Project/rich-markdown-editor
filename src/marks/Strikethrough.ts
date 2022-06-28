@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { toggleMark } from "prosemirror-commands";
+import { MarkSpec, MarkType } from "prosemirror-model";
 import markInputRule from "../lib/markInputRule";
 import Mark from "./Mark";
 
@@ -7,7 +9,7 @@ export default class Strikethrough extends Mark {
     return "strikethrough";
   }
 
-  get schema() {
+  get schema(): MarkSpec {
     return {
       parseDOM: [
         {
@@ -19,22 +21,26 @@ export default class Strikethrough extends Mark {
         {
           tag: "strike",
         },
+        {
+          style: "text-decoration",
+          getAttrs: value => (value === "line-through" ? null : false),
+        },
       ],
       toDOM: () => ["del", 0],
     };
   }
 
-  keys({ type }) {
+  keys({ type }: { type: MarkType }) {
     return {
       "Mod-d": toggleMark(type),
     };
   }
 
-  inputRules({ type }) {
+  inputRules({ type }: { type: MarkType }) {
     return [markInputRule(/~([^~]+)~$/, type)];
   }
 
-  get toMarkdown() {
+  toMarkdown() {
     return {
       open: "~~",
       close: "~~",

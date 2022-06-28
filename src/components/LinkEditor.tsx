@@ -1,21 +1,24 @@
-import * as React from "react";
-import { setTextSelection } from "prosemirror-utils";
-import { EditorView } from "prosemirror-view";
-import { Mark } from "prosemirror-model";
 import {
+  ArrowIcon,
   DocumentIcon,
   CloseIcon,
   PlusIcon,
   TrashIcon,
   OpenIcon,
 } from "outline-icons";
-import styled, { withTheme } from "styled-components";
+import { Mark } from "prosemirror-model";
+import { setTextSelection } from "prosemirror-utils";
+import { EditorView } from "prosemirror-view";
+import * as React from "react";
+import styled from "styled-components";
 import isUrl from "../lib/isUrl";
-import theme from "../styles/theme";
+import { isInternalUrl } from "../utils/urls";
 import Flex from "./Flex";
+import { ToastOptions } from "../types";
 import Input from "./Input";
-import ToolbarButton from "./ToolbarButton";
 import LinkSearchResult from "./LinkSearchResult";
+import ToolbarButton from "./ToolbarButton";
+import Tooltip from "./Tooltip";
 import baseDictionary from "../dictionary";
 
 export type SearchResult = {
@@ -28,7 +31,6 @@ type Props = {
   mark?: Mark;
   from: number;
   to: number;
-  tooltip: typeof React.Component | React.FC<any>;
   dictionary: typeof baseDictionary;
   onRemoveLink?: () => void;
   onCreateLink?: (title: string) => Promise<void>;
@@ -39,10 +41,12 @@ type Props = {
     from: number;
     to: number;
   }) => void;
-  onClickLink: (href: string, event: MouseEvent) => void;
-  onShowToast?: (message: string, code: string) => void;
+  onClickLink: (
+    href: string,
+    event: React.MouseEvent<HTMLButtonElement>
+  ) => void;
+  onShowToast: (message: string, options: ToastOptions) => void;
   view: EditorView;
-  theme: typeof theme;
 };
 
 type State = {
@@ -104,7 +108,9 @@ class LinkEditor extends React.Component<Props, State> {
   save = (href: string, title?: string): void => {
     href = href.trim();
 
-    if (href.length === 0) return;
+    if (href.length === 0) {
+      return;
+    }
 
     this.discardInputValue = true;
     const { from, to } = this.props;
@@ -162,7 +168,9 @@ class LinkEditor extends React.Component<Props, State> {
       }
 
       case "ArrowUp": {
-        if (event.shiftKey) return;
+        if (event.shiftKey) {
+          return;
+        }
         event.preventDefault();
         event.stopPropagation();
         const prevIndex = this.state.selectedIndex - 1;
@@ -174,8 +182,11 @@ class LinkEditor extends React.Component<Props, State> {
       }
 
       case "ArrowDown":
-        if (event.shiftKey) return;
       case "Tab": {
+        if (event.shiftKey) {
+          return;
+        }
+
         event.preventDefault();
         event.stopPropagation();
         const { selectedIndex, value } = this.state;
@@ -195,7 +206,9 @@ class LinkEditor extends React.Component<Props, State> {
     this.setState({ selectedIndex });
   };
 
-  handleChange = async (event): Promise<void> => {
+  handleChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ): Promise<void> => {
     const value = event.target.value;
 
     this.setState({
@@ -225,19 +238,23 @@ class LinkEditor extends React.Component<Props, State> {
     setTimeout(() => this.save(this.state.value, this.state.value), 0);
   };
 
-  handleOpenLink = (event): void => {
+  handleOpenLink = (event: React.MouseEvent<HTMLButtonElement>): void => {
     event.preventDefault();
     this.props.onClickLink(this.href, event);
   };
 
-  handleCreateLink = (value: string) => {
+  handleCreateLink = async (value: string) => {
     this.discardInputValue = true;
     const { onCreateLink } = this.props;
 
     value = value.trim();
-    if (value.length === 0) return;
+    if (value.length === 0) {
+      return;
+    }
 
-    if (onCreateLink) return onCreateLink(value);
+    if (onCreateLink) {
+      return onCreateLink(value);
+    }
   };
 
   handleRemoveLink = (): void => {
@@ -257,7 +274,9 @@ class LinkEditor extends React.Component<Props, State> {
     view.focus();
   };
 
-  handleSelectLink = (url: string, title: string) => event => {
+  handleSelectLink = (url: string, title: string) => (
+    event: React.MouseEvent
+  ) => {
     event.preventDefault();
     this.save(url, title);
 
@@ -274,17 +293,16 @@ class LinkEditor extends React.Component<Props, State> {
   };
 
   render() {
-    const { dictionary, theme } = this.props;
+    const { dictionary } = this.props;
     const { value, selectedIndex } = this.state;
     const results =
       this.state.results[value.trim()] ||
       this.state.results[this.state.previousValue] ||
       [];
 
-    const Tooltip = this.props.tooltip;
     const looksLikeUrl = value.match(/^https?:\/\//i);
-
     const suggestedLinkTitle = this.suggestedLinkTitle;
+    const isInternal = isInternalUrl(value);
 
     const showCreateLink =
       !!this.props.onCreateLink &&
@@ -310,20 +328,24 @@ class LinkEditor extends React.Component<Props, State> {
           autoFocus={this.href === ""}
         />
 
-        <ToolbarButton onClick={this.handleOpenLink} disabled={!value}>
-          <Tooltip tooltip={dictionary.openLink} placement="top">
-            <OpenIcon color={theme.toolbarItem} />
-          </Tooltip>
-        </ToolbarButton>
-        <ToolbarButton onClick={this.handleRemoveLink}>
-          <Tooltip tooltip={dictionary.removeLink} placement="top">
-            {this.initialValue ? (
-              <TrashIcon color={theme.toolbarItem} />
+        <Tooltip tooltip={dictionary.openLink}>
+          <ToolbarButton onClick={this.handleOpenLink} disabled={!value}>
+            {isInternal ? (
+              <ArrowIcon color="currentColor" />
             ) : (
-              <CloseIcon color={theme.toolbarItem} />
+              <OpenIcon color="currentColor" />
             )}
-          </Tooltip>
-        </ToolbarButton>
+          </ToolbarButton>
+        </Tooltip>
+        <Tooltip tooltip={dictionary.removeLink}>
+          <ToolbarButton onClick={this.handleRemoveLink}>
+            {this.initialValue ? (
+              <TrashIcon color="currentColor" />
+            ) : (
+              <CloseIcon color="currentColor" />
+            )}
+          </ToolbarButton>
+        </Tooltip>
 
         {showResults && (
           <SearchResults id="link-search-results">
@@ -332,8 +354,8 @@ class LinkEditor extends React.Component<Props, State> {
                 key={result.url}
                 title={result.title}
                 subtitle={result.subtitle}
-                icon={<DocumentIcon color={theme.toolbarItem} />}
-                onMouseOver={() => this.handleFocusLink(index)}
+                icon={<DocumentIcon color="currentColor" />}
+                onPointerMove={() => this.handleFocusLink(index)}
                 onClick={this.handleSelectLink(result.url, result.title)}
                 selected={index === selectedIndex}
               />
@@ -344,8 +366,8 @@ class LinkEditor extends React.Component<Props, State> {
                 key="create"
                 title={suggestedLinkTitle}
                 subtitle={dictionary.createNewDoc}
-                icon={<PlusIcon color={theme.toolbarItem} />}
-                onMouseOver={() => this.handleFocusLink(results.length)}
+                icon={<PlusIcon color="currentColor" />}
+                onPointerMove={() => this.handleFocusLink(results.length)}
                 onClick={() => {
                   this.handleCreateLink(suggestedLinkTitle);
 
@@ -368,6 +390,7 @@ const Wrapper = styled(Flex)`
   margin-right: -8px;
   min-width: 336px;
   pointer-events: all;
+  gap: 8px;
 `;
 
 const SearchResults = styled.ol`
@@ -377,13 +400,14 @@ const SearchResults = styled.ol`
   width: 100%;
   height: auto;
   left: 0;
-  padding: 4px 8px 8px;
+  padding: 0;
   margin: 0;
   margin-top: -3px;
   margin-bottom: 0;
   border-radius: 0 0 4px 4px;
   overflow-y: auto;
-  max-height: 25vh;
+  overscroll-behavior: none;
+  max-height: 260px;
 
   @media (hover: none) and (pointer: coarse) {
     position: fixed;
@@ -395,4 +419,4 @@ const SearchResults = styled.ol`
   }
 `;
 
-export default withTheme(LinkEditor);
+export default LinkEditor;

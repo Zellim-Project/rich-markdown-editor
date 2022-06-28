@@ -1,4 +1,7 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
+import Token from "markdown-it/lib/token";
 import { wrappingInputRule } from "prosemirror-inputrules";
+import { NodeType, Node as ProsemirrorNode } from "prosemirror-model";
 import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import { LinkIcon } from "outline-icons";
@@ -8,9 +11,10 @@ import Node from "./Node";
 import filesRule from "../rules/files";
 import uploadFilePlaceholderPlugin from "../lib/uploadFilePlaceholder";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
-import insertAllFiles from "../commands/insertAllFiles";
+import insertAllFiles, { Options } from "../commands/insertAllFiles";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 
-const uploadPlugin = options =>
+const uploadPlugin = (options: Options) =>
   new Plugin({
     props: {
       handleDOMEvents: {
@@ -27,8 +31,8 @@ const uploadPlugin = options =>
           // check if we actually pasted any files
           const files = Array.prototype.slice
             .call(event.clipboardData.items)
-            .map(dt => dt.getAsFile())
-            .filter(file => file);
+            .map((dt: DataTransferItem) => dt.getAsFile())
+            .filter((file: DataTransferItem) => file);
 
           if (files.length === 0) return false;
 
@@ -44,7 +48,7 @@ const uploadPlugin = options =>
         drop(view, event: DragEvent): boolean {
           if (
             (view.props.editable && !view.props.editable(view.state)) ||
-            !options.uploadImage
+            !options.uploadFile
           ) {
             return false;
           }
@@ -80,7 +84,7 @@ export default class File extends Node {
     return [filesRule];
   }
 
-  get schema() {
+  get schema(): any {
     return {
       attrs: {
         src: {},
@@ -102,7 +106,7 @@ export default class File extends Node {
           }),
         },
       ],
-      toDOM: node => {
+      toDOM: (node: any) => {
         const a = document.createElement("a");
         a.href = node.attrs.src;
         const fileName = document.createTextNode(node.attrs.alt);
@@ -126,22 +130,22 @@ export default class File extends Node {
     };
   }
 
-  commands({ type }) {
-    return attrs => toggleWrap(type, attrs);
+  commands({ type }: { type: NodeType }) {
+    return (attrs: any) => toggleWrap(type, attrs);
   }
 
-  inputRules({ type }) {
+  inputRules({ type }: { type: NodeType }) {
     return [wrappingInputRule(/^@@@$/, type)];
   }
 
-  toMarkdown(state, node) {
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
     state.write("\n@@@");
     state.write(
       "[" +
-        state.esc(node.attrs.alt) +
+        state.esc(node.attrs.alt || "", false) +
         "]" +
         "(" +
-        state.esc(node.attrs.src) +
+        state.esc(node.attrs.src || "", false) +
         ")"
     );
     state.ensureNewLine();
@@ -152,7 +156,7 @@ export default class File extends Node {
   parseMarkdown() {
     return {
       block: "container_file",
-      getAttrs: token => {
+      getAttrs: (token: Token) => {
         const file_regex = /\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         return {

@@ -32,7 +32,7 @@ function looksLikeChecklist(tokens: Token[], index: number) {
 }
 
 export default function markdownItCheckbox(md: MarkdownIt): void {
-  function render(tokens, idx) {
+  function render(tokens: Token[], idx: number) {
     const token = tokens[idx];
     const checked = !!token.attrGet("checked");
 

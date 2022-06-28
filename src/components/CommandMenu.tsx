@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import * as React from "react";
 import capitalize from "lodash/capitalize";
 import { Portal } from "react-portal";
@@ -12,6 +14,8 @@ import filterExcessSeparators from "../lib/filterExcessSeparators";
 import insertFiles from "../commands/insertFiles";
 import insertAllFiles from "../commands/insertAllFiles";
 import baseDictionary from "../dictionary";
+import { CommandFactory } from "../lib/Extension";
+import depths from "../styles/depths";
 
 const SSR = typeof window === "undefined";
 
@@ -25,7 +29,7 @@ const defaultPosition = {
 export type Props<T extends MenuItem = MenuItem> = {
   rtl: boolean;
   isActive: boolean;
-  commands: Record<string, any>;
+  commands: Record<string, CommandFactory>;
   dictionary: typeof baseDictionary;
   view: EditorView;
   search: string;
@@ -82,7 +86,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   }
 
-  shouldComponentUpdate(nextProps, nextState) {
+  shouldComponentUpdate(nextProps: Props, nextState: State) {
     return (
       nextProps.search !== this.props.search ||
       nextProps.isActive !== this.props.isActive ||
@@ -90,7 +94,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     );
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate(prevProps: Props) {
     if (!prevProps.isActive && this.props.isActive) {
       const position = this.calculatePosition(this.props);
 
@@ -178,7 +182,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  insertItem = item => {
+  insertItem = (item: any) => {
     switch (item.name) {
       case "image":
         return this.triggerImagePick();
@@ -267,11 +271,11 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  triggerLinkInput = item => {
+  triggerLinkInput = (item: EmbedDescriptor) => {
     this.setState({ insertItem: item });
   };
 
-  handleImagePicked = event => {
+  handleImagePicked = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = getDataTransferFiles(event);
 
     const {
@@ -292,10 +296,10 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
     if (parent) {
       insertFiles(view, event, parent.pos, files, {
-        uploadImage,
-        onImageUploadStart,
-        onImageUploadStop,
-        onShowToast,
+        uploadFile: uploadImage,
+        onFileUploadStart: onImageUploadStart,
+        onFileUploadStop: onImageUploadStop,
+        onShowToast: onShowToast as (message: string, id: string) => void,
         dictionary: this.props.dictionary,
       });
     }
@@ -307,7 +311,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClose();
   };
 
-  handleFilePicked = event => {
+  handleFilePicked = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = getDataTransferFiles(event);
 
     const {
@@ -329,7 +333,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         )
       );
 
-      insertAllFiles(view, event, parent.pos, files, {
+      insertAllFiles(view, event as any, parent.pos, files, {
         uploadFile,
         onFileUploadStart,
         onFileUploadStop,
@@ -345,10 +349,10 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClearSearch();
   };
 
-  insertBlock(item) {
+  insertBlock(item: MenuItem) {
     this.clearSearch();
 
-    const command = this.props.commands[item.name];
+    const command = item.name ? this.props.commands[item.name] : undefined;
 
     if (command) {
       command(item.attrs);
@@ -390,7 +394,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     };
   }
 
-  calculatePosition(props) {
+  calculatePosition(props: Props) {
     const { view } = props;
     const { selection } = view.state;
     let startPos;
@@ -456,7 +460,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     const embedItems: EmbedDescriptor[] = [];
 
     for (const embed of embeds) {
-      if (embed.title && embed.icon) {
+      if ("icon" in embed && embed.title) {
         embedItems.push({
           ...embed,
           name: "embed",
@@ -597,7 +601,7 @@ const LinkInputWrapper = styled.div`
 const LinkInput = styled(Input)`
   height: 36px;
   width: 100%;
-  color: ${props => props.theme.blockToolbarText};
+  color: ${props => props.theme.textSecondary};
 `;
 
 const List = styled.ol`
@@ -630,15 +634,15 @@ export const Wrapper = styled.div<{
   left?: number;
   isAbove: boolean;
 }>`
-  color: ${props => props.theme.text};
+  color: ${props => props.theme.textSecondary};
   font-family: ${props => props.theme.fontFamily};
   position: absolute;
-  z-index: ${props => props.theme.zIndex + 100};
+  z-index: ${depths.editorToolbar};
   ${props => props.top !== undefined && `top: ${props.top}px`};
   ${props => props.bottom !== undefined && `bottom: ${props.bottom}px`};
   left: ${props => props.left}px;
-  background-color: ${props => props.theme.blockToolbarBackground};
-  border-radius: 4px;
+  background: ${props => props.theme.menuBackground};
+  border-radius: 6px;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px,
     rgba(0, 0, 0, 0.08) 0px 4px 8px, rgba(0, 0, 0, 0.08) 0px 2px 4px;
   opacity: 0;
@@ -651,9 +655,8 @@ export const Wrapper = styled.div<{
   pointer-events: none;
   white-space: nowrap;
   width: 300px;
-  max-height: 224px;
-  overflow: hidden;
-  overflow-y: auto;
+  height: auto;
+  max-height: 324px;
 
   * {
     box-sizing: border-box;
@@ -662,7 +665,7 @@ export const Wrapper = styled.div<{
   hr {
     border: 0;
     height: 0;
-    border-top: 1px solid ${props => props.theme.blockToolbarDivider};
+    border-top: 1px solid ${props => props.theme.divider};
   }
 
   ${({ active, isAbove }) =>

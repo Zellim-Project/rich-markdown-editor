@@ -1,3 +1,4 @@
+import { NodeSpec, NodeType, Node as ProsemirrorNode } from "prosemirror-model";
 import {
   splitListItem,
   sinkListItem,
@@ -9,20 +10,21 @@ import {
   Plugin,
   TextSelection,
 } from "prosemirror-state";
-import { DecorationSet, Decoration } from "prosemirror-view";
 import { findParentNodeClosestToPos } from "prosemirror-utils";
-
-import Node from "./Node";
-import isList from "../queries/isList";
-import isInList from "../queries/isInList";
+import { DecorationSet, Decoration } from "prosemirror-view";
+import { MarkdownSerializerState } from "../lib/markdown/serializer";
 import getParentListItem from "../queries/getParentListItem";
+import isInList from "../queries/isInList";
+import isList from "../queries/isList";
+import { Dispatch } from "../types";
+import Node from "./Node";
 
 export default class ListItem extends Node {
   get name() {
     return "list_item";
   }
 
-  get schema() {
+  get schema(): NodeSpec {
     return {
       content: "paragraph block*",
       defining: true,
@@ -191,25 +193,33 @@ export default class ListItem extends Node {
     ];
   }
 
-  keys({ type }) {
+  keys({ type }: { type: NodeType }) {
     return {
       Enter: splitListItem(type),
       Tab: sinkListItem(type),
       "Shift-Tab": liftListItem(type),
       "Mod-]": sinkListItem(type),
       "Mod-[": liftListItem(type),
-      "Shift-Enter": (state, dispatch) => {
-        if (!isInList(state)) return false;
-        if (!state.selection.empty) return false;
+      "Shift-Enter": (state: EditorState, dispatch: Dispatch) => {
+        if (!isInList(state)) {
+          return false;
+        }
+        if (!state.selection.empty) {
+          return false;
+        }
 
         const { tr, selection } = state;
         dispatch(tr.split(selection.to));
         return true;
       },
-      "Alt-ArrowUp": (state, dispatch) => {
-        if (!state.selection.empty) return false;
+      "Alt-ArrowUp": (state: EditorState, dispatch: Dispatch) => {
+        if (!state.selection.empty) {
+          return false;
+        }
         const result = getParentListItem(state);
-        if (!result) return false;
+        if (!result) {
+          return false;
+        }
 
         const [li, pos] = result;
         const $pos = state.doc.resolve(pos);
@@ -233,10 +243,14 @@ export default class ListItem extends Node {
         );
         return true;
       },
-      "Alt-ArrowDown": (state, dispatch) => {
-        if (!state.selection.empty) return false;
+      "Alt-ArrowDown": (state: EditorState, dispatch: Dispatch) => {
+        if (!state.selection.empty) {
+          return false;
+        }
         const result = getParentListItem(state);
-        if (!result) return false;
+        if (!result) {
+          return false;
+        }
 
         const [li, pos] = result;
         const $pos = state.doc.resolve(pos + li.nodeSize);
@@ -263,7 +277,7 @@ export default class ListItem extends Node {
     };
   }
 
-  toMarkdown(state, node) {
+  toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
     state.renderContent(node);
   }
 

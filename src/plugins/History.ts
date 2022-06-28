@@ -17,6 +17,6 @@ export default class History extends Extension {
   }
 
   get plugins() {
-    return [history()];
+    return [history()] as any;
   }
 }

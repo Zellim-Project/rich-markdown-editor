@@ -1,8 +1,15 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import { wrapIn, lift } from "prosemirror-commands";
+import { NodeType } from "prosemirror-model";
+import { EditorState } from "prosemirror-state";
 import isNodeActive from "../queries/isNodeActive";
+import { Dispatch } from "../types";
 
-export default function toggleWrap(type, attrs?: Record<string, any>) {
-  return (state, dispatch) => {
+export default function toggleWrap(
+  type: NodeType,
+  attrs?: Record<string, any>
+) {
+  return (state: EditorState, dispatch?: Dispatch) => {
     const isActive = isNodeActive(type)(state);
 
     if (isActive) {

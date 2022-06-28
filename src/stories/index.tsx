@@ -70,7 +70,7 @@ const embeds = [
         height={24}
       />
     ),
-    matcher: url => {
+    matcher: (url: string) => {
       return url.match(
         /(?:https?:\/\/)?(?:www\.)?youtu\.?be(?:\.com)?\/?.*(?:watch|embed)?(?:.*v=|v\/|\/)([a-zA-Z0-9_-]{11})$/i
       );
@@ -79,7 +79,7 @@ const embeds = [
   },
 ];
 
-export default function Example(props) {
+export default function Example(props: any) {
   const { body } = document;
   if (body)
     body.style.backgroundColor = props.dark
@@ -117,7 +117,7 @@ export default function Example(props) {
             }, Math.random() * 500);
           });
         }}
-        uploadImage={file => {
+        uploadImage={(file: any) => {
           console.log("File upload triggered: ", file);
 
           // Delay to simulate time taken to upload
