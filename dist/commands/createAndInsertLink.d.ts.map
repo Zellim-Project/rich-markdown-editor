@@ -1,0 +1,1 @@
+{"version":3,"file":"createAndInsertLink.d.ts","sourceRoot":"","sources":["../../src/commands/createAndInsertLink.ts"],"names":[],"mappings":"AACA,OAAO,EAAE,UAAU,EAAE,MAAM,kBAAkB,CAAC;AA+B9C,QAAA,MAAM,mBAAmB,SACjB,UAAU,SACT,MAAM,QACP,MAAM;gBAEE,GAAG;0BACO,MAAM,KAAK,QAAQ,MAAM,CAAC;2BACzB,MAAM,KAAK,IAAI;mBA2CzC,CAAC;AAEF,eAAe,mBAAmB,CAAC"}
