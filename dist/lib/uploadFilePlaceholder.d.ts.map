@@ -1,1 +1,0 @@
-{"version":3,"file":"uploadFilePlaceholder.d.ts","sourceRoot":"","sources":["../../src/lib/uploadFilePlaceholder.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,WAAW,EAAE,MAAM,EAAE,MAAM,mBAAmB,CAAC;AAGxD,QAAA,MAAM,qBAAqB,kBAiCzB,CAAC;AAEH,eAAe,qBAAqB,CAAC;AAErC,wBAAgB,eAAe,CAC7B,KAAK,EAAE,WAAW,EAClB,EAAE,EAAE,MAAM,GACT,CAAC,MAAM,EAAE,MAAM,CAAC,GAAG,IAAI,CAIzB"}
