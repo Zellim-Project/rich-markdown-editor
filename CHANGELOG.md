@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [11.23.3-beta.5](https://github.com/outline/rich-markdown-editor/compare/v11.23.3-beta.4...v11.23.3-beta.5) (2022-06-28)
+
+
+### Bug Fixes
+
+* tsconfig ([3c17de5](https://github.com/outline/rich-markdown-editor/commit/3c17de50e59c2f7252490f44b2254858e2c30304))
+
 ### [11.23.3-beta.4](https://github.com/outline/rich-markdown-editor/compare/v11.23.3-beta.3...v11.23.3-beta.4) (2022-06-17)
 
 ### [11.23.3-beta.3](https://github.com/outline/rich-markdown-editor/compare/v11.23.3-beta.2...v11.23.3-beta.3) (2022-06-17)
