@@ -117,9 +117,13 @@ export default class ExtensionManager {
   }
 
   get plugins() {
-    return this.extensions
-      .filter(extension => "plugins" in extension)
-      .reduce((allPlugins, { plugins }) => [...allPlugins, ...plugins], []);
+    return this.extensions.reduce((allPlugins, extension) => {
+      if ("plugins" in extension) {
+        console.log({ plugins: extension.plugins });
+        return [...allPlugins, ...extension.plugins];
+      }
+      return allPlugins;
+    }, []);
   }
 
   get rulePlugins() {
