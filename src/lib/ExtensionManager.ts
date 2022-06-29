@@ -10,6 +10,7 @@ import Node from "../nodes/Node";
 import Extension, { CommandFactory } from "./Extension";
 import makeRules from "./markdown/rules";
 import { MarkdownSerializer } from "./markdown/serializer";
+import uniqBy from "lodash/uniqBy";
 
 export default class ExtensionManager {
   extensions: (Node | Mark | Extension)[] = [];
@@ -117,13 +118,15 @@ export default class ExtensionManager {
   }
 
   get plugins() {
-    return this.extensions.reduce((allPlugins, extension) => {
-      if ("plugins" in extension) {
-        console.log({ plugins: extension.plugins });
-        return [...allPlugins, ...extension.plugins];
-      }
-      return allPlugins;
-    }, []);
+    return uniqBy(
+      this.extensions.reduce((allPlugins, extension) => {
+        if ("plugins" in extension) {
+          return [...allPlugins, ...extension.plugins];
+        }
+        return allPlugins;
+      }, []),
+      "key"
+    );
   }
 
   get rulePlugins() {
