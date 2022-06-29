@@ -1,2 +1,0 @@
-export default function useEventListener<T extends EventListener>(eventName: string, handler: T, element?: Window | Node, options?: AddEventListenerOptions): void;
-//# sourceMappingURL=useEventListener.d.ts.map
