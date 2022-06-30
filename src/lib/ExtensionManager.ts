@@ -10,6 +10,7 @@ import Node from "../nodes/Node";
 import Extension, { CommandFactory } from "./Extension";
 import makeRules from "./markdown/rules";
 import { MarkdownSerializer } from "./markdown/serializer";
+import uniqBy from "lodash/uniqBy";
 
 export default class ExtensionManager {
   extensions: (Node | Mark | Extension)[] = [];
@@ -117,13 +118,15 @@ export default class ExtensionManager {
   }
 
   get plugins() {
-    return this.extensions.reduce((allPlugins, extension) => {
-      if ("plugins" in extension) {
-        console.log({ plugins: extension, plugin: extension.plugins });
-        return [...allPlugins, ...extension.plugins];
-      }
-      return allPlugins;
-    }, []);
+    return uniqBy(
+      this.extensions.reduce((allPlugins, extension) => {
+        if ("plugins" in extension) {
+          return [...allPlugins, ...extension.plugins];
+        }
+        return allPlugins;
+      }, []),
+      "key"
+    );
   }
 
   get rulePlugins() {
@@ -141,26 +144,19 @@ export default class ExtensionManager {
   keymaps({ schema }: { schema: Schema }) {
     const keymaps = this.extensions
       .filter(extension => extension.keys)
-      .map(extension => {
-        console.log({ extension });
-        if (["node", "mark"].includes(extension.type)) {
-          console.log(
-            extension.keys({
+      .map(extension =>
+        ["node", "mark"].includes(extension.type)
+          ? extension.keys({
               type: schema[`${extension.type}s`][extension.name],
               schema,
             })
-          );
-          return extension.keys({
-            type: schema[`${extension.type}s`][extension.name],
-            schema,
-          });
-        } else {
-          console.log((extension as Extension).keys({ schema }));
-          return (extension as Extension).keys({ schema });
-        }
-      });
-    console.log(keymaps, keymaps.map(keymap));
-    return keymaps.map(keymap);
+          : (extension as Extension).keys({ schema })
+      );
+    console.log(
+      keymaps.filter(key => Object.keys(key).length > 0),
+      keymaps.filter(key => Object.keys(key).length > 0).map(keymap)
+    );
+    return keymaps.filter(key => Object.keys(key).length > 0).map(keymap);
   }
 
   inputRules({ schema }: { schema: Schema }) {

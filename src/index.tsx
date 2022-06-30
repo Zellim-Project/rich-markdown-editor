@@ -397,6 +397,7 @@ class RichMarkdownEditor extends React.PureComponent<
       doc,
       plugins: [
         ...this.plugins,
+        ...this.keymaps,
         dropCursor({ color: this.props.theme?.cursor }),
         gapCursor(),
         inputRules({
