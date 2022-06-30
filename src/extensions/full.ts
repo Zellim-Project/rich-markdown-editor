@@ -7,7 +7,7 @@ import CheckboxList from "../nodes/CheckboxList";
 import CodeBlock from "../nodes/CodeBlock";
 import CodeFence from "../nodes/CodeFence";
 import Embed from "../nodes/Embed";
-// import FileDoc from "../nodes/FileDoc";
+import FileDoc from "../nodes/FileDoc";
 import Heading from "../nodes/Heading";
 import HorizontalRule from "../nodes/HorizontalRule";
 import ListItem from "../nodes/ListItem";
@@ -32,7 +32,7 @@ const fullPackage = [
   BulletList,
   OrderedList,
   Embed,
-  // FileDoc,
+  FileDoc,
   ListItem,
   Notice,
   Heading,
