@@ -159,7 +159,7 @@ export default class ExtensionManager {
           return (extension as Extension).keys({ schema });
         }
       });
-    console.log(keymaps);
+    console.log(keymaps, keymaps.map(keymap));
     return keymaps.map(keymap);
   }
 
