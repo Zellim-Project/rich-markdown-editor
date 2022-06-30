@@ -152,10 +152,6 @@ export default class ExtensionManager {
             })
           : (extension as Extension).keys({ schema })
       );
-    console.log(
-      keymaps.filter(key => Object.keys(key).length > 0),
-      keymaps.filter(key => Object.keys(key).length > 0).map(keymap)
-    );
     return keymaps.filter(key => Object.keys(key).length > 0).map(keymap);
   }
 

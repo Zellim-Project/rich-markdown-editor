@@ -269,19 +269,33 @@ class RichMarkdownEditor extends React.PureComponent<
 
   init() {
     this.extensions = this.createExtensions();
+    console.log("extensions");
     this.nodes = this.createNodes();
+    console.log("nodes");
     this.marks = this.createMarks();
+    console.log("marks");
     this.schema = this.createSchema();
+    console.log("schema");
     this.plugins = this.createPlugins();
+    console.log("plugins");
     this.rulePlugins = this.createRulePlugins();
+    console.log("rulePlugins");
     this.keymaps = this.createKeymaps();
+    console.log("keymaps");
     this.serializer = this.createSerializer();
+    console.log("serializer");
     this.parser = this.createParser();
+    console.log("parser");
     this.pasteParser = this.createPasteParser();
+    console.log("pasteParser");
     this.inputRules = this.createInputRules();
+    console.log("inputRules");
     this.nodeViews = this.createNodeViews();
+    console.log("nodeViews");
     this.view = this.createView();
+    console.log("view");
     this.commands = this.createCommands();
+    console.log("commands");
   }
 
   createExtensions() {
@@ -381,17 +395,6 @@ class RichMarkdownEditor extends React.PureComponent<
 
   createState(value?: string) {
     const doc = this.createDocument(value || this.props.defaultValue);
-    console.log(
-      {
-        plugins: this.plugins,
-        keymaps: this.keymaps,
-      },
-      dropCursor({ color: this.props.theme?.cursor }),
-      gapCursor(),
-      inputRules({
-        rules: this.inputRules,
-      })
-    );
     return EditorState.create({
       schema: this.schema,
       doc,
