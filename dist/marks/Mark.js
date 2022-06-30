@@ -1,0 +1,35 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const prosemirror_commands_1 = require("prosemirror-commands");
+const Extension_1 = __importDefault(require("../lib/Extension"));
+class Mark extends Extension_1.default {
+    get type() {
+        return "mark";
+    }
+    get schema() {
+        return {};
+    }
+    get markdownToken() {
+        return "";
+    }
+    keys(_options) {
+        return {};
+    }
+    inputRules(_options) {
+        return [];
+    }
+    toMarkdown(state, node) {
+        console.error("toMarkdown not implemented", state, node);
+    }
+    parseMarkdown() {
+        return undefined;
+    }
+    commands({ type }) {
+        return () => (0, prosemirror_commands_1.toggleMark)(type);
+    }
+}
+exports.default = Mark;
+//# sourceMappingURL=Mark.js.map
