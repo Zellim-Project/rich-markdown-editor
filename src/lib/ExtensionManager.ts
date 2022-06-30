@@ -119,7 +119,7 @@ export default class ExtensionManager {
   get plugins() {
     return this.extensions.reduce((allPlugins, extension) => {
       if ("plugins" in extension) {
-        console.log({ plugins: extension });
+        console.log({ plugins: extension, plugin: extension.plugins });
         return [...allPlugins, ...extension.plugins];
       }
       return allPlugins;
@@ -144,15 +144,22 @@ export default class ExtensionManager {
       .map(extension => {
         console.log({ extension });
         if (["node", "mark"].includes(extension.type)) {
+          console.log(
+            extension.keys({
+              type: schema[`${extension.type}s`][extension.name],
+              schema,
+            })
+          );
           return extension.keys({
             type: schema[`${extension.type}s`][extension.name],
             schema,
           });
         } else {
+          console.log((extension as Extension).keys({ schema }));
           return (extension as Extension).keys({ schema });
         }
       });
-
+    console.log(keymaps);
     return keymaps.map(keymap);
   }
 
