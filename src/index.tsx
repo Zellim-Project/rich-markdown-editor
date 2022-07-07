@@ -79,8 +79,6 @@ import TrailingNode from "./plugins/TrailingNode";
 import PasteHandler from "./plugins/PasteHandler";
 import { PluginSimple } from "markdown-it";
 
-export { schema, parser, serializer, renderToHtml } from "./server";
-
 export { default as Extension } from "./lib/Extension";
 
 export const theme = lightTheme;
