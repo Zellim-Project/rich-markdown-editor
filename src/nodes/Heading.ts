@@ -63,7 +63,7 @@ export default class Heading extends Node {
           this.handleFoldContent(event)
         );
 
-        return [`h${node.attrs.level + (this.options.offset || 0)}`, 0];
+        return [`h${node.attrs.level}`, 0];
       },
     };
   }
@@ -89,13 +89,16 @@ export default class Heading extends Node {
     };
   }
 
-  handleFoldContent = event => {
+  handleFoldContent = (event: MouseEvent) => {
     event.preventDefault();
+    if (!(event.currentTarget instanceof HTMLButtonElement)) {
+      return;
+    }
 
     const { view } = this.editor;
     const hadFocus = view.hasFocus();
     const { tr } = view.state;
-    const { top, left } = event.target.getBoundingClientRect();
+    const { top, left } = event.currentTarget.getBoundingClientRect();
     const result = view.posAtCoords({ top, left });
 
     if (result) {
@@ -133,11 +136,15 @@ export default class Heading extends Node {
     }
   };
 
-  handleCopyLink = event => {
+  handleCopyLink = (event: MouseEvent) => {
     // this is unfortunate but appears to be the best way to grab the anchor
     // as it's added directly to the dom by a decoration.
-    const anchor = event.currentTarget.parentNode.parentNode.previousSibling;
-    if (!anchor.className.includes(this.className)) {
+    const anchor =
+      event.currentTarget instanceof HTMLButtonElement &&
+      (event.currentTarget.parentNode?.parentNode
+        ?.previousSibling as HTMLElement);
+
+    if (!anchor || !anchor.className.includes(this.className)) {
       throw new Error("Did not find anchor as previous sibling of heading");
     }
     const hash = `#${anchor.id}`;

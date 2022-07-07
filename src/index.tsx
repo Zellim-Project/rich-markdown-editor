@@ -513,7 +513,16 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   createState(value?: string) {
     const doc = this.createDocument(value || this.props.defaultValue);
-
+    console.log(
+      this.plugins,
+      this.keymaps,
+      dropCursor({ color: this.theme().cursor }),
+      gapCursor(),
+      inputRules({
+        rules: this.inputRules,
+      }),
+      keymap(baseKeymap)
+    );
     return EditorState.create({
       schema: this.schema,
       doc,
