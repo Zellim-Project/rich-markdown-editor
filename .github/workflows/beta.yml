@@ -1,8 +1,9 @@
-name: Release version
+name: Pre Release beta version
 on:
   push:
     branches:
-      - main
+      - beta
+      - alpha
 
 jobs:
   release_version:
@@ -31,12 +32,12 @@ jobs:
           git config --global user.email "c.christiancuri@gmail.com"
           git config --global user.name "Christian Curi"
           git remote set-url origin git@github.com:Zellim-Project/${{ github.event.repository.name }}.git
-          
+
       - name: Install dependencies
         run: yarn install
 
       - name: Generate version
-        run: yarn run release --no-verify
+        run: yarn run release --prerelease ${GITHUB_REF#refs/heads/} --no-verify
 
       - name: Update bump
         run: |
