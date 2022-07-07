@@ -63,27 +63,7 @@ export default class Heading extends Node {
           this.handleFoldContent(event)
         );
 
-        return [
-          `h${node.attrs.level + (this.options.offset || 0)}`,
-          [
-            "span",
-            {
-              contentEditable: false,
-              class: `heading-actions ${
-                node.attrs.collapsed ? "collapsed" : ""
-              }`,
-            },
-            anchor,
-            fold,
-          ],
-          [
-            "span",
-            {
-              class: "heading-content",
-            },
-            0,
-          ],
-        ];
+        return [`h${node.attrs.level + (this.options.offset || 0)}`, 0];
       },
     };
   }
