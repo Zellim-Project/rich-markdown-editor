@@ -10,7 +10,7 @@ import VisuallyHidden from "./VisuallyHidden";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import filterExcessSeparators from "../lib/filterExcessSeparators";
 import insertFiles from "../commands/insertFiles";
-// import insertAllFiles from "../commands/insertAllFiles";
+import insertAllFiles from "../commands/insertAllFiles";
 import baseDictionary from "../dictionary";
 
 const SSR = typeof window === "undefined";
@@ -65,7 +65,7 @@ type State = {
 class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   menuRef = React.createRef<HTMLDivElement>();
   inputRef = React.createRef<HTMLInputElement>();
-  // fileInputRef = React.createRef<HTMLInputElement>();
+  fileInputRef = React.createRef<HTMLInputElement>();
 
   state: State = {
     left: -1000,
@@ -182,8 +182,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     switch (item.name) {
       case "image":
         return this.triggerImagePick();
-      /* case "container_file":
-        return this.triggerFilePick(); */
+      case "container_file":
+        return this.triggerFilePick();
       case "embed":
         return this.triggerLinkInput(item);
       case "link": {
@@ -261,12 +261,12 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  /* triggerFilePick = () => {
+  triggerFilePick = () => {
     if (this.fileInputRef.current) {
       this.fileInputRef.current.click();
     }
   };
- */
+
   triggerLinkInput = item => {
     this.setState({ insertItem: item });
   };
@@ -307,7 +307,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClose();
   };
 
-  /* handleFilePicked = event => {
+  handleFilePicked = event => {
     const files = getDataTransferFiles(event);
 
     const {
@@ -339,7 +339,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
 
     this.props.onClose();
-  }; */
+  };
 
   clearSearch = () => {
     this.props.onClearSearch();
@@ -506,7 +506,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   render() {
-    const { dictionary, isActive, uploadImage } = this.props;
+    const { dictionary, isActive, uploadImage, uploadFile } = this.props;
     const items = this.filtered;
     const { insertItem, ...positioning } = this.state;
 
@@ -574,7 +574,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
               />
             </VisuallyHidden>
           )}
-          {/* {uploadFile && (
+          {uploadFile && (
             <VisuallyHidden>
               <input
                 type="file"
@@ -583,7 +583,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
                 accept="*"
               />
             </VisuallyHidden>
-          )} */}
+          )}
         </Wrapper>
       </Portal>
     );
