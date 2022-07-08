@@ -337,13 +337,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new Notice({
             dictionary,
           }),
-          /* new FileDoc({
-            dictionary,
-            uploadFile: this.props.uploadFile,
-            onFileUploadStart: this.props.onFileUploadStart,
-            onFileUploadStop: this.props.onFileUploadStop,
-            onShowToast: this.props.onShowToast,
-          }), */
           new Heading({
             dictionary,
             onShowToast: this.props.onShowToast,
