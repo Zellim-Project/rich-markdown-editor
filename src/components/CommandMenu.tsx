@@ -11,6 +11,7 @@ import getDataTransferFiles from "../lib/getDataTransferFiles";
 import filterExcessSeparators from "../lib/filterExcessSeparators";
 import insertFiles from "../commands/insertFiles";
 import insertAllFiles from "../commands/insertAllFiles";
+import embedATaskCommand, { ITask } from "../commands/embedATask";
 import baseDictionary from "../dictionary";
 
 const SSR = typeof window === "undefined";
@@ -35,6 +36,7 @@ export type Props<T extends MenuItem = MenuItem> = {
   uploadFile?: (file: File) => Promise<string>;
   onFileUploadStart?: () => void;
   onFileUploadStop?: () => void;
+  embedATask?: () => Promise<ITask>;
   onShowToast?: (message: string, id: string) => void;
   onLinkToolbarOpen?: () => void;
   onClose: () => void;
@@ -66,6 +68,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   menuRef = React.createRef<HTMLDivElement>();
   inputRef = React.createRef<HTMLInputElement>();
   fileInputRef = React.createRef<HTMLInputElement>();
+  embedTaskRef = React.createRef<HTMLInputElement>();
 
   state: State = {
     left: -1000,
@@ -184,6 +187,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         return this.triggerImagePick();
       case "container_file":
         return this.triggerFilePick();
+      case "embed_task":
+        return this.triggerEmbedATask();
       case "embed":
         return this.triggerLinkInput(item);
       case "link": {
@@ -267,6 +272,12 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
+  triggerEmbedATask = () => {
+    if (this.embedTaskRef.current) {
+      this.embedTaskRef.current.click();
+    }
+  };
+
   triggerLinkInput = item => {
     this.setState({ insertItem: item });
   };
@@ -333,6 +344,30 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         uploadFile,
         onFileUploadStart,
         onFileUploadStop,
+        onShowToast,
+        dictionary: this.props.dictionary,
+      });
+    }
+
+    this.props.onClose();
+  };
+
+  handleEmbedATask = event => {
+    const { view, embedATask, onShowToast } = this.props;
+    const { state, dispatch } = view;
+    const parent = findParentNode(node => !!node)(state.selection);
+
+    if (parent) {
+      dispatch(
+        state.tr.insertText(
+          "",
+          parent.pos,
+          parent.pos + parent.node.textContent.length + 1
+        )
+      );
+
+      embedATaskCommand(view, event, parent.pos, {
+        embedATask,
         onShowToast,
         dictionary: this.props.dictionary,
       });
@@ -449,6 +484,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       search = "",
       uploadImage,
       uploadFile,
+      embedATask,
       commands,
       filterable = true,
     } = this.props;
@@ -487,7 +523,10 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       if (!uploadImage && item.name === "image") return false;
 
       // If no file upload callback has been passed, filter the file block out
-      if (!uploadFile && item.name === "file") return false;
+      if (!uploadFile && item.name === "container_file") return false;
+
+      // If no file upload callback has been passed, filter the file block out
+      if (!embedATask && item.name === "embed_task") return false;
 
       // some items (defaultHidden) are not visible until a search query exists
       if (!search) return !item.defaultHidden;
@@ -506,7 +545,13 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   render() {
-    const { dictionary, isActive, uploadImage, uploadFile } = this.props;
+    const {
+      dictionary,
+      isActive,
+      uploadImage,
+      uploadFile,
+      embedATask,
+    } = this.props;
     const items = this.filtered;
     const { insertItem, ...positioning } = this.state;
 
@@ -582,6 +627,11 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
                 onChange={this.handleFilePicked}
                 accept="*"
               />
+            </VisuallyHidden>
+          )}
+          {embedATask && (
+            <VisuallyHidden>
+              <div ref={this.embedTaskRef} onClick={this.handleEmbedATask} />
             </VisuallyHidden>
           )}
         </Wrapper>
