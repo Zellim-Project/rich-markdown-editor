@@ -54,7 +54,12 @@ export default class EmbedTask extends Node {
         icon.className = "icon";
         ReactDOM.render(component, icon);
 
-        return ["div", { class: `embed_task` }, icon, title, subTitle];
+        const info = document.createElement("div");
+        info.className = "info";
+        info.appendChild(title);
+        info.appendChild(subTitle);
+
+        return ["div", { class: `embed_task` }, icon, info];
       },
     };
   }
