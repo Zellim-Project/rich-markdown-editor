@@ -1,7 +1,7 @@
 import { wrappingInputRule } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
-import { LinkIcon } from "outline-icons";
+import { Union } from "../lib/icons";
 import * as React from "react";
 import ReactDOM from "react-dom";
 import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
@@ -48,7 +48,7 @@ export default class EmbedTask extends Node {
         const projectName = document.createTextNode(node.attrs.projectName);
         subTitle.appendChild(projectName);
 
-        const component = <LinkIcon color="currentColor" />;
+        const component = <Union />;
 
         const icon = document.createElement("div");
         icon.className = "icon";
