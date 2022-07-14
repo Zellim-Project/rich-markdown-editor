@@ -49,6 +49,7 @@ import Image from "./nodes/Image";
 import ListItem from "./nodes/ListItem";
 import Notice from "./nodes/Notice";
 import FileDoc from "./nodes/FileDoc";
+import EmbedTask from "./nodes/embedTask";
 import OrderedList from "./nodes/OrderedList";
 import Paragraph from "./nodes/Paragraph";
 import Table from "./nodes/Table";
@@ -78,6 +79,8 @@ import SmartText from "./plugins/SmartText";
 import TrailingNode from "./plugins/TrailingNode";
 import PasteHandler from "./plugins/PasteHandler";
 import { PluginSimple } from "markdown-it";
+
+import { ITask } from "./commands/embedATask";
 
 export { default as Extension } from "./lib/Extension";
 
@@ -135,6 +138,7 @@ export type Props = {
   };
   uploadImage?: (file: File) => Promise<string>;
   uploadFile?: (file: File) => Promise<string>;
+  embedATask?: () => Promise<ITask>;
   onBlur?: () => void;
   onFocus?: () => void;
   onSave?: ({ done: boolean }) => void;
@@ -342,6 +346,11 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             uploadFile: this.props.uploadFile,
             onFileUploadStart: this.props.onFileUploadStart,
             onFileUploadStop: this.props.onFileUploadStop,
+            onShowToast: this.props.onShowToast,
+          }),
+          new EmbedTask({
+            dictionary,
+            embedATask: this.props.embedATask,
             onShowToast: this.props.onShowToast,
           }),
           new Heading({
@@ -814,6 +823,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
                   onClose={this.handleCloseBlockMenu}
                   uploadImage={this.props.uploadImage}
                   uploadFile={this.props.uploadFile}
+                  embedATask={this.props.embedATask}
                   onLinkToolbarOpen={this.handleOpenLinkMenu}
                   onImageUploadStart={this.props.onImageUploadStart}
                   onImageUploadStop={this.props.onImageUploadStop}
