@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.24.0-alpha.0](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.8...v11.24.0-alpha.0) (2022-07-14)
+
+
+### Features
+
+* embed a task plugin ([00a4b2f](https://github.com/outline/rich-markdown-editor/commit/00a4b2f7d7fc84293aedb94c305a76d240f07e89))
+
 ### [11.23.5-alpha.8](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.7...v11.23.5-alpha.8) (2022-07-08)
 
 ### [11.23.5-alpha.7](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.6...v11.23.5-alpha.7) (2022-07-08)
