@@ -33,7 +33,7 @@ export default class EmbedTask extends Node {
           contentElement: "div:last-child",
           getAttrs: (dom: HTMLDivElement) => ({
             taskName: dom.getElementsByClassName("title")[0].textContent,
-            projectName: dom.getElementsByClassName("sub-title")[0].textContent,
+            projectName: dom.getElementsByClassName("subtitle")[0].textContent,
           }),
         },
       ],
@@ -69,11 +69,11 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^@@$/, type)];
+    return [wrappingInputRule(/^@@@@$/, type)];
   }
 
   toMarkdown(state, node) {
-    state.write("\n@@");
+    state.write("\n@@@@");
     state.write(
       "[" +
         state.esc(node.attrs.taskName) +
@@ -83,7 +83,7 @@ export default class EmbedTask extends Node {
         ")"
     );
     state.ensureNewLine();
-    state.write("@@");
+    state.write("@@@@");
     state.closeBlock(node);
   }
 
