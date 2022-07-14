@@ -356,6 +356,45 @@ export const StyledEditor = styled("div")<{
     top: 1px;
   }
 
+  .embed_task {
+    background: #393E4A;
+    width: 295px;
+    display: flex;
+    border-radius: 12px;
+    height: 60px;
+  }
+
+  .embed_task .icon {
+    display: flex;
+    align-items: center;
+    color: #898E9A;
+    background: #FFFFFF1A;
+    margin: 12px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .embed_task .icon svg {
+    height: 18px;
+    width: 18px;
+  }
+
+  .embed_task .info .title {
+    color: #DFDFDF;
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 13px;
+    line-height: 20px;
+    letter-spacing: 0.1px;
+  }
+
+  .embed_task .info .subtitle {
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 14px;
+    color: #FFFFFF4D;
+  }
+
   .notice-block {
     display: flex;
     align-items: center;

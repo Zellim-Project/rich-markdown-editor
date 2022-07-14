@@ -44,7 +44,7 @@ export default class EmbedTask extends Node {
         title.appendChild(taskName);
 
         const subTitle = document.createElement("p");
-        subTitle.className = "title";
+        subTitle.className = "subtitle";
         const projectName = document.createTextNode(node.attrs.projectName);
         subTitle.appendChild(projectName);
 
