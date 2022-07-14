@@ -69,21 +69,21 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^@@@@$/, type)];
+    return [wrappingInputRule(/^@@!@$/, type)];
   }
 
   toMarkdown(state, node) {
-    state.write("\n@@@@");
+    state.write("\n@@!@");
     state.write(
       "[" +
         state.esc(node.attrs.taskName) +
         "]" +
         "(" +
-        state.esc(node.attrs.projectNamwe) +
+        state.esc(node.attrs.projectName) +
         ")"
     );
     state.ensureNewLine();
-    state.write("@@@@");
+    state.write("@@!@");
     state.closeBlock(node);
   }
 
