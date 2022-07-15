@@ -1,19 +1,16 @@
-import { wrappingInputRule } from "prosemirror-inputrules";
+import { InputRule } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import { Union } from "../lib/icons";
 import * as React from "react";
 import ReactDOM from "react-dom";
-import taskRules from "../rules/embedTask";
 import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
 import Node from "./Node";
+
+const EMBED_TASK_REGEX = /!task\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)\)$/;
 export default class EmbedTask extends Node {
   get name() {
     return "embed_task";
-  }
-
-  get rulePlugins() {
-    return [taskRules];
   }
 
   get schema() {
@@ -73,13 +70,31 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^\$\$\$task$/, type)];
+    console.log({ type });
+    return [
+      new InputRule(EMBED_TASK_REGEX, (state, match, start, end) => {
+        const [okay, taskName, projectName] = match;
+        const { tr } = state;
+        console.log(okay, match);
+        if (okay) {
+          tr.replaceWith(
+            start - 1,
+            end,
+            type.create({
+              taskName,
+              projectName,
+            })
+          );
+        }
+
+        return tr;
+      }),
+    ];
   }
 
   toMarkdown(state, node) {
-    state.write("\n$$$task");
     state.write(
-      "[" +
+      "!task[" +
         state.esc(node.attrs.taskName) +
         "]" +
         "(" +
