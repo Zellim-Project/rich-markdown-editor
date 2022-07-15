@@ -356,7 +356,7 @@ export const StyledEditor = styled("div")<{
     top: 1px;
   }
 
-  .embed_task {
+  .embed-task {
     background: #393E4A;
     width: 295px;
     display: flex;
@@ -364,7 +364,7 @@ export const StyledEditor = styled("div")<{
     height: 60px;
   }
 
-  .embed_task .icon {
+  .embed-task .icon {
     display: flex;
     align-items: center;
     color: #898E9A;
@@ -374,12 +374,12 @@ export const StyledEditor = styled("div")<{
     border-radius: 8px;
   }
 
-  .embed_task .icon svg {
+  .embed-task .icon svg {
     height: 18px;
     width: 18px;
   }
 
-  .embed_task .info .title {
+  .embed-task .info .title {
     color: #DFDFDF;
     font-size: 14px;
     font-weight: 700;
@@ -388,7 +388,7 @@ export const StyledEditor = styled("div")<{
     letter-spacing: 0.1px;
   }
 
-  .embed_task .info .subtitle {
+  .embed-task .info .subtitle {
     font-weight: 600;
     font-size: 11px;
     line-height: 14px;

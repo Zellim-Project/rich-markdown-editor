@@ -1,4 +1,4 @@
-import { wrappingInputRule } from "prosemirror-inputrules";
+import { InputRule } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import { Union } from "../lib/icons";
@@ -7,6 +7,7 @@ import ReactDOM from "react-dom";
 import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
 import Node from "./Node";
 
+const EMBED_TASK_REGEX = /!!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)\)$/;
 export default class EmbedTask extends Node {
   get name() {
     return "embed_task";
@@ -28,7 +29,7 @@ export default class EmbedTask extends Node {
       draggable: false,
       parseDOM: [
         {
-          tag: "div.embed_task",
+          tag: "div.embed-task",
           preserveWhitespace: "full",
           contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => ({
@@ -59,7 +60,7 @@ export default class EmbedTask extends Node {
         info.appendChild(title);
         info.appendChild(subTitle);
 
-        return ["div", { class: `embed_task` }, icon, info];
+        return ["div", { class: `embed-task` }, icon, info];
       },
     };
   }
@@ -69,13 +70,30 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^$$$$/, type)];
+    return [
+      new InputRule(EMBED_TASK_REGEX, (state, match, start, end) => {
+        const [okay, taskName, projectName] = match;
+        const { tr } = state;
+
+        if (okay) {
+          tr.replaceWith(
+            start - 1,
+            end,
+            type.create({
+              taskName,
+              projectName,
+            })
+          );
+        }
+
+        return tr;
+      }),
+    ];
   }
 
   toMarkdown(state, node) {
-    state.write("$$$");
     state.write(
-      "[" +
+      " !![" +
         state.esc(node.attrs.taskName) +
         "]" +
         "(" +
@@ -90,11 +108,10 @@ export default class EmbedTask extends Node {
     return {
       block: "embed_task",
       getAttrs: token => {
-        const file_regex = /\[(?<taskName>[^]*?)\]\((?<projectName>[^]*?)\)/g;
-        const result = file_regex.exec(token.info);
+        console.log(token);
         return {
-          projectName: result ? result[2] : null,
-          taskName: result ? result[1] : null,
+          taskName: token.attrGet("taskName"),
+          projectName: token.attrGet("projectName"),
         };
       },
     };
