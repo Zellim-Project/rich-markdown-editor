@@ -60,12 +60,7 @@ export default class EmbedTask extends Node {
         info.appendChild(title);
         info.appendChild(subTitle);
 
-        return [
-          "div",
-          { class: `embed-task` },
-          icon,
-          [info, { contentEditable: false }],
-        ];
+        return ["div", { class: `embed-task` }, icon, info];
       },
     };
   }
