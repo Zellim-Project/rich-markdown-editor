@@ -7,7 +7,7 @@ import ReactDOM from "react-dom";
 import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
 import Node from "./Node";
 
-const EMBED_TASK_REGEX = /!!\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)$/;
+const EMBED_TASK_REGEX = /!!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 export default class EmbedTask extends Node {
   get name() {
     return "embed_task";
