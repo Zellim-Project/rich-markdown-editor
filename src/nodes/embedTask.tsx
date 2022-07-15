@@ -30,7 +30,7 @@ export default class EmbedTask extends Node {
         {
           tag: "div.embed_task",
           preserveWhitespace: "full",
-          contentElement: "div:last-child",
+          contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => ({
             taskName: dom.getElementsByClassName("title")[0].textContent,
             projectName: dom.getElementsByClassName("subtitle")[0].textContent,
@@ -69,11 +69,11 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^!@@$/, type)];
+    return [wrappingInputRule(/^$$$$/, type)];
   }
 
   toMarkdown(state, node) {
-    state.write("!@@");
+    state.write("$$$");
     state.write(
       "[" +
         state.esc(node.attrs.taskName) +
@@ -83,7 +83,6 @@ export default class EmbedTask extends Node {
         ")"
     );
     state.ensureNewLine();
-    state.write("@@@");
     state.closeBlock(node);
   }
 
@@ -91,7 +90,7 @@ export default class EmbedTask extends Node {
     return {
       block: "embed_task",
       getAttrs: token => {
-        const file_regex = /\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
+        const file_regex = /\[(?<taskName>[^]*?)\]\((?<projectName>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         return {
           projectName: result ? result[2] : null,
