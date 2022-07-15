@@ -74,7 +74,7 @@ export default class EmbedTask extends Node {
       new InputRule(EMBED_TASK_REGEX, (state, match, start, end) => {
         const [okay, taskName, projectName] = match;
         const { tr } = state;
-
+        console.log(okay, match);
         if (okay) {
           tr.replaceWith(
             start - 1,
