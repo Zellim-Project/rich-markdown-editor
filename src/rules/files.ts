@@ -2,8 +2,10 @@ import customFence from "markdown-it-container";
 
 export default function file(md): void {
   return customFence(md, "file", {
-    validate: params =>
-      params.trim.match(/@@@\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/),
+    validate: params => {
+      console.log(params);
+      return params.trim.match(/@@@\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/);
+    },
     render: function(tokens, idx) {
       const { info } = tokens[idx];
       if (tokens[idx].nesting === 1) {
