@@ -76,9 +76,9 @@ export default class File extends Node {
     return "container_file";
   }
 
-  get rulePlugins() {
+  /* get rulePlugins() {
     return [filesRule];
-  }
+  } */
 
   get schema() {
     return {
