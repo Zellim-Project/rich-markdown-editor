@@ -98,7 +98,7 @@ export default class EmbedTask extends Node {
   }
 
   toMarkdown(state, node) {
-    state.write("\n&&&");
+    state.write("&&&");
     state.write(
       "[" +
         state.esc(node.attrs.taskName) +
