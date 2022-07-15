@@ -1,9 +1,8 @@
 import customFence from "markdown-it-container";
 
 export default function file(md): void {
-  return customFence(md, "file", {
-    marker: "@",
-    validate: () => true,
+  return customFence(md, "task", {
+    validate: params => params.trim().match(/^:::task\s+(.*)$/),
     render: function(tokens, idx) {
       const { info } = tokens[idx];
       if (tokens[idx].nesting === 1) {
