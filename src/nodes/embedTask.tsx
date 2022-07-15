@@ -11,7 +11,7 @@ import taskRUles from "../rules/embedTask";
 // const EMBED_TASK_REGEX = /&&&\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 export default class EmbedTask extends Node {
   get name() {
-    return "container-task";
+    return "container_task";
   }
 
   get schema() {
