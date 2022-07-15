@@ -9,7 +9,7 @@ export default function task(md): void {
       console.log(info);
       if (tokens[idx].nesting === 1) {
         // opening tag
-        return `<div class="task task-${md.utils.escapeHtml(info)}">\n`;
+        return `<div class="embed-task">\n`;
       } else {
         // closing tag
         return "</div>\n";
