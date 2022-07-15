@@ -1,4 +1,4 @@
-import { wrappingInputRule } from "prosemirror-inputrules";
+import { InputRule } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import { Union } from "../lib/icons";
@@ -7,6 +7,7 @@ import ReactDOM from "react-dom";
 import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
 import Node from "./Node";
 
+const EMBED_TASK__REGEX = /!@@\[(?<taskName>[^\]\[]*?)]\((?<projectName>[^\]\[]*?)?\”?\)$/;
 export default class EmbedTask extends Node {
   get name() {
     return "embed_task";
@@ -69,21 +70,36 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^@@!@$/, type)];
+    return [
+      new InputRule(EMBED_TASK__REGEX, (state, match, start, end) => {
+        const [okay, taskName, projectName] = match;
+        const { tr } = state;
+
+        if (okay) {
+          tr.replaceWith(
+            start - 1,
+            end,
+            type.create({
+              taskName,
+              projectName,
+            })
+          );
+        }
+
+        return tr;
+      }),
+    ];
   }
 
   toMarkdown(state, node) {
-    state.write("\n@@!@");
     state.write(
-      "[" +
-        state.esc(node.attrs.taskName) +
-        "]" +
-        "(" +
+      " !@@[" +
+        state.esc((node.attrs.taskName || "").replace("\n", "") || "") +
+        "](" +
         state.esc(node.attrs.projectName) +
         ")"
     );
     state.ensureNewLine();
-    state.write("@@!@");
     state.closeBlock(node);
   }
 
