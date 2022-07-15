@@ -45,7 +45,7 @@ import Embed from "./nodes/Embed";
 import HardBreak from "./nodes/HardBreak";
 import Heading from "./nodes/Heading";
 import HorizontalRule from "./nodes/HorizontalRule";
-import Image from "./nodes/Image";
+// import Image from "./nodes/Image";
 import ListItem from "./nodes/ListItem";
 import Notice from "./nodes/Notice";
 import FileDoc from "./nodes/FileDoc";
@@ -359,13 +359,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             offset: this.props.headingsOffset,
           }),
           new HorizontalRule(),
-          new Image({
+          /* new Image({
             dictionary,
             uploadImage: this.props.uploadImage,
             onImageUploadStart: this.props.onImageUploadStart,
             onImageUploadStop: this.props.onImageUploadStop,
             onShowToast: this.props.onShowToast,
-          }),
+          }), */
           new Table(),
           new TableCell({
             onSelectTable: this.handleSelectTable,
