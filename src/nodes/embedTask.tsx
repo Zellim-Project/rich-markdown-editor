@@ -73,11 +73,11 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^:::task$/, type)];
+    return [wrappingInputRule(/^\$\$\$task$/, type)];
   }
 
   toMarkdown(state, node) {
-    state.write("\n:::task");
+    state.write("\n$$$task");
     state.write(
       "[" +
         state.esc(node.attrs.taskName) +
