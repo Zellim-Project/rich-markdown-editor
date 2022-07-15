@@ -187,7 +187,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         return this.triggerImagePick();
       case "container_file":
         return this.triggerFilePick();
-      case "embed_task":
+      case "container_task":
         return this.triggerEmbedATask();
       case "embed":
         return this.triggerLinkInput(item);
@@ -526,7 +526,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       if (!uploadFile && item.name === "container_file") return false;
 
       // If no file upload callback has been passed, filter the file block out
-      if (!embedATask && item.name === "embed_task") return false;
+      if (!embedATask && item.name === "container_task") return false;
 
       // some items (defaultHidden) are not visible until a search query exists
       if (!search) return !item.defaultHidden;

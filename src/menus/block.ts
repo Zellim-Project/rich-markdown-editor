@@ -154,7 +154,7 @@ export default function blockMenuItems(
       keywords: "file",
     },
     {
-      name: "embed_task",
+      name: "container_task",
       title: dictionary.embedATask,
       icon: DocumentIcon,
       keywords: "task embed",

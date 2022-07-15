@@ -11,7 +11,7 @@ import taskRUles from "../rules/embedTask";
 // const EMBED_TASK_REGEX = /&&&\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 export default class EmbedTask extends Node {
   get name() {
-    return "embed_task";
+    return "container-task";
   }
 
   get schema() {
@@ -30,7 +30,7 @@ export default class EmbedTask extends Node {
       draggable: false,
       parseDOM: [
         {
-          tag: "div.embed-task",
+          tag: "div.task-block",
           preserveWhitespace: "full",
           contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => ({
@@ -61,7 +61,7 @@ export default class EmbedTask extends Node {
         info.appendChild(title);
         info.appendChild(subTitle);
 
-        return ["div", { class: `embed-task` }, icon, info];
+        return ["div", { class: `task-block` }, icon, info];
       },
     };
   }
@@ -115,12 +115,13 @@ export default class EmbedTask extends Node {
 
   parseMarkdown() {
     return {
-      block: "embed_task",
+      block: "container_task",
       getAttrs: token => {
-        console.log(token);
+        const file_regex = /\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
+        const result = file_regex.exec(token.info);
         return {
-          taskName: token.attrGet("taskName"),
-          projectName: token.attrGet("projectName"),
+          projectName: result ? result[2] : null,
+          taskName: result ? result[1] : null,
         };
       },
     };

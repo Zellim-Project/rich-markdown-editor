@@ -62,7 +62,7 @@ const embedATask = function(
         .replaceWith(
           pos,
           pos,
-          schema.nodes.embed_task.create({ taskName, projectName })
+          schema.nodes.container_task.create({ taskName, projectName })
         )
         .setMeta(embedTaskPlaceholderPlugin, { remove: { id } });
 
