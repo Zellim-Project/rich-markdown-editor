@@ -145,7 +145,6 @@ export default class File extends Node {
         ")"
     );
     state.ensureNewLine();
-    state.write("@@@");
     state.closeBlock(node);
   }
 
