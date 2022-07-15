@@ -7,7 +7,7 @@ import ReactDOM from "react-dom";
 import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
 import Node from "./Node";
 
-const EMBED_TASK_REGEX = /!task\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
+const EMBED_TASK_REGEX = /!!\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
 export default class EmbedTask extends Node {
   get name() {
     return "embed_task";
@@ -70,7 +70,6 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    console.log({ type });
     return [
       new InputRule(EMBED_TASK_REGEX, (state, match, start, end) => {
         const [okay, taskName, projectName] = match;
@@ -94,7 +93,7 @@ export default class EmbedTask extends Node {
 
   toMarkdown(state, node) {
     state.write(
-      "!task[" +
+      "!![" +
         state.esc(node.attrs.taskName) +
         "]" +
         "(" +
