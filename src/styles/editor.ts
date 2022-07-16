@@ -327,24 +327,19 @@ export const StyledEditor = styled("div")<{
   .file-block {
     display: flex;
     align-items: center;
-    background: #F0F8FF;
-    color: #181A1B;
+    background: ${props => props.theme.blockToolbarSelectedBackground};
+    color: ${props => props.theme.blockToolbarIconSelected};
     border-radius: 4px;
     padding: 8px 16px;
     margin: 8px 0;
 
     a {
-      color: #181A1B;
+      color: ${props => props.theme.blockToolbarIconSelected};
     }
 
     a:not(.heading-name) {
       text-decoration: underline;
     }
-  }
-
-  .file-block .content {
-    flex-grow: 1;
-    min-width: 0;
   }
 
   .file-block .icon {
@@ -357,7 +352,7 @@ export const StyledEditor = styled("div")<{
   }
 
   .task-block {
-    background: #393E4A;
+    background: ${props => props.theme.blockToolbarSelectedBackground};
     width: 295px;
     display: flex;
     border-radius: 12px;
@@ -380,7 +375,7 @@ export const StyledEditor = styled("div")<{
   }
 
   .task-block .info .title {
-    color: #DFDFDF;
+    color: ${props => props.theme.blockToolbarIconSelected};
     font-size: 14px;
     font-weight: 700;
     margin-top: 13px;
@@ -392,7 +387,7 @@ export const StyledEditor = styled("div")<{
     font-weight: 600;
     font-size: 11px;
     line-height: 14px;
-    color: #FFFFFF4D;
+    color: ${props => props.theme.textSecondary};
   }
 
   .notice-block {

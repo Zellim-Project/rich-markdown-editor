@@ -108,7 +108,7 @@ export default class File extends Node {
         const fileName = document.createTextNode(node.attrs.alt);
         a.appendChild(fileName);
 
-        const component = <LinkIcon color="currentColor" />;
+        const component = <LinkIcon color="#898E9A" />;
 
         const icon = document.createElement("div");
         icon.className = "icon";
@@ -120,7 +120,6 @@ export default class File extends Node {
           icon,
           a,
           ["div", { contentEditable: true }],
-          ["div", { class: "content" }, 0],
         ];
       },
     };
