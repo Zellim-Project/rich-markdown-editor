@@ -42,6 +42,10 @@ export default class EmbedTask extends Node {
         },
       ],
       toDOM: node => {
+        const container = document.createElement("div");
+        container.className = "task-block";
+        container.addEventListener("click", () => openATask?.(node.attrs.id));
+
         const title = document.createElement("p");
         title.className = "title";
         const taskName = document.createTextNode(node.attrs.taskName);
@@ -63,12 +67,7 @@ export default class EmbedTask extends Node {
         info.appendChild(title);
         info.appendChild(subTitle);
 
-        return [
-          "div",
-          { class: `task-block`, onclick: () => openATask?.(node.attrs.id) },
-          icon,
-          info,
-        ];
+        return [container, icon, info];
       },
     };
   }
