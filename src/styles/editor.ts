@@ -383,7 +383,7 @@ export const StyledEditor = styled("div")<{
     letter-spacing: 0.1px;
   }
 
-  .task-block .info .taskId {
+  .task-block .info .task-id {
     display: none;
   }
 

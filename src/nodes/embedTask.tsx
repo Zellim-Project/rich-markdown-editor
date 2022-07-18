@@ -13,7 +13,6 @@ export default class EmbedTask extends Node {
   }
 
   get schema() {
-    const { openATask } = this.editor.props;
     return {
       attrs: {
         id: {
@@ -43,44 +42,36 @@ export default class EmbedTask extends Node {
         },
       ],
       toDOM: node => {
-        const container = document.createElement("div");
-        container.className = "task-block";
-        container.addEventListener("click", () => openATask?.(node.attrs.id));
-
-        const title = document.createElement("p");
-        title.className = "title";
-        const taskName = document.createTextNode(node.attrs.taskName);
-        title.appendChild(taskName);
-
-        const id = document.createElement("p");
-        id.className = "taskId";
-        const taskId = document.createTextNode(node.attrs.id);
-        id.appendChild(taskId);
-
-        const subTitle = document.createElement("p");
-        subTitle.className = "subtitle";
-        const projectName = document.createTextNode(node.attrs.projectName);
-        subTitle.appendChild(projectName);
-
-        const component = <Union />;
-
-        const icon = document.createElement("div");
-        icon.className = "icon";
-        ReactDOM.render(component, icon);
-
-        const info = document.createElement("div");
-        info.className = "info";
-        info.appendChild(title);
-        info.appendChild(subTitle);
-        info.appendChild(id);
-
-        container.appendChild(icon);
-        container.appendChild(info);
-
-        return [container];
+        return [
+          "div",
+          { class: "task-block" },
+          ["p", { ...node.attrs, contentEditable: false }],
+        ];
       },
     };
   }
+
+  component = props => {
+    const { id, taskname, projectName } = props.node.attrs;
+    const { openATask } = this.editor.props;
+
+    return (
+      <div
+        contentEditable={false}
+        className="task-block"
+        onClick={() => openATask?.(id)}
+      >
+        <div className="icon">
+          <Union />
+        </div>
+        <div className="info">
+          <p className="task-id">{id}</p>
+          <p className="title">{taskname}</p>
+          <p className="subtitle">{projectName}</p>
+        </div>
+      </div>
+    );
+  };
 
   commands({ type }) {
     return attrs => toggleWrap(type, attrs);
