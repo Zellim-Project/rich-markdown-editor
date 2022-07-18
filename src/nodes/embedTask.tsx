@@ -105,6 +105,7 @@ export default class EmbedTask extends Node {
     state.write("&&&");
     state.write(
       "[" +
+        "taskId-" +
         state.esc(node.attrs.id) +
         "]" +
         "(" +
