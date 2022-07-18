@@ -383,6 +383,10 @@ export const StyledEditor = styled("div")<{
     letter-spacing: 0.1px;
   }
 
+  .task-block .info .taskId {
+    display: none;
+  }
+
   .task-block .info .subtitle {
     font-weight: 600;
     font-size: 11px;

@@ -37,6 +37,7 @@ export default class EmbedTask extends Node {
           contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => ({
             taskName: dom.getElementsByClassName("title")[0].textContent,
+            id: dom.getElementsByClassName("taskId")[0].textContent,
             projectName: dom.getElementsByClassName("subtitle")[0].textContent,
           }),
         },
@@ -50,6 +51,11 @@ export default class EmbedTask extends Node {
         title.className = "title";
         const taskName = document.createTextNode(node.attrs.taskName);
         title.appendChild(taskName);
+
+        const id = document.createElement("p");
+        id.className = "taskId";
+        const taskId = document.createTextNode(node.attrs.id);
+        id.appendChild(taskId);
 
         const subTitle = document.createElement("p");
         subTitle.className = "subtitle";
@@ -66,8 +72,12 @@ export default class EmbedTask extends Node {
         info.className = "info";
         info.appendChild(title);
         info.appendChild(subTitle);
+        info.appendChild(id);
 
-        return [container, icon, info];
+        container.appendChild(icon);
+        container.appendChild(info);
+
+        return [container];
       },
     };
   }
