@@ -63,7 +63,12 @@ export default class EmbedTask extends Node {
         info.appendChild(title);
         info.appendChild(subTitle);
 
-        return ["div", { class: `task-block`, onclick: openATask }, icon, info];
+        return [
+          "div",
+          { class: `task-block`, onclick: openATask?.(node.attrs.id) },
+          icon,
+          info,
+        ];
       },
     };
   }
