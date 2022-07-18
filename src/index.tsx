@@ -139,6 +139,7 @@ export type Props = {
   uploadImage?: (file: File) => Promise<string>;
   uploadFile?: (file: File) => Promise<string>;
   embedATask?: () => Promise<ITask>;
+  openATask?: () => Promise<void>;
   onBlur?: () => void;
   onFocus?: () => void;
   onSave?: ({ done: boolean }) => void;
@@ -351,7 +352,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new EmbedTask({
             dictionary,
             embedATask: this.props.embedATask,
-            embedATask: this.props.embedATask,
+            openATask: this.props.openATask,
             onShowToast: this.props.onShowToast,
           }),
           new Heading({
