@@ -65,7 +65,7 @@ export default class EmbedTask extends Node {
 
         return [
           "div",
-          { class: `task-block`, onclick: openATask?.(node.attrs.id) },
+          { class: `task-block`, onclick: () => openATask?.(node.attrs.id) },
           icon,
           info,
         ];
