@@ -351,6 +351,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new EmbedTask({
             dictionary,
             embedATask: this.props.embedATask,
+            embedATask: this.props.embedATask,
             onShowToast: this.props.onShowToast,
           }),
           new Heading({

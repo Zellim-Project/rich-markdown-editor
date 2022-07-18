@@ -13,8 +13,12 @@ export default class EmbedTask extends Node {
   }
 
   get schema() {
+    const { openATask } = this.editor.props;
     return {
       attrs: {
+        id: {
+          default: "",
+        },
         taskName: {
           default: "",
         },
@@ -59,7 +63,7 @@ export default class EmbedTask extends Node {
         info.appendChild(title);
         info.appendChild(subTitle);
 
-        return ["div", { class: `task-block` }, icon, info];
+        return ["div", { class: `task-block`, onclick: openATask }, icon, info];
       },
     };
   }
@@ -101,9 +105,11 @@ export default class EmbedTask extends Node {
     state.write("&&&");
     state.write(
       "[" +
-        state.esc(node.attrs.taskName) +
+        state.esc(node.attrs.id) +
         "]" +
         "(" +
+        state.esc(node.attrs.taskName) +
+        "&-&" +
         state.esc(node.attrs.projectName) +
         ")"
     );
@@ -116,11 +122,13 @@ export default class EmbedTask extends Node {
     return {
       block: "container_task",
       getAttrs: token => {
-        const file_regex = /\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
+        const file_regex = /\[(?<id>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
+        const [taskName, projectName] = result?.[2].split("&-&") || [];
         return {
-          projectName: result ? result[2] : null,
-          taskName: result ? result[1] : null,
+          projectName: result ? taskName : null,
+          taskName: result ? projectName : null,
+          id: result ? result[1] : null,
         };
       },
     };
