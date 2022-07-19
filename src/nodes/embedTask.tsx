@@ -35,7 +35,7 @@ export default class EmbedTask extends Node {
           contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => ({
             taskName: dom.getElementsByClassName("title")[0].textContent,
-            id: dom.getElementsByClassName("task-id")[0].textContent,
+            taskId: dom.getElementsByClassName("task-id")[0].textContent,
             projectName: dom.getElementsByClassName("subtitle")[0].textContent,
           }),
         },
@@ -53,7 +53,6 @@ export default class EmbedTask extends Node {
   component = props => {
     const { taskId, taskName, projectName } = props.node.attrs;
     const { openATask } = this.editor.props;
-    console.log({ taskId, taskName, projectName });
     return (
       <div
         contentEditable={false}
@@ -127,10 +126,9 @@ export default class EmbedTask extends Node {
     return {
       block: "container_task",
       getAttrs: token => {
-        const file_regex = /\[(?<id>[^]*?)\]\((?<filename>[^]*?)\)/g;
+        const file_regex = /\[(?<taskId>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         const [taskName, projectName] = result?.[2].split("&-&") || [];
-        console.log({ taskName, projectName });
         return {
           projectName: result ? taskName : null,
           taskName: result ? projectName : null,
