@@ -6,7 +6,6 @@ export default function file(md): void {
     validate: () => true,
     render: function(tokens, idx) {
       const { info } = tokens[idx];
-      console.log(info);
       if (tokens[idx].nesting === 1) {
         // opening tag
         return `<div class="file file-${md.utils.escapeHtml(info)}">\n`;
