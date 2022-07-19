@@ -327,24 +327,19 @@ export const StyledEditor = styled("div")<{
   .file-block {
     display: flex;
     align-items: center;
-    background: #F0F8FF;
-    color: #181A1B;
+    background: ${props => props.theme.blockToolbarSelectedBackground};
+    color: ${props => props.theme.blockToolbarIconSelected};
     border-radius: 4px;
     padding: 8px 16px;
     margin: 8px 0;
 
     a {
-      color: #181A1B;
+      color: ${props => props.theme.blockToolbarIconSelected};
     }
 
     a:not(.heading-name) {
       text-decoration: underline;
     }
-  }
-
-  .file-block .content {
-    flex-grow: 1;
-    min-width: 0;
   }
 
   .file-block .icon {
@@ -354,6 +349,49 @@ export const StyledEditor = styled("div")<{
     margin-${props => (props.rtl ? "left" : "right")}: 4px;
     position: relative;
     top: 1px;
+  }
+
+  .task-block {
+    background: ${props => props.theme.blockToolbarSelectedBackground};
+    width: 295px;
+    display: flex;
+    border-radius: 12px;
+    height: 60px;
+  }
+
+  .task-block .icon {
+    display: flex;
+    align-items: center;
+    color: #898E9A;
+    background: #FFFFFF1A;
+    margin: 12px;
+    padding: 10px;
+    border-radius: 8px;
+  }
+
+  .task-block .icon svg {
+    height: 18px;
+    width: 18px;
+  }
+
+  .task-block .info .title {
+    color: ${props => props.theme.blockToolbarIconSelected};
+    font-size: 14px;
+    font-weight: 700;
+    margin-top: 13px;
+    line-height: 20px;
+    letter-spacing: 0.1px;
+  }
+
+  .task-block .info .task-id {
+    display: none;
+  }
+
+  .task-block .info .subtitle {
+    font-weight: 600;
+    font-size: 11px;
+    line-height: 14px;
+    color: ${props => props.theme.textSecondary};
   }
 
   .notice-block {
