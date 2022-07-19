@@ -105,7 +105,6 @@ export default class EmbedTask extends Node {
   }
 
   toMarkdown(state, node) {
-    console.log({ taskId: node.attrs.taskId }, node.attrs);
     state.write("&&&");
     state.write(
       "[" +
