@@ -3,7 +3,6 @@ import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import { Union } from "../lib/icons";
 import * as React from "react";
-import ReactDOM from "react-dom";
 import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
 import Node from "./Node";
 import taskRUles from "../rules/embedTask";
@@ -15,7 +14,7 @@ export default class EmbedTask extends Node {
   get schema() {
     return {
       attrs: {
-        id: {
+        taskId: {
           default: "",
         },
         taskName: {
@@ -52,20 +51,20 @@ export default class EmbedTask extends Node {
   }
 
   component = props => {
-    const { id, taskName, projectName } = props.node.attrs;
+    const { taskId, taskName, projectName } = props.node.attrs;
     const { openATask } = this.editor.props;
-
+    console.log({ taskId, taskName, projectName });
     return (
       <div
         contentEditable={false}
         className="task-block"
-        onClick={() => openATask?.(id)}
+        onClick={() => openATask?.(taskId)}
       >
         <div className="icon">
           <Union />
         </div>
         <div className="info">
-          <p className="task-id">{id}</p>
+          <p className="task-id">{taskId}</p>
           <p className="title">{taskName}</p>
           <p className="subtitle">{projectName}</p>
         </div>
@@ -111,7 +110,7 @@ export default class EmbedTask extends Node {
     state.write(
       "[" +
         "taskId-" +
-        state.esc(node.attrs.id) +
+        state.esc(node.attrs.taskId) +
         "]" +
         "(" +
         state.esc(node.attrs.taskName) +
@@ -135,7 +134,7 @@ export default class EmbedTask extends Node {
         return {
           projectName: result ? taskName : null,
           taskName: result ? projectName : null,
-          id: result ? result[1] : null,
+          taskId: result ? result[1] : null,
         };
       },
     };

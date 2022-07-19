@@ -8,6 +8,7 @@ import baseDictionary from "../dictionary";
 export type ITask = {
   taskName: string;
   projectName: string;
+  taskId: string;
 };
 
 const embedATask = function(
@@ -51,7 +52,7 @@ const embedATask = function(
   // to allow all placeholders to be entered at once with the uploads
   // happening in the background in parallel.
   embedATask()
-    .then(({ taskName, projectName }) => {
+    .then(({ taskName, projectName, taskId }) => {
       const pos = findPlaceholder(view.state, id);
 
       // if the content around the placeholder has been deleted
@@ -62,7 +63,7 @@ const embedATask = function(
         .replaceWith(
           pos,
           pos,
-          schema.nodes.container_task.create({ taskName, projectName })
+          schema.nodes.container_task.create({ taskName, projectName, taskId })
         )
         .setMeta(embedTaskPlaceholderPlugin, { remove: { id } });
 
