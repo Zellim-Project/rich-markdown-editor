@@ -17,6 +17,9 @@ export default class EmbedTask extends Node {
         taskId: {
           default: "",
         },
+        projectId: {
+          default: "",
+        },
         taskName: {
           default: "",
         },
@@ -36,6 +39,7 @@ export default class EmbedTask extends Node {
           getAttrs: (dom: HTMLDivElement) => ({
             taskName: dom.getElementsByClassName("title")[0].textContent,
             taskId: dom.getElementsByClassName("task-id")[0].textContent,
+            projectId: dom.getElementsByClassName("project-id")[0].textContent,
             projectName: dom.getElementsByClassName("subtitle")[0].textContent,
           }),
         },
@@ -51,19 +55,20 @@ export default class EmbedTask extends Node {
   }
 
   component = props => {
-    const { taskId, taskName, projectName } = props.node.attrs;
+    const { taskId, projectId, taskName, projectName } = props.node.attrs;
     const { openATask } = this.editor.props;
     return (
       <div
         contentEditable={false}
         className="task-block"
-        onClick={() => openATask?.(taskId)}
+        onClick={() => openATask?.({ taskId, projectId })}
       >
         <div className="icon">
           <Union />
         </div>
         <div className="info">
           <p className="task-id">{taskId}</p>
+          <p className="project-id">{projectId}</p>
           <p className="title">{taskName}</p>
           <p className="subtitle">{projectName}</p>
         </div>
@@ -110,6 +115,8 @@ export default class EmbedTask extends Node {
       "[" +
         "taskId-" +
         state.esc(node.attrs.taskId) +
+        "-" +
+        state.esc(node.attrs.projectId) +
         "]" +
         "(" +
         state.esc(node.attrs.taskName) +
@@ -129,10 +136,12 @@ export default class EmbedTask extends Node {
         const file_regex = /\[(?<taskId>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         const [taskName, projectName] = result?.[2].split("&-&") || [];
+        const [taskId, projectId] = result?.[1].split("-") || [];
         return {
           projectName: result ? taskName : null,
           taskName: result ? projectName : null,
-          taskId: result ? result[1] : null,
+          taskId: result ? taskId : null,
+          projectId: result ? projectId : null,
         };
       },
     };
