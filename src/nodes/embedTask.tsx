@@ -136,7 +136,7 @@ export default class EmbedTask extends Node {
         const file_regex = /\[(?<taskId>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         const [taskName, projectName] = result?.[2].split("&-&") || [];
-        const [taskId, projectId] = result?.[1].split("-") || [];
+        const [, taskId, projectId] = result?.[1].split("-") || [];
         return {
           projectName: result ? taskName : null,
           taskName: result ? projectName : null,
