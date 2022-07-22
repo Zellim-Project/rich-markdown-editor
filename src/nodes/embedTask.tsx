@@ -80,27 +80,6 @@ export default class EmbedTask extends Node {
     return attrs => toggleWrap(type, attrs);
   }
 
-  /* inputRules({ type }) {
-    return [
-      new InputRule(EMBED_TASK_REGEX, (state, match, start, end) => {
-        const [okay, taskName, projectName] = match;
-        const { tr } = state;
-        console.log(okay, match);
-        if (okay) {
-          tr.replaceWith(
-            start - 1,
-            end,
-            type.create({
-              taskName,
-              projectName,
-            })
-          );
-        }
-
-        return tr;
-      }),
-    ];
-  } */
   get rulePlugins() {
     return [taskRUles];
   }
@@ -138,8 +117,8 @@ export default class EmbedTask extends Node {
         const [taskName, projectName] = result?.[2].split("&-&") || [];
         const [, taskId, projectId] = result?.[1].split("-") || [];
         return {
-          projectName: result ? taskName : null,
-          taskName: result ? projectName : null,
+          projectName: result ? projectName : null,
+          taskName: result ? taskName : null,
           taskId: result ? taskId : null,
           projectId: result ? projectId : null,
         };
