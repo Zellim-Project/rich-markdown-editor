@@ -94,11 +94,8 @@ export default class EmbedTask extends Node {
       "[" +
         "taskId-" +
         state.esc(node.attrs.taskId) +
-        "-" +
         state.esc(node.attrs.projectId) +
         "]" +
-        "(" +
-        state.esc(node.attrs.taskName) +
         "&-&" +
         state.esc(node.attrs.projectName) +
         ")"

@@ -9,7 +9,10 @@ export type ITask = {
   taskName: string;
   projectName: string;
   taskId: string;
+<<<<<<< HEAD
   projectId: string;
+=======
+>>>>>>> 0459cf2a48887bba873377d8fa2e7ebcd72a099b
 };
 
 const embedATask = function(
