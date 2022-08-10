@@ -387,6 +387,10 @@ export const StyledEditor = styled("div")<{
     display: none;
   }
 
+  .task-block .info .project-id {
+    display: none;
+  }
+
   .task-block .info .subtitle {
     font-weight: 600;
     font-size: 11px;
