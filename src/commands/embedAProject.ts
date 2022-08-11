@@ -65,7 +65,7 @@ const embedAProject = function(
         .replaceWith(
           pos,
           pos,
-          schema.nodes.container_task.create({
+          schema.nodes.container_project.create({
             projectImg,
             projectName,
             projectId,
