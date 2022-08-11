@@ -8,7 +8,7 @@ import projectRules from "../rules/embedProject";
 
 const getLetter = (data): string => {
   return (
-    data?.name
+    data
       ?.replace(/(?<first>\w{1})(?<dirty>.*)/, (...args) => {
         const [{ first }] = args.reverse();
         return first.toUpperCase();
