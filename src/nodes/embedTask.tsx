@@ -3,9 +3,9 @@ import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import { Union } from "../lib/icons";
 import * as React from "react";
-import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
+import embedTaskPlaceHolder from "../lib/embedSimplePlaceHolder";
 import Node from "./Node";
-import taskRUles from "../rules/embedTask";
+import taskRules from "../rules/embedTask";
 export default class EmbedTask extends Node {
   get name() {
     return "container_task";
@@ -33,7 +33,7 @@ export default class EmbedTask extends Node {
       draggable: false,
       parseDOM: [
         {
-          tag: "div.task-block",
+          tag: "div.embed-block",
           preserveWhitespace: "full",
           contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => ({
@@ -47,7 +47,7 @@ export default class EmbedTask extends Node {
       toDOM: node => {
         return [
           "div",
-          { class: "task-block" },
+          { class: "embed-block" },
           ["p", { ...node.attrs, contentEditable: false }],
         ];
       },
@@ -60,7 +60,7 @@ export default class EmbedTask extends Node {
     return (
       <div
         contentEditable={false}
-        className="task-block"
+        className="embed-block"
         onClick={() => openATask?.({ taskId, projectId })}
       >
         <div className="icon">
@@ -81,7 +81,7 @@ export default class EmbedTask extends Node {
   }
 
   get rulePlugins() {
-    return [taskRUles];
+    return [taskRules];
   }
 
   inputRules({ type }) {

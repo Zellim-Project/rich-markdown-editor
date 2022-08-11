@@ -2,7 +2,7 @@ import { Plugin } from "prosemirror-state";
 import { Decoration, DecorationSet } from "prosemirror-view";
 
 // based on the example at: https://prosemirror.net/examples/upload/
-const embedTaskPlaceholder = new Plugin({
+const embedSimplePlaceHolder = new Plugin({
   state: {
     init() {
       return DecorationSet.empty;
@@ -36,10 +36,10 @@ const embedTaskPlaceholder = new Plugin({
   },
 });
 
-export default embedTaskPlaceholder;
+export default embedSimplePlaceHolder;
 
 export function findPlaceholder(state, id) {
-  const decos = embedTaskPlaceholder.getState(state);
+  const decos = embedSimplePlaceHolder.getState(state);
   const found = decos.find(null, null, spec => spec.id === id);
   return found.length ? found[0].from : null;
 }

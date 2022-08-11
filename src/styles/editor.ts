@@ -351,7 +351,7 @@ export const StyledEditor = styled("div")<{
     top: 1px;
   }
 
-  .task-block {
+  .embed-block {
     background: ${props => props.theme.blockToolbarSelectedBackground};
     width: 295px;
     display: flex;
@@ -359,7 +359,7 @@ export const StyledEditor = styled("div")<{
     height: 60px;
   }
 
-  .task-block .icon {
+  .embed-block .icon {
     display: flex;
     align-items: center;
     color: #898E9A;
@@ -369,12 +369,18 @@ export const StyledEditor = styled("div")<{
     border-radius: 8px;
   }
 
-  .task-block .icon svg {
+  .embed-block .icon svg {
     height: 18px;
     width: 18px;
   }
 
-  .task-block .info .title {
+  .embed-block .embed-img {
+    line-height: 32px;
+    height: 32px;
+    width: 32px;
+  }
+
+  .embed-block .info .title {
     color: ${props => props.theme.blockToolbarIconSelected};
     font-size: 14px;
     font-weight: 700;
@@ -383,15 +389,15 @@ export const StyledEditor = styled("div")<{
     letter-spacing: 0.1px;
   }
 
-  .task-block .info .task-id {
+  .embed-block .info .task-id {
     display: none;
   }
 
-  .task-block .info .project-id {
+  .embed-block .info .project-id {
     display: none;
   }
 
-  .task-block .info .subtitle {
+  .embed-block .info .subtitle {
     font-weight: 600;
     font-size: 11px;
     line-height: 14px;

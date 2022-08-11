@@ -159,5 +159,11 @@ export default function blockMenuItems(
       icon: DocumentIcon,
       keywords: "task embed",
     },
+    {
+      name: "container_project",
+      title: dictionary.embedAProject,
+      icon: DocumentIcon,
+      keywords: "project embed",
+    },
   ];
 }

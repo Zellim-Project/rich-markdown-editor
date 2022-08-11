@@ -50,6 +50,7 @@ import ListItem from "./nodes/ListItem";
 import Notice from "./nodes/Notice";
 import FileDoc from "./nodes/FileDoc";
 import EmbedTask from "./nodes/embedTask";
+import EmbedProject from "./nodes/embedProject";
 import OrderedList from "./nodes/OrderedList";
 import Paragraph from "./nodes/Paragraph";
 import Table from "./nodes/Table";
@@ -81,6 +82,7 @@ import PasteHandler from "./plugins/PasteHandler";
 import { PluginSimple } from "markdown-it";
 
 import { ITask } from "./commands/embedATask";
+import { IProject } from "./commands/embedAProject";
 
 export { default as Extension } from "./lib/Extension";
 
@@ -140,6 +142,8 @@ export type Props = {
   uploadFile?: (file: File) => Promise<string>;
   embedATask?: () => Promise<ITask>;
   openATask?: (val: { taskId: string; projectId: string }) => Promise<void>;
+  embedAProject?: () => Promise<IProject>;
+  openAProject?: (val: { projectId: string }) => Promise<void>;
   onBlur?: () => void;
   onFocus?: () => void;
   onSave?: ({ done: boolean }) => void;
@@ -353,6 +357,12 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             dictionary,
             embedATask: this.props.embedATask,
             openATask: this.props.openATask,
+            onShowToast: this.props.onShowToast,
+          }),
+          new EmbedProject({
+            dictionary,
+            embedAProject: this.props.embedAProject,
+            openAProject: this.props.openAProject,
             onShowToast: this.props.onShowToast,
           }),
           new Heading({
@@ -826,6 +836,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
                   uploadImage={this.props.uploadImage}
                   uploadFile={this.props.uploadFile}
                   embedATask={this.props.embedATask}
+                  embedAProject={this.props.embedAProject}
                   onLinkToolbarOpen={this.handleOpenLinkMenu}
                   onImageUploadStart={this.props.onImageUploadStart}
                   onImageUploadStop={this.props.onImageUploadStop}

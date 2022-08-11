@@ -34,6 +34,7 @@ export const base = {
   image: "Image",
   file: "File",
   embedATask: "Embed A Task",
+  embedAProject: "Embed A Project",
   imageUploadError: "Sorry, an error occurred uploading the image",
   imageCaptionPlaceholder: "Write a caption",
   info: "Info",
