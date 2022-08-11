@@ -1,7 +1,8 @@
 import { EditorView } from "prosemirror-view";
-import embedProjectPlaceholderPlugin, {
+import {
+  embedProjectPlaceholder,
   findPlaceholder,
-} from "../lib/embedProjectPlaceHolder";
+} from "../lib/embedSimplePlaceHolder";
 import { ToastType } from "../types";
 import baseDictionary from "../dictionary";
 
@@ -42,7 +43,7 @@ const embedAProject = function(
 
   // insert a placeholder at this position, or mark an existing image as being
   // replaced
-  tr.setMeta(embedProjectPlaceholderPlugin, {
+  tr.setMeta(embedProjectPlaceholder, {
     add: {
       id,
       pos,
@@ -55,7 +56,7 @@ const embedAProject = function(
   // happening in the background in parallel.
   embedAProject()
     .then(({ projectImg, projectName, projectId, projectColor, members }) => {
-      const pos = findPlaceholder(view.state, id);
+      const pos = findPlaceholder(view.state, id, "project");
 
       // if the content around the placeholder has been deleted
       // then forget about inserting this file
@@ -73,7 +74,7 @@ const embedAProject = function(
             members,
           })
         )
-        .setMeta(embedProjectPlaceholderPlugin, { remove: { id } });
+        .setMeta(embedProjectPlaceholder, { remove: { id } });
 
       view.dispatch(transaction);
     })
@@ -81,7 +82,7 @@ const embedAProject = function(
       console.error(error);
 
       // cleanup the placeholder if there is a failure
-      const transaction = view.state.tr.setMeta(embedProjectPlaceholderPlugin, {
+      const transaction = view.state.tr.setMeta(embedProjectPlaceholder, {
         remove: { id },
       });
       view.dispatch(transaction);

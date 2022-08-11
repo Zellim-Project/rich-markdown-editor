@@ -1,7 +1,8 @@
 import { EditorView } from "prosemirror-view";
-import embedTaskPlaceholderPlugin, {
+import {
+  embedTaskPlaceholder,
   findPlaceholder,
-} from "../lib/embedTaskPlaceHolder";
+} from "../lib/embedSimplePlaceHolder";
 import { ToastType } from "../types";
 import baseDictionary from "../dictionary";
 
@@ -41,7 +42,7 @@ const embedATask = function(
 
   // insert a placeholder at this position, or mark an existing image as being
   // replaced
-  tr.setMeta(embedTaskPlaceholderPlugin, {
+  tr.setMeta(embedTaskPlaceholder, {
     add: {
       id,
       pos,
@@ -54,7 +55,7 @@ const embedATask = function(
   // happening in the background in parallel.
   embedATask()
     .then(({ taskName, projectName, taskId, projectId }) => {
-      const pos = findPlaceholder(view.state, id);
+      const pos = findPlaceholder(view.state, id, "task");
 
       // if the content around the placeholder has been deleted
       // then forget about inserting this file
@@ -71,7 +72,7 @@ const embedATask = function(
             projectId,
           })
         )
-        .setMeta(embedTaskPlaceholderPlugin, { remove: { id } });
+        .setMeta(embedTaskPlaceholder, { remove: { id } });
 
       view.dispatch(transaction);
     })
@@ -79,7 +80,7 @@ const embedATask = function(
       console.error(error);
 
       // cleanup the placeholder if there is a failure
-      const transaction = view.state.tr.setMeta(embedTaskPlaceholderPlugin, {
+      const transaction = view.state.tr.setMeta(embedTaskPlaceholder, {
         remove: { id },
       });
       view.dispatch(transaction);
