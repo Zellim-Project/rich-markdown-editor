@@ -352,6 +352,7 @@ export const StyledEditor = styled("div")<{
   }
 
   .embed-block {
+    cursor: pointer;
     background: ${props => props.theme.blockToolbarSelectedBackground};
     width: 295px;
     display: flex;
@@ -381,6 +382,7 @@ export const StyledEditor = styled("div")<{
     height: 32px;
     width: 32px;
     text-align: center;
+    border-radius: 8px;
   }
 
   .embed-block .info .title {
