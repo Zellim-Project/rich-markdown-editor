@@ -1,7 +1,7 @@
 import { EditorView } from "prosemirror-view";
 import embedProjectPlaceholderPlugin, {
   findPlaceholder,
-} from "../lib/embedSimplePlaceHolder";
+} from "../lib/embedProjectPlaceHolder";
 import { ToastType } from "../types";
 import baseDictionary from "../dictionary";
 

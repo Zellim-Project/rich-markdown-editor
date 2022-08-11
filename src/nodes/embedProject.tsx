@@ -2,7 +2,7 @@ import { wrappingInputRule } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import * as React from "react";
-import embedProjectPlaceHolder from "../lib/embedSimplePlaceHolder";
+import embedProjectPlaceHolder from "../lib/embedProjectPlaceHolder";
 import Node from "./Node";
 import projectRules from "../rules/embedProject";
 

@@ -3,7 +3,7 @@ import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import { Union } from "../lib/icons";
 import * as React from "react";
-import embedTaskPlaceHolder from "../lib/embedSimplePlaceHolder";
+import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
 import Node from "./Node";
 import taskRules from "../rules/embedTask";
 export default class EmbedTask extends Node {
