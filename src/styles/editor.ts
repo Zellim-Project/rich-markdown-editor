@@ -380,13 +380,14 @@ export const StyledEditor = styled("div")<{
     line-height: 32px;
     height: 32px;
     width: 32px;
+    text-align: center;
   }
 
   .embed-block .info .title {
     color: ${props => props.theme.blockToolbarIconSelected};
     font-size: 14px;
     font-weight: 700;
-    margin-top: 13px;
+    margin-top: 12px;
     line-height: 20px;
     letter-spacing: 0.1px;
   }
