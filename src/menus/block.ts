@@ -17,6 +17,7 @@ import {
   InfoIcon,
   LinkIcon,
 } from "outline-icons";
+import { Project } from "../lib/icons";
 import { MenuItem } from "../types";
 import baseDictionary from "../dictionary";
 
@@ -124,6 +125,18 @@ export default function blockMenuItems(
       keywords: "link url uri href",
     },
     {
+      name: "container_task",
+      title: dictionary.embedATask,
+      icon: DocumentIcon,
+      keywords: "task embed",
+    },
+    {
+      name: "container_project",
+      title: dictionary.embedAProject,
+      icon: Project,
+      keywords: "project embed",
+    },
+    {
       name: "separator",
     },
     {
@@ -152,18 +165,6 @@ export default function blockMenuItems(
       title: dictionary.file,
       icon: DocumentIcon,
       keywords: "file",
-    },
-    {
-      name: "container_task",
-      title: dictionary.embedATask,
-      icon: DocumentIcon,
-      keywords: "task embed",
-    },
-    {
-      name: "container_project",
-      title: dictionary.embedAProject,
-      icon: DocumentIcon,
-      keywords: "project embed",
     },
   ];
 }
