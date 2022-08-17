@@ -354,10 +354,12 @@ export const StyledEditor = styled("div")<{
   .embed-block {
     cursor: pointer;
     background: ${props => props.theme.blockToolbarSelectedBackground};
-    width: 295px;
+    min-width: 295px;
     display: flex;
     border-radius: 12px;
-    height: 60px;
+    min-height: 60px;
+    height: fit-content;
+    width: fit-content;
   }
 
   .embed-block .icon {
@@ -390,6 +392,7 @@ export const StyledEditor = styled("div")<{
     font-size: 14px;
     font-weight: 700;
     margin-top: 12px;
+    margin-right: 12px;
     line-height: 20px;
     letter-spacing: 0.1px;
   }
@@ -403,6 +406,8 @@ export const StyledEditor = styled("div")<{
   }
 
   .embed-block .info .subtitle {
+    margin-bottom: 12px;
+    margin-right: 12px;
     font-weight: 600;
     font-size: 11px;
     line-height: 14px;
