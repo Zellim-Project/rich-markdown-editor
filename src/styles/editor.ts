@@ -355,6 +355,7 @@ export const StyledEditor = styled("div")<{
     cursor: pointer;
     background: ${props => props.theme.blockToolbarSelectedBackground};
     min-width: 295px;
+    max-width: 100%;
     display: flex;
     border-radius: 12px;
     min-height: 60px;
@@ -367,7 +368,7 @@ export const StyledEditor = styled("div")<{
     align-items: center;
     color: #898E9A;
     background: #FFFFFF1A;
-    margin: 12px;
+    margin: auto 12px;
     padding: 10px;
     border-radius: 8px;
   }
