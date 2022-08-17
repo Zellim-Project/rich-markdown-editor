@@ -379,7 +379,7 @@ export const StyledEditor = styled("div")<{
 
   .embed-block .embed-img {
     color: #FFFFFF;
-    margin: 12px;
+    margin: auto 12px;
     line-height: 32px;
     height: 32px;
     width: 32px;
