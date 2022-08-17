@@ -109,11 +109,11 @@ export default class EmbedProject extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^###$/, type)];
+    return [wrappingInputRule(/^#-#-#-$/, type)];
   }
 
   toMarkdown(state, node) {
-    state.write("###");
+    state.write("#-#-#-");
     state.write(
       "[" +
         "projectId-" +
@@ -130,7 +130,7 @@ export default class EmbedProject extends Node {
         ")"
     );
     state.ensureNewLine();
-    state.write("###");
+    state.write("#-#-#-");
     state.closeBlock(node);
   }
 

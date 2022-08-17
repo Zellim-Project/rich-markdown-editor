@@ -2,7 +2,7 @@ import customFence from "markdown-it-container";
 
 export default function project(md): void {
   return customFence(md, "project", {
-    marker: "#",
+    marker: "#-",
     validate: () => true,
     render: function(tokens, idx) {
       const { info } = tokens[idx];
