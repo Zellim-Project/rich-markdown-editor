@@ -89,10 +89,9 @@ export default class Heading extends Node {
   }
 
   toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
-    state.ensureNewLine();
     state.write("\\\n");
     state.write(state.repeat("#", node.attrs.level));
-    state.ensureNewLine();
+    state.write("\\\n");
     state.write("\\\n");
     state.renderInline(node);
     state.closeBlock(node);
