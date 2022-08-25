@@ -312,7 +312,7 @@ export default class Image extends Node {
     state.write("\\");
     state.write(markdown);
     state.ensureNewLine();
-    state.ensureNewLine();
+    state.write("\\");
     state.write("\\");
     state.closeBlock(node);
   }
