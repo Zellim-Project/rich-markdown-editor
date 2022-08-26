@@ -307,9 +307,9 @@ export default class Image extends Node {
       markdown += ' "' + state.esc(node.attrs.title) + '"';
     }
     markdown += ")";
-    state.write("\n\\\\\n\n");
+    state.ensureNewLine();
     state.write(markdown);
-    state.write("\n\\\n");
+    state.ensureNewLine();
     state.closeBlock(node);
   }
 

@@ -64,7 +64,7 @@ export default class EmbedProject extends Node {
         return [
           "div",
           { class: "embed-block" },
-          ["p", { ...node.attrs, contentEditable: false }],
+          ["div", { ...node.attrs, contentEditable: false }],
         ];
       },
     };
