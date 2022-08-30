@@ -92,6 +92,7 @@ export default class Heading extends Node {
     state.write(state.repeat("#", node.attrs.level));
     state.ensureNewLine();
     state.write("\\");
+    state.ensureNewLine();
     state.renderInline(node);
     state.closeBlock(node);
   }
