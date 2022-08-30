@@ -68,7 +68,7 @@ export default class Heading extends Node {
           [
             "span",
             {
-              contentEditable: false,
+              contentEditable: "false",
               class: `heading-actions ${
                 node.attrs.collapsed ? "collapsed" : ""
               }`,
@@ -93,6 +93,7 @@ export default class Heading extends Node {
     state.write(state.repeat("#", node.attrs.level));
     state.ensureNewLine();
     state.write("\\");
+    state.renderContent(node);
     state.closeBlock(node);
   }
 
