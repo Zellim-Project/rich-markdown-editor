@@ -1,13 +1,13 @@
 import { wrappingInputRule } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
-import { LinkIcon } from "outline-icons";
 import * as React from "react";
 import Node from "./Node";
 import filesRule from "../rules/files";
 import uploadFilePlaceholderPlugin from "../lib/uploadFilePlaceholder";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import insertAllFiles from "../commands/insertAllFiles";
+import { selectIcon } from "../lib/parseIcon";
 
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return "0 Bytes";
@@ -136,9 +136,7 @@ export default class File extends Node {
     const { alt, src, size, type } = props.node.attrs;
     return (
       <div contentEditable={false} className="embed-block">
-        <div className="icon">
-          <LinkIcon color="#898E9A" />
-        </div>
+        <div className="icon">{selectIcon(type)}</div>
         <div className="info">
           <a href={src} style={{ textDecoration: "none" }}>
             <p className="title">{alt}</p>
