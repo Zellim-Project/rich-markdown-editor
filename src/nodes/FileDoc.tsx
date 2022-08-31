@@ -110,12 +110,8 @@ export default class File extends Node {
           tag: "div.file-block",
           preserveWhitespace: "full",
           contentElement: "div:last-child",
-          getAttrs: (dom: HTMLDivElement) => ({
-            alt: dom.getElementsByClassName("title")[0].textContent,
-            src: dom.getElementsByTagName("a")[0].href,
-            size: dom.getElementsByClassName("file-size")[0].textContent,
-            type: dom.getElementsByClassName("file-type")[0].textContent,
-          }),
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          getAttrs: (_dom: HTMLDivElement) => ({}),
         },
       ],
       toDOM: node => {
