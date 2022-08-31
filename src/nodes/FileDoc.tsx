@@ -130,7 +130,6 @@ export default class File extends Node {
 
   component = props => {
     const { alt, src, size, type } = props.node.attrs;
-    console.log(123);
     return (
       <div contentEditable={false} className="embed-block">
         <div className="icon">

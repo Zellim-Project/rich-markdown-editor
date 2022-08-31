@@ -63,8 +63,8 @@ const insertAllFiles = function(view, event, pos, files, options) {
             schema.nodes.container_file.create({
               src,
               alt: file.name,
-              size: file.name,
-              type: file.name,
+              size: file?.size,
+              type: file?.type,
             })
           )
           .setMeta(uploadFilePlaceholderPlugin, { remove: { id } });
