@@ -113,6 +113,9 @@ export default class EmbedProject extends Node {
   }
 
   toMarkdown(state, node) {
+    state.ensureNewLine();
+    state.write("\\\\");
+    state.ensureNewLine();
     state.write("#-#-#-");
     state.write(
       "[" +
