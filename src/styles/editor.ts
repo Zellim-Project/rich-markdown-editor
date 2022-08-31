@@ -363,19 +363,26 @@ export const StyledEditor = styled("div")<{
     width: fit-content;
   }
 
-  .embed-block .icon {
+  .embed-block .icon, .embed-block .file-icon {
     display: flex;
     align-items: center;
-    color: #898E9A;
-    background: #FFFFFF1A;
     margin: auto 12px;
-    padding: 10px;
-    border-radius: 8px;
   }
 
+  .embed-block .icon {
+    border-radius: 8px;
+    color: #898E9A;
+    background: #FFFFFF1A;
+    padding: 10px;
+  }
   .embed-block .icon svg {
     height: 18px;
     width: 18px;
+  }
+
+  .embed-block .file-icon svg {
+    height: 36px;
+    width: 36px;
   }
 
   .embed-block .embed-img {
