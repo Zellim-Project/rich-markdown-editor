@@ -63,7 +63,7 @@ const insertAllFiles = function(view, event, pos, files, options) {
             schema.nodes.container_file.create({
               src,
               alt: file.name,
-              size: file?.size,
+              size: String(file?.size || ""),
               type: file?.type,
             })
           )

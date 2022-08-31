@@ -99,7 +99,7 @@ export default class File extends Node {
           default: "",
         },
         size: {
-          default: 0,
+          default: "",
         },
         type: {
           default: "",
@@ -144,7 +144,7 @@ export default class File extends Node {
             <p className="title">{alt}</p>
           </a>
           <p className="subtitle">
-            <span className="file-size">{formatBytes(size)} </span>•{" "}
+            <span className="file-size">{formatBytes(Number(size))} </span>•{" "}
             <span className="file-type">{type}</span>
           </p>
         </div>
