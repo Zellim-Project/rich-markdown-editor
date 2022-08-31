@@ -45,8 +45,6 @@ const insertAllFiles = function(view, event, pos, files, options) {
     });
     view.dispatch(tr);
 
-    console.log(file);
-
     // start uploading the file file to the server. Using "then" syntax
     // to allow all placeholders to be entered at once with the uploads
     // happening in the background in parallel.

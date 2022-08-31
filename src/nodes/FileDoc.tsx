@@ -113,8 +113,8 @@ export default class File extends Node {
           getAttrs: (dom: HTMLDivElement) => ({
             alt: dom.getElementsByClassName("title")[0].textContent,
             src: dom.getElementsByTagName("a")[0].href,
-            size: dom.getElementsByClassName("subtitle")[0].textContent,
-            type: dom.getElementsByClassName("subtitle")[0].textContent,
+            size: dom.getElementsByClassName("file-size")[0].textContent,
+            type: dom.getElementsByClassName("file-type")[0].textContent,
           }),
         },
       ],
@@ -140,7 +140,8 @@ export default class File extends Node {
             <p className="title">{alt}</p>
           </a>
           <p className="subtitle">
-            {formatBytes(size)} • {type}
+            <span className="file-size">{formatBytes(size)} </span>•{" "}
+            <span className="file-type">{type}</span>
           </p>
         </div>
       </div>
