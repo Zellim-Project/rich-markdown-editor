@@ -98,8 +98,12 @@ export default class File extends Node {
         alt: {
           default: "",
         },
-        size: {},
-        type: {},
+        size: {
+          default: 0,
+        },
+        type: {
+          default: "",
+        },
       },
       content: "block+",
       group: "block",
