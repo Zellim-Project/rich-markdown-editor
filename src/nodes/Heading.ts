@@ -68,7 +68,7 @@ export default class Heading extends Node {
           [
             "span",
             {
-              contentEditable: "false",
+              contentEditable: false,
               class: `heading-actions ${
                 node.attrs.collapsed ? "collapsed" : ""
               }`,
@@ -89,11 +89,8 @@ export default class Heading extends Node {
   }
 
   toMarkdown(state: MarkdownSerializerState, node: ProsemirrorNode) {
-    state.ensureNewLine();
     state.write(state.repeat("#", node.attrs.level));
-    state.ensureNewLine();
-    state.write("\\");
-    state.renderContent(node);
+    state.renderInline(node);
     state.closeBlock(node);
   }
 

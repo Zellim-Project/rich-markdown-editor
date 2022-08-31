@@ -3,7 +3,6 @@ import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import { LinkIcon } from "outline-icons";
 import * as React from "react";
-import ReactDOM from "react-dom";
 import Node from "./Node";
 import filesRule from "../rules/files";
 import uploadFilePlaceholderPlugin from "../lib/uploadFilePlaceholder";
@@ -87,6 +86,8 @@ export default class File extends Node {
         alt: {
           default: "",
         },
+        size: {},
+        type: {},
       },
       content: "block+",
       group: "block",
@@ -103,27 +104,33 @@ export default class File extends Node {
         },
       ],
       toDOM: node => {
-        const a = document.createElement("a");
-        a.href = node.attrs.src;
-        const fileName = document.createTextNode(node.attrs.alt);
-        a.appendChild(fileName);
-
-        const component = <LinkIcon color="#898E9A" />;
-
-        const icon = document.createElement("div");
-        icon.className = "icon";
-        ReactDOM.render(component, icon);
-
         return [
           "div",
-          { class: `file-block` },
-          icon,
-          a,
-          ["div", { contentEditable: true }],
+          { class: "embed-block" },
+          ["div", { ...node.attrs, contentEditable: true }],
         ];
       },
     };
   }
+
+  component = props => {
+    const { alt, src, size, type } = props.node.attrs;
+    return (
+      <div contentEditable={false} className="embed-block">
+        <div className="icon">
+          <LinkIcon color="#898E9A" />;
+        </div>
+        <div className="info">
+          <a href={src}>
+            <p className="title">{alt}</p>
+          </a>
+          <p className="subtitle">
+            {size} • {type}
+          </p>
+        </div>
+      </div>
+    );
+  };
 
   commands({ type }) {
     return attrs => toggleWrap(type, attrs);
@@ -141,6 +148,10 @@ export default class File extends Node {
         "]" +
         "(" +
         state.esc(node.attrs.src) +
+        "&-&" +
+        state.esc(node.attrs.size) +
+        "&-&" +
+        state.esc(node.attrs.type) +
         ")"
     );
     state.ensureNewLine();
@@ -154,8 +165,11 @@ export default class File extends Node {
       getAttrs: token => {
         const file_regex = /\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
+        const [src, size, type] = result?.[2].split("&-&") || [];
         return {
-          src: result ? result[2] : null,
+          src: result ? src : null,
+          size: result ? size : null,
+          type: result ? type : null,
           alt: result ? result[1] : null,
         };
       },
