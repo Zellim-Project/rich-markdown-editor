@@ -9,6 +9,18 @@ import uploadFilePlaceholderPlugin from "../lib/uploadFilePlaceholder";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import insertAllFiles from "../commands/insertAllFiles";
 
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return "0 Bytes";
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
+
 const uploadPlugin = options =>
   new Plugin({
     props: {
@@ -128,7 +140,7 @@ export default class File extends Node {
             <p className="title">{alt}</p>
           </a>
           <p className="subtitle">
-            {size} • {type}
+            {formatBytes(size)} • {type}
           </p>
         </div>
       </div>
