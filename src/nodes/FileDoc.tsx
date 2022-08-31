@@ -136,7 +136,7 @@ export default class File extends Node {
     const { alt, src, size, type } = props.node.attrs;
     return (
       <div contentEditable={false} className="embed-block">
-        <div className="icon">{selectIcon(type)}</div>
+        <div className="file-icon">{selectIcon(type)}</div>
         <div className="info">
           <a href={src} style={{ textDecoration: "none" }}>
             <p className="title">{alt}</p>
