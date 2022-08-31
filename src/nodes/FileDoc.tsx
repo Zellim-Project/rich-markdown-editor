@@ -99,7 +99,10 @@ export default class File extends Node {
           preserveWhitespace: "full",
           contentElement: "div:last-child",
           getAttrs: (dom: HTMLDivElement) => ({
-            alt: dom.className.includes("a"),
+            alt: dom.getElementsByClassName("title")[0].textContent,
+            src: dom.getElementsByTagName("a")[0].href,
+            size: dom.getElementsByClassName("subtitle")[0].textContent,
+            type: dom.getElementsByClassName("subtitle")[0].textContent,
           }),
         },
       ],
@@ -118,10 +121,10 @@ export default class File extends Node {
     return (
       <div contentEditable={false} className="embed-block">
         <div className="icon">
-          <LinkIcon color="#898E9A" />;
+          <LinkIcon color="#898E9A" />
         </div>
         <div className="info">
-          <a href={src}>
+          <a href={src} style={{ textDecoration: "none" }}>
             <p className="title">{alt}</p>
           </a>
           <p className="subtitle">
