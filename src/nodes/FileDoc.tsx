@@ -143,7 +143,7 @@ export default class File extends Node {
           </a>
           <p className="subtitle">
             <span className="file-size">{formatBytes(Number(size))} </span>•{" "}
-            <span className="file-type">{type}</span>
+            <span className="file-type">{type.toUpperCase()}</span>
           </p>
         </div>
       </div>
