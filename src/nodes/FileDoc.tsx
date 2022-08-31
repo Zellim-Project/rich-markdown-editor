@@ -110,8 +110,12 @@ export default class File extends Node {
           tag: "div.file-block",
           preserveWhitespace: "full",
           contentElement: "div:last-child",
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          getAttrs: (_dom: HTMLDivElement) => ({}),
+          getAttrs: (dom: HTMLDivElement) => ({
+            alt: dom.getElementsByClassName("title")[0].textContent,
+            src: dom.getElementsByTagName("a")[0].href,
+            size: dom.getElementsByClassName("file-size")[0].textContent,
+            type: dom.getElementsByClassName("file-type")[0].textContent,
+          }),
         },
       ],
       toDOM: node => {
@@ -126,6 +130,7 @@ export default class File extends Node {
 
   component = props => {
     const { alt, src, size, type } = props.node.attrs;
+    console.log(123);
     return (
       <div contentEditable={false} className="embed-block">
         <div className="icon">

@@ -55,6 +55,7 @@ const insertAllFiles = function(view, event, pos, files, options) {
         // if the content around the placeholder has been deleted
         // then forget about inserting this file
         if (pos === null) return;
+
         const transaction = view.state.tr
           .replaceWith(
             pos,
@@ -62,8 +63,8 @@ const insertAllFiles = function(view, event, pos, files, options) {
             schema.nodes.container_file.create({
               src,
               alt: file.name,
-              size: file.size,
-              type: file.type,
+              size: file.name,
+              type: file.name,
             })
           )
           .setMeta(uploadFilePlaceholderPlugin, { remove: { id } });
