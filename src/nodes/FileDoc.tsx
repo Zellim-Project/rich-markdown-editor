@@ -141,7 +141,10 @@ export default class File extends Node {
     return (
       <div contentEditable={false} className="embed-block">
         <div className="file-icon">
-          <img src={`/lib/files${getIcon(alt, mimeType)}`} alt="file-icon" />
+          <img
+            src={require(`../lib/icons/files${getIcon(alt, mimeType)}`)}
+            alt="file-icon"
+          />
         </div>
         <div className="info">
           <span className="mimetype">{mimeType}</span>
