@@ -8,7 +8,6 @@ import uploadFilePlaceholderPlugin from "../lib/uploadFilePlaceholder";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import insertAllFiles from "../commands/insertAllFiles";
 import { getIcon } from "../lib/parseIcon";
-import Path from "path";
 
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return "0 Bytes";
@@ -139,11 +138,10 @@ export default class File extends Node {
 
   component = props => {
     const { alt, src, size, type, mimeType } = props.node.attrs;
-    const dirPath = Path.join(__dirname, "/src/lib/icons/files");
     return (
       <div contentEditable={false} className="embed-block">
         <div className="file-icon">
-          <img src={`${dirPath}${getIcon(alt, mimeType)}`} alt="file-icon" />
+          <img src={`/lib/files${getIcon(alt, mimeType)}`} alt="file-icon" />
         </div>
         <div className="info">
           <span className="mimetype">{mimeType}</span>
