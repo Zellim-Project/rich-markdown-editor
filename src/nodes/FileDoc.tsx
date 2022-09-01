@@ -7,7 +7,7 @@ import filesRule from "../rules/files";
 import uploadFilePlaceholderPlugin from "../lib/uploadFilePlaceholder";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import insertAllFiles from "../commands/insertAllFiles";
-import { selectIcon } from "../lib/parseIcon";
+import { getIcon } from "../lib/parseIcon";
 
 function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return "0 Bytes";
@@ -104,6 +104,9 @@ export default class File extends Node {
         type: {
           default: "",
         },
+        mimeType: {
+          default: "",
+        },
       },
       content: "block+",
       group: "block",
@@ -119,6 +122,7 @@ export default class File extends Node {
             src: dom.getElementsByTagName("a")[0].href,
             size: dom.getElementsByClassName("file-size")[0].textContent,
             type: dom.getElementsByClassName("file-type")[0].textContent,
+            mimeType: dom.getElementsByClassName("mimeType")[0].textContent,
           }),
         },
       ],
@@ -133,11 +137,17 @@ export default class File extends Node {
   }
 
   component = props => {
-    const { alt, src, size, type } = props.node.attrs;
+    const { alt, src, size, type, mimeType } = props.node.attrs;
     return (
       <div contentEditable={false} className="embed-block">
-        <div className="file-icon">{selectIcon(type)}</div>
+        <div className="file-icon">
+          <img
+            src={`/lib/icons/files/${getIcon(alt, mimeType)}`}
+            alt="file-icon"
+          />
+        </div>
         <div className="info">
+          <span className="mimetype">{mimeType}</span>
           <a href={src} style={{ textDecoration: "none" }}>
             <p className="title">{alt}</p>
           </a>
@@ -173,6 +183,8 @@ export default class File extends Node {
         state.esc(node.attrs.size) +
         "&-&" +
         state.esc(node.attrs.type) +
+        "&-&" +
+        state.esc(node.attrs.mimeType) +
         ")"
     );
     state.ensureNewLine();
@@ -186,11 +198,12 @@ export default class File extends Node {
       getAttrs: token => {
         const file_regex = /\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
-        const [src, size, type] = result?.[2].split("&-&") || [];
+        const [src, size, type, mimeType] = result?.[2].split("&-&") || [];
         return {
           src: result ? src : null,
           size: result ? size : null,
           type: result ? type : null,
+          mimeType: result ? mimeType : null,
           alt: result ? result[1] : null,
         };
       },

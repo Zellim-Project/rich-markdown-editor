@@ -380,7 +380,7 @@ export const StyledEditor = styled("div")<{
     width: 18px;
   }
 
-  .embed-block .file-icon svg {
+  .embed-block .file-icon img {
     height: 36px;
     width: 36px;
   }
@@ -406,6 +406,10 @@ export const StyledEditor = styled("div")<{
   }
 
   .embed-block .info .task-id {
+    display: none;
+  }
+
+  .embed-block .info .mimeType {
     display: none;
   }
 

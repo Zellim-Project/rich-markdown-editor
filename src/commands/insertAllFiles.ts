@@ -65,6 +65,7 @@ const insertAllFiles = function(view, event, pos, files, options) {
               alt: file.name,
               size: String(file?.size || ""),
               type: file?.name?.split(".")?.reverse()?.[0],
+              mimetype: file?.type,
             })
           )
           .setMeta(uploadFilePlaceholderPlugin, { remove: { id } });
