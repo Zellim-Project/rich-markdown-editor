@@ -142,7 +142,7 @@ export default class File extends Node {
       <div contentEditable={false} className="embed-block">
         <div className="file-icon">
           <img
-            src={`../lib/icons/files${getIcon(alt, mimeType)}`}
+            src={`/assets/images/files${getIcon(alt, mimeType)}`}
             alt="file-icon"
           />
         </div>
