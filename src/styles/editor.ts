@@ -413,6 +413,10 @@ export const StyledEditor = styled("div")<{
     display: none;
   }
 
+  .embed-block .info .filename {
+    display: none;
+  }
+
   .embed-block .info .project-id {
     display: none;
   }

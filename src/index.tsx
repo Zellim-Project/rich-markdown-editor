@@ -142,6 +142,7 @@ export type Props = {
   uploadFile?: (file: File) => Promise<string>;
   embedATask?: () => Promise<ITask>;
   openATask?: (val: { taskId: string; projectId: string }) => Promise<void>;
+  downloadAFile?: (url: string) => Promise<void>;
   embedAProject?: () => Promise<IProject>;
   openAProject?: (val: { projectId: string }) => Promise<void>;
   onBlur?: () => void;
@@ -349,6 +350,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new FileDoc({
             dictionary,
             uploadFile: this.props.uploadFile,
+            downloadAFile: this.props.downloadAFile,
             onFileUploadStart: this.props.onFileUploadStart,
             onFileUploadStop: this.props.onFileUploadStop,
             onShowToast: this.props.onShowToast,

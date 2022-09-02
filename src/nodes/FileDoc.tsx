@@ -94,7 +94,7 @@ export default class File extends Node {
   get schema() {
     return {
       attrs: {
-        src: {},
+        fileName: {},
         alt: {
           default: "",
         },
@@ -119,7 +119,7 @@ export default class File extends Node {
           contentElement: "div:last-child",
           getAttrs: (dom: HTMLDivElement) => ({
             alt: dom.getElementsByClassName("title")[0].textContent,
-            src: dom.getElementsByTagName("a")[0].href,
+            fileName: dom.getElementsByClassName("filename")[0].textContent,
             size: dom.getElementsByClassName("file-size")[0].textContent,
             type: dom.getElementsByClassName("file-type")[0].textContent,
             mimeType: dom.getElementsByClassName("mimeType")[0].textContent,
@@ -137,9 +137,14 @@ export default class File extends Node {
   }
 
   component = props => {
-    const { alt, src, size, type, mimeType } = props.node.attrs;
+    const { alt, fileName, size, type, mimeType } = props.node.attrs;
+    const { downloadAFile } = this.editor.props;
     return (
-      <div contentEditable={false} className="embed-block">
+      <div
+        contentEditable={false}
+        className="embed-block"
+        onClick={() => downloadAFile?.(fileName)}
+      >
         <div className="file-icon">
           <img
             src={`/assets/images/files${getIcon(alt, mimeType)}`}
@@ -148,9 +153,8 @@ export default class File extends Node {
         </div>
         <div className="info">
           <span className="mimetype">{mimeType}</span>
-          <a href={src} style={{ textDecoration: "none" }}>
-            <p className="title">{alt}</p>
-          </a>
+          <span className="filename">{fileName}</span>
+          <p className="title">{alt}</p>
           <p className="subtitle">
             <span className="file-size">{formatBytes(Number(size))} </span>•{" "}
             <span className="file-type">{type.toUpperCase()}</span>
@@ -178,7 +182,7 @@ export default class File extends Node {
         state.esc(node.attrs.alt) +
         "]" +
         "(" +
-        state.esc(node.attrs.src) +
+        state.esc(node.attrs.fileName) +
         "&-&" +
         state.esc(node.attrs.size) +
         "&-&" +
@@ -198,9 +202,9 @@ export default class File extends Node {
       getAttrs: token => {
         const file_regex = /\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
-        const [src, size, type, mimeType] = result?.[2].split("&-&") || [];
+        const [fileName, size, type, mimeType] = result?.[2].split("&-&") || [];
         return {
-          src: result ? src : null,
+          fileName: result ? fileName : null,
           size: result ? size : null,
           type: result ? type : null,
           mimeType: result ? mimeType : null,
