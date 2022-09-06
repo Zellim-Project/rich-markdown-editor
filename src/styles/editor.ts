@@ -354,13 +354,18 @@ export const StyledEditor = styled("div")<{
   .embed-block {
     cursor: pointer;
     background: ${props => props.theme.blockToolbarSelectedBackground};
-    min-width: 295px;
     max-width: 100%;
     display: flex;
     border-radius: 12px;
     min-height: 60px;
     height: fit-content;
     width: fit-content;
+  }
+
+  @media (min-width: 768px) {
+    .embed-block {
+      min-width: 295px;
+    }
   }
 
   .embed-block .icon, .embed-block .file-icon {
