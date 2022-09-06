@@ -362,7 +362,7 @@ export const StyledEditor = styled("div")<{
     width: fit-content;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: 576px) {
     .embed-block {
       min-width: 295px;
     }
