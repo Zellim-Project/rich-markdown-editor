@@ -97,6 +97,7 @@ export default class EmbedTask extends Node {
       "[" +
         "taskId-" +
         state.esc(node.attrs.taskId) +
+        "-" +
         state.esc(node.attrs.projectId) +
         "]" +
         "(" +
