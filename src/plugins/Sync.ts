@@ -21,6 +21,7 @@ const selectionBuilder = (user) => {
     class: "ProseMirror-yjs-selection",
   };
 };
+
 export default class Sync extends Extension {
   get name(): string {
     return "sync";
