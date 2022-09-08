@@ -26,6 +26,8 @@ import Extension from "./lib/Extension";
 import ExtensionManager from "./lib/ExtensionManager";
 import ComponentView from "./lib/ComponentView";
 import headingToSlug from "./lib/headingToSlug";
+import { YXmlFragment } from "yjs/dist/src/internals";
+import { WebsocketProvider } from "y-websocket";
 
 // styles
 import { StyledEditor } from "./styles/editor";
@@ -66,6 +68,7 @@ import Link from "./marks/Link";
 import Strikethrough from "./marks/Strikethrough";
 import TemplatePlaceholder from "./marks/Placeholder";
 import Underline from "./marks/Underline";
+import Sync from "./plugins/Sync";
 
 // plugins
 import BlockMenuTrigger from "./plugins/BlockMenuTrigger";
@@ -90,6 +93,8 @@ export type Props = {
   id?: string;
   value?: string;
   defaultValue: string;
+  yXmlFragment: YXmlFragment;
+  yProvider: WebsocketProvider;
   placeholder: string;
   extensions?: Extension[];
   disableExtensions?: (
@@ -142,7 +147,7 @@ export type Props = {
   openATask?: (val: { taskId: string; projectId: string }) => Promise<void>;
   onBlur?: () => void;
   onFocus?: () => void;
-  onSave?: ({ done: boolean }) => void;
+  onSave?: ({ done }: { done: boolean }) => void;
   onCancel?: () => void;
   onChange?: (value: () => string) => void;
   onImageUploadStart?: () => void;
@@ -391,6 +396,10 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           }),
           new Strikethrough(),
           new OrderedList(),
+          new Sync({
+            yProvider: this.props.yProvider,
+            yXmlFragment: this.props.yXmlFragment,
+          }),
           new History(),
           new Folding(),
           new SmartText(),
