@@ -54,12 +54,15 @@
     "refractor": "^3.3.1",
     "resize-observer-polyfill": "^1.5.1",
     "slugify": "^1.4.0",
-    "smooth-scroll-into-view-if-needed": "^1.1.29"
+    "smooth-scroll-into-view-if-needed": "^1.1.29",
+    "y-prosemirror": "^1.1.3",
+    "yjs": "^13.5.41"
   },
   "peerDependencies": {
     "react": "^16.0.0 || ^17.0.0",
     "react-dom": "^16.0.0 || ^17.0.0",
-    "styled-components": "^5.0.0"
+    "styled-components": "^5.0.0",
+    "y-websocket": "^1.4.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
