@@ -1,16 +1,9 @@
 import { ReactElement } from "react";
 import ReactDOM from "react-dom";
-import {
-  ySyncPlugin,
-  yCursorPlugin,
-  // yUndoPlugin,
-  // undo,
-  // redo,
-} from "y-prosemirror";
+import { ySyncPlugin, yCursorPlugin } from "y-prosemirror";
 import EditorCursor from "../components/EditorCursor";
 import Extension from "../lib/Extension";
 import { Plugin } from "prosemirror-state";
-// import { keymap } from "prosemirror-keymap";
 
 function cursorBuilder(userInfo: Record<string, string>): HTMLElement {
   const cursor = document.createElement("span");
@@ -36,14 +29,6 @@ export default class Sync extends Extension {
 
   get plugins(): Plugin[] {
     return [
-      // ySyncPlugin(this.options.yXmlFragment),
-      // yCursorPlugin(this.options.yProvider.awareness),
-      // yUndoPlugin(),
-      // keymap({
-      //   "Mod-z": undo,
-      //   "Mod-y": redo,
-      //   "Mod-Shift-z": redo,
-      // }),
       ySyncPlugin(this.options.yXmlFragment),
       yCursorPlugin(
         this.options.yProvider.awareness,
