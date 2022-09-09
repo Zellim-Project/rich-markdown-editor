@@ -26,6 +26,8 @@ import Extension from "./lib/Extension";
 import ExtensionManager from "./lib/ExtensionManager";
 import ComponentView from "./lib/ComponentView";
 import headingToSlug from "./lib/headingToSlug";
+import { YXmlFragment } from "yjs/dist/src/internals";
+import { WebsocketProvider } from "y-websocket";
 
 // styles
 import { StyledEditor } from "./styles/editor";
@@ -67,6 +69,7 @@ import Link from "./marks/Link";
 import Strikethrough from "./marks/Strikethrough";
 import TemplatePlaceholder from "./marks/Placeholder";
 import Underline from "./marks/Underline";
+import Sync from "./plugins/Sync";
 
 // plugins
 import BlockMenuTrigger from "./plugins/BlockMenuTrigger";
@@ -92,6 +95,8 @@ export type Props = {
   id?: string;
   value?: string;
   defaultValue: string;
+  yXmlFragment: YXmlFragment;
+  yProvider: WebsocketProvider;
   placeholder: string;
   extensions?: Extension[];
   disableExtensions?: (
@@ -147,7 +152,7 @@ export type Props = {
   openAProject?: (val: { projectId: string }) => Promise<void>;
   onBlur?: () => void;
   onFocus?: () => void;
-  onSave?: ({ done: boolean }) => void;
+  onSave?: ({ done }: { done: boolean }) => void;
   onCancel?: () => void;
   onChange?: (value: () => string) => void;
   onImageUploadStart?: () => void;
@@ -192,7 +197,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     onImageUploadStop: () => {
       // no default behavior
     },
-    onClickLink: href => {
+    onClickLink: (href) => {
       window.open(href, "_blank");
     },
     embeds: [],
@@ -403,6 +408,10 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           }),
           new Strikethrough(),
           new OrderedList(),
+          new Sync({
+            yProvider: this.props.yProvider,
+            yXmlFragment: this.props.yXmlFragment,
+          }),
           new History(),
           new Folding(),
           new SmartText(),
@@ -434,7 +443,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           new MaxLength({
             maxLength: this.props.maxLength,
           }),
-        ].filter(extension => {
+        ].filter((extension) => {
           // Optionaly disable extensions
           if (this.props.disableExtensions) {
             return !(this.props.disableExtensions as string[]).includes(
@@ -559,7 +568,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     if (!this.element) {
       throw new Error("createView called before ref available");
     }
-    const isEditingCheckbox = tr => {
+    const isEditingCheckbox = (tr) => {
       return tr.steps.some(
         (step: Step) =>
           step.slice?.content?.firstChild?.type.name ===
@@ -585,7 +594,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         // changing then call our own change handler to let the outside world
         // know
         if (
-          transactions.some(tr => tr.docChanged) &&
+          transactions.some((tr) => tr.docChanged) &&
           (!self.props.readOnly ||
             (self.props.readOnlyWriteCheckboxes &&
               transactions.some(isEditingCheckbox)))
@@ -723,7 +732,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     const headings: { title: string; level: number; id: string }[] = [];
     const previouslySeen = {};
 
-    this.view.state.doc.forEach(node => {
+    this.view.state.doc.forEach((node) => {
       if (node.type.name === "heading") {
         // calculate the optimal slug
         const slug = headingToSlug(node);
@@ -790,7 +799,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
               rtl={isRTL}
               readOnly={readOnly}
               readOnlyWriteCheckboxes={readOnlyWriteCheckboxes}
-              ref={ref => (this.element = ref)}
+              ref={(ref) => (this.element = ref)}
             />
             {!readOnly && this.view && (
               <React.Fragment>

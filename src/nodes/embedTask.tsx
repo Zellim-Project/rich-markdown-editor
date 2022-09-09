@@ -44,7 +44,7 @@ export default class EmbedTask extends Node {
           }),
         },
       ],
-      toDOM: node => {
+      toDOM: (node) => {
         return [
           "div",
           { class: "embed-block" },
@@ -54,7 +54,7 @@ export default class EmbedTask extends Node {
     };
   }
 
-  component = props => {
+  component = (props) => {
     const { taskId, projectId, taskName, projectName } = props.node.attrs;
     const { openATask } = this.editor.props;
     return (
@@ -77,7 +77,7 @@ export default class EmbedTask extends Node {
   };
 
   commands({ type }) {
-    return attrs => toggleWrap(type, attrs);
+    return (attrs) => toggleWrap(type, attrs);
   }
 
   get rulePlugins() {
@@ -114,7 +114,7 @@ export default class EmbedTask extends Node {
   parseMarkdown() {
     return {
       block: "container_task",
-      getAttrs: token => {
+      getAttrs: (token) => {
         const file_regex = /\[(?<taskId>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         const [taskName, projectName] = result?.[2].split("&-&") || [];

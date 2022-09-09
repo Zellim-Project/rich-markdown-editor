@@ -184,7 +184,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  insertItem = item => {
+  insertItem = (item) => {
     switch (item.name) {
       case "image":
         return this.triggerImagePick();
@@ -289,11 +289,11 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  triggerLinkInput = item => {
+  triggerLinkInput = (item) => {
     this.setState({ insertItem: item });
   };
 
-  handleImagePicked = event => {
+  handleImagePicked = (event) => {
     const files = getDataTransferFiles(event);
 
     const {
@@ -304,7 +304,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       onShowToast,
     } = this.props;
     const { state } = view;
-    const parent = findParentNode(node => !!node)(state.selection);
+    const parent = findParentNode((node) => !!node)(state.selection);
 
     this.clearSearch();
 
@@ -329,7 +329,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClose();
   };
 
-  handleFilePicked = event => {
+  handleFilePicked = (event) => {
     const files = getDataTransferFiles(event);
 
     const {
@@ -340,7 +340,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       onShowToast,
     } = this.props;
     const { state, dispatch } = view;
-    const parent = findParentNode(node => !!node)(state.selection);
+    const parent = findParentNode((node) => !!node)(state.selection);
 
     if (parent) {
       dispatch(
@@ -363,10 +363,10 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClose();
   };
 
-  handleEmbedATask = event => {
+  handleEmbedATask = (event) => {
     const { view, embedATask, onShowToast } = this.props;
     const { state, dispatch } = view;
-    const parent = findParentNode(node => !!node)(state.selection);
+    const parent = findParentNode((node) => !!node)(state.selection);
 
     if (parent) {
       dispatch(
@@ -387,10 +387,10 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClose();
   };
 
-  handleEmbedAProject = event => {
+  handleEmbedAProject = (event) => {
     const { view, embedAProject, onShowToast } = this.props;
     const { state, dispatch } = view;
-    const parent = findParentNode(node => !!node)(state.selection);
+    const parent = findParentNode((node) => !!node)(state.selection);
 
     if (parent) {
       dispatch(
@@ -543,7 +543,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       items = items.concat(embedItems);
     }
 
-    const filtered = items.filter(item => {
+    const filtered = items.filter((item) => {
       if (item.name === "separator") return true;
 
       // Some extensions may be disabled, remove corresponding menu items
@@ -696,7 +696,7 @@ const LinkInputWrapper = styled.div`
 const LinkInput = styled(Input)`
   height: 36px;
   width: 100%;
-  color: ${props => props.theme.blockToolbarText};
+  color: ${(props) => props.theme.blockToolbarText};
 `;
 
 const List = styled.ol`
@@ -715,7 +715,7 @@ const ListItem = styled.li`
 const Empty = styled.div`
   display: flex;
   align-items: center;
-  color: ${props => props.theme.textSecondary};
+  color: ${(props) => props.theme.textSecondary};
   font-weight: 500;
   font-size: 14px;
   height: 36px;
@@ -729,14 +729,14 @@ export const Wrapper = styled.div<{
   left?: number;
   isAbove: boolean;
 }>`
-  color: ${props => props.theme.text};
-  font-family: ${props => props.theme.fontFamily};
+  color: ${(props) => props.theme.text};
+  font-family: ${(props) => props.theme.fontFamily};
   position: absolute;
-  z-index: ${props => props.theme.zIndex + 100};
-  ${props => props.top !== undefined && `top: ${props.top}px`};
-  ${props => props.bottom !== undefined && `bottom: ${props.bottom}px`};
-  left: ${props => props.left}px;
-  background-color: ${props => props.theme.blockToolbarBackground};
+  z-index: ${(props) => props.theme.zIndex + 100};
+  ${(props) => props.top !== undefined && `top: ${props.top}px`};
+  ${(props) => props.bottom !== undefined && `bottom: ${props.bottom}px`};
+  left: ${(props) => props.left}px;
+  background-color: ${(props) => props.theme.blockToolbarBackground};
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px,
     rgba(0, 0, 0, 0.08) 0px 4px 8px, rgba(0, 0, 0, 0.08) 0px 2px 4px;
@@ -761,7 +761,7 @@ export const Wrapper = styled.div<{
   hr {
     border: 0;
     height: 0;
-    border-top: 1px solid ${props => props.theme.blockToolbarDivider};
+    border-top: 1px solid ${(props) => props.theme.blockToolbarDivider};
   }
 
   ${({ active, isAbove }) =>
