@@ -2,6 +2,247 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.25.0-alpha.0](https://github.com/outline/rich-markdown-editor/compare/v11.24.5...v11.25.0-alpha.0) (2022-09-09)
+
+## [11.24.0-alpha.109](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.108...v11.24.0-alpha.109) (2022-09-07)
+
+## [11.24.0-alpha.108](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.107...v11.24.0-alpha.108) (2022-09-06)
+
+## [11.24.0-alpha.107](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.106...v11.24.0-alpha.107) (2022-09-06)
+
+## [11.24.0-alpha.106](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.105...v11.24.0-alpha.106) (2022-09-02)
+
+## [11.24.0-alpha.105](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.104...v11.24.0-alpha.105) (2022-09-01)
+
+## [11.24.0-alpha.104](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.103...v11.24.0-alpha.104) (2022-09-01)
+
+## [11.24.0-alpha.103](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.102...v11.24.0-alpha.103) (2022-09-01)
+
+## [11.24.0-alpha.102](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.101...v11.24.0-alpha.102) (2022-09-01)
+
+## [11.24.0-alpha.101](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.100...v11.24.0-alpha.101) (2022-09-01)
+
+## [11.24.0-alpha.100](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.99...v11.24.0-alpha.100) (2022-09-01)
+
+## [11.24.0-alpha.99](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.98...v11.24.0-alpha.99) (2022-09-01)
+
+## [11.24.0-alpha.98](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.97...v11.24.0-alpha.98) (2022-08-31)
+
+## [11.24.0-alpha.97](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.96...v11.24.0-alpha.97) (2022-08-31)
+
+## [11.24.0-alpha.96](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.95...v11.24.0-alpha.96) (2022-08-31)
+
+## [11.24.0-alpha.95](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.94...v11.24.0-alpha.95) (2022-08-31)
+
+## [11.24.0-alpha.94](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.93...v11.24.0-alpha.94) (2022-08-31)
+
+## [11.24.0-alpha.93](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.92...v11.24.0-alpha.93) (2022-08-31)
+
+## [11.24.0-alpha.92](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.91...v11.24.0-alpha.92) (2022-08-31)
+
+## [11.24.0-alpha.91](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.90...v11.24.0-alpha.91) (2022-08-31)
+
+## [11.24.0-alpha.90](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.89...v11.24.0-alpha.90) (2022-08-31)
+
+## [11.24.0-alpha.89](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.88...v11.24.0-alpha.89) (2022-08-31)
+
+## [11.24.0-alpha.88](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.87...v11.24.0-alpha.88) (2022-08-31)
+
+## [11.24.0-alpha.87](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.86...v11.24.0-alpha.87) (2022-08-31)
+
+## [11.24.0-alpha.86](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.85...v11.24.0-alpha.86) (2022-08-31)
+
+## [11.24.0-alpha.85](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.84...v11.24.0-alpha.85) (2022-08-30)
+
+## [11.24.0-alpha.84](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.83...v11.24.0-alpha.84) (2022-08-30)
+
+## [11.24.0-alpha.83](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.82...v11.24.0-alpha.83) (2022-08-30)
+
+## [11.24.0-alpha.82](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.81...v11.24.0-alpha.82) (2022-08-30)
+
+## [11.24.0-alpha.81](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.80...v11.24.0-alpha.81) (2022-08-30)
+
+## [11.24.0-alpha.80](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.79...v11.24.0-alpha.80) (2022-08-26)
+
+## [11.24.0-alpha.79](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.78...v11.24.0-alpha.79) (2022-08-26)
+
+## [11.24.0-alpha.78](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.77...v11.24.0-alpha.78) (2022-08-25)
+
+## [11.24.0-alpha.77](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.76...v11.24.0-alpha.77) (2022-08-25)
+
+## [11.24.0-alpha.76](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.75...v11.24.0-alpha.76) (2022-08-25)
+
+## [11.24.0-alpha.75](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.74...v11.24.0-alpha.75) (2022-08-25)
+
+## [11.24.0-alpha.74](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.73...v11.24.0-alpha.74) (2022-08-25)
+
+## [11.24.0-alpha.73](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.72...v11.24.0-alpha.73) (2022-08-25)
+
+## [11.24.0-alpha.72](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.71...v11.24.0-alpha.72) (2022-08-25)
+
+## [11.24.0-alpha.71](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.70...v11.24.0-alpha.71) (2022-08-25)
+
+## [11.24.0-alpha.70](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.69...v11.24.0-alpha.70) (2022-08-25)
+
+## [11.24.0-alpha.69](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.68...v11.24.0-alpha.69) (2022-08-25)
+
+## [11.24.0-alpha.68](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.67...v11.24.0-alpha.68) (2022-08-25)
+
+## [11.24.0-alpha.67](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.66...v11.24.0-alpha.67) (2022-08-25)
+
+## [11.24.0-alpha.66](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.65...v11.24.0-alpha.66) (2022-08-24)
+
+## [11.24.0-alpha.65](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.64...v11.24.0-alpha.65) (2022-08-17)
+
+## [11.24.0-alpha.64](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.63...v11.24.0-alpha.64) (2022-08-17)
+
+## [11.24.0-alpha.63](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.62...v11.24.0-alpha.63) (2022-08-17)
+
+## [11.24.0-alpha.62](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.61...v11.24.0-alpha.62) (2022-08-17)
+
+## [11.24.0-alpha.61](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.60...v11.24.0-alpha.61) (2022-08-12)
+
+## [11.24.0-alpha.60](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.59...v11.24.0-alpha.60) (2022-08-12)
+
+## [11.24.0-alpha.59](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.58...v11.24.0-alpha.59) (2022-08-12)
+
+## [11.24.0-alpha.58](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.57...v11.24.0-alpha.58) (2022-08-11)
+
+## [11.24.0-alpha.57](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.56...v11.24.0-alpha.57) (2022-08-11)
+
+## [11.24.0-alpha.56](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.55...v11.24.0-alpha.56) (2022-08-11)
+
+## [11.24.0-alpha.55](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.54...v11.24.0-alpha.55) (2022-08-11)
+
+## [11.24.0-alpha.54](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.53...v11.24.0-alpha.54) (2022-08-11)
+
+## [11.24.0-alpha.53](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.52...v11.24.0-alpha.53) (2022-08-11)
+
+## [11.24.0-alpha.52](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.51...v11.24.0-alpha.52) (2022-08-11)
+
+## [11.24.0-alpha.51](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.50...v11.24.0-alpha.51) (2022-08-10)
+
+## [11.24.0-alpha.50](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.49...v11.24.0-alpha.50) (2022-08-09)
+
+## [11.24.0-alpha.49](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.48...v11.24.0-alpha.49) (2022-07-22)
+
+## [11.24.0-alpha.48](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.47...v11.24.0-alpha.48) (2022-07-22)
+
+## [11.24.0-alpha.47](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.46...v11.24.0-alpha.47) (2022-07-22)
+
+## [11.24.0-alpha.46](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.45...v11.24.0-alpha.46) (2022-07-19)
+
+## [11.24.0-alpha.45](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.44...v11.24.0-alpha.45) (2022-07-19)
+
+## [11.24.0-alpha.44](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.43...v11.24.0-alpha.44) (2022-07-19)
+
+## [11.24.0-alpha.43](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.42...v11.24.0-alpha.43) (2022-07-19)
+
+## [11.24.0-alpha.42](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.41...v11.24.0-alpha.42) (2022-07-19)
+
+## [11.24.0-alpha.41](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.40...v11.24.0-alpha.41) (2022-07-19)
+
+## [11.24.0-alpha.40](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.39...v11.24.0-alpha.40) (2022-07-18)
+
+## [11.24.0-alpha.39](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.38...v11.24.0-alpha.39) (2022-07-18)
+
+## [11.24.0-alpha.38](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.37...v11.24.0-alpha.38) (2022-07-18)
+
+## [11.24.0-alpha.37](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.36...v11.24.0-alpha.37) (2022-07-18)
+
+## [11.24.0-alpha.36](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.35...v11.24.0-alpha.36) (2022-07-18)
+
+## [11.24.0-alpha.35](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.34...v11.24.0-alpha.35) (2022-07-18)
+
+## [11.24.0-alpha.34](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.33...v11.24.0-alpha.34) (2022-07-16)
+
+## [11.24.0-alpha.33](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.32...v11.24.0-alpha.33) (2022-07-15)
+
+## [11.24.0-alpha.32](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.31...v11.24.0-alpha.32) (2022-07-15)
+
+## [11.24.0-alpha.31](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.30...v11.24.0-alpha.31) (2022-07-15)
+
+## [11.24.0-alpha.30](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.29...v11.24.0-alpha.30) (2022-07-15)
+
+## [11.24.0-alpha.29](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.28...v11.24.0-alpha.29) (2022-07-15)
+
+## [11.24.0-alpha.28](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.27...v11.24.0-alpha.28) (2022-07-15)
+
+## [11.24.0-alpha.27](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.26...v11.24.0-alpha.27) (2022-07-15)
+
+## [11.24.0-alpha.26](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.25...v11.24.0-alpha.26) (2022-07-15)
+
+## [11.24.0-alpha.25](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.24...v11.24.0-alpha.25) (2022-07-15)
+
+## [11.24.0-alpha.24](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.23...v11.24.0-alpha.24) (2022-07-15)
+
+## [11.24.0-alpha.23](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.22...v11.24.0-alpha.23) (2022-07-15)
+
+## [11.24.0-alpha.22](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.21...v11.24.0-alpha.22) (2022-07-15)
+
+## [11.24.0-alpha.21](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.20...v11.24.0-alpha.21) (2022-07-15)
+
+## [11.24.0-alpha.20](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.19...v11.24.0-alpha.20) (2022-07-15)
+
+## [11.24.0-alpha.19](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.18...v11.24.0-alpha.19) (2022-07-15)
+
+## [11.24.0-alpha.18](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.17...v11.24.0-alpha.18) (2022-07-15)
+
+## [11.24.0-alpha.17](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.16...v11.24.0-alpha.17) (2022-07-15)
+
+## [11.24.0-alpha.16](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.15...v11.24.0-alpha.16) (2022-07-15)
+
+## [11.24.0-alpha.15](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.14...v11.24.0-alpha.15) (2022-07-15)
+
+## [11.24.0-alpha.14](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.13...v11.24.0-alpha.14) (2022-07-15)
+
+## [11.24.0-alpha.13](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.12...v11.24.0-alpha.13) (2022-07-15)
+
+## [11.24.0-alpha.12](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.11...v11.24.0-alpha.12) (2022-07-15)
+
+## [11.24.0-alpha.11](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.10...v11.24.0-alpha.11) (2022-07-15)
+
+## [11.24.0-alpha.10](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.9...v11.24.0-alpha.10) (2022-07-15)
+
+## [11.24.0-alpha.9](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.8...v11.24.0-alpha.9) (2022-07-15)
+
+## [11.24.0-alpha.8](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.7...v11.24.0-alpha.8) (2022-07-15)
+
+## [11.24.0-alpha.7](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.6...v11.24.0-alpha.7) (2022-07-14)
+
+## [11.24.0-alpha.6](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.5...v11.24.0-alpha.6) (2022-07-14)
+
+## [11.24.0-alpha.5](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.4...v11.24.0-alpha.5) (2022-07-14)
+
+## [11.24.0-alpha.4](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.3...v11.24.0-alpha.4) (2022-07-14)
+
+## [11.24.0-alpha.3](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.2...v11.24.0-alpha.3) (2022-07-14)
+
+## [11.24.0-alpha.2](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.1...v11.24.0-alpha.2) (2022-07-14)
+
+## [11.24.0-alpha.1](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.0...v11.24.0-alpha.1) (2022-07-14)
+
+## [11.24.0-alpha.0](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.8...v11.24.0-alpha.0) (2022-07-14)
+
+
+### Features
+
+* embed a task plugin ([00a4b2f](https://github.com/outline/rich-markdown-editor/commit/00a4b2f7d7fc84293aedb94c305a76d240f07e89))
+
+### [11.23.5-alpha.8](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.7...v11.23.5-alpha.8) (2022-07-08)
+
+### [11.23.5-alpha.7](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.6...v11.23.5-alpha.7) (2022-07-08)
+
+### [11.23.5-alpha.6](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.5...v11.23.5-alpha.6) (2022-07-08)
+
+### [11.23.5-alpha.5](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.4...v11.23.5-alpha.5) (2022-07-07)
+
+### [11.23.5-alpha.4](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.3...v11.23.5-alpha.4) (2022-07-07)
+
+### [11.23.5-alpha.3](https://github.com/outline/rich-markdown-editor/compare/v11.23.5-alpha.2...v11.23.5-alpha.3) (2022-07-07)
+
+### [11.23.5-alpha.2](https://github.com/outline/rich-markdown-editor/compare/v11.23.4...v11.23.5-alpha.2) (2022-07-07)
+
 ### [11.24.5](https://github.com/outline/rich-markdown-editor/compare/v11.24.4...v11.24.5) (2022-09-08)
 
 ### [11.24.4](https://github.com/outline/rich-markdown-editor/compare/v11.24.3...v11.24.4) (2022-09-08)
