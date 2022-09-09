@@ -56,6 +56,7 @@
     "slugify": "^1.4.0",
     "smooth-scroll-into-view-if-needed": "^1.1.29",
     "y-prosemirror": "^1.1.3",
+    "y-protocols": "^1.0.5",
     "yjs": "^13.5.41"
   },
   "peerDependencies": {
