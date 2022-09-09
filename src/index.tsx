@@ -27,7 +27,6 @@ import ExtensionManager from "./lib/ExtensionManager";
 import ComponentView from "./lib/ComponentView";
 import headingToSlug from "./lib/headingToSlug";
 import { YXmlFragment } from "yjs/dist/src/internals";
-import { WebsocketProvider } from "y-websocket";
 
 // styles
 import { StyledEditor } from "./styles/editor";
@@ -96,7 +95,7 @@ export type Props = {
   value?: string;
   defaultValue: string;
   yXmlFragment: YXmlFragment;
-  yProvider: WebsocketProvider;
+  yProvider: unknown;
   placeholder: string;
   extensions?: Extension[];
   disableExtensions?: (
