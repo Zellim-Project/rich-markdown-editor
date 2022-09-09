@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.25.0-alpha.1](https://github.com/outline/rich-markdown-editor/compare/v11.25.0-alpha.0...v11.25.0-alpha.1) (2022-09-09)
+
 ## [11.25.0-alpha.0](https://github.com/outline/rich-markdown-editor/compare/v11.24.5...v11.25.0-alpha.0) (2022-09-09)
 
 ## [11.24.0-alpha.109](https://github.com/outline/rich-markdown-editor/compare/v11.24.0-alpha.108...v11.24.0-alpha.109) (2022-09-07)
