@@ -1,7 +1,7 @@
 {
   "name": "rich-markdown-editor",
   "description": "A rich text editor with Markdown shortcuts",
-  "version": "11.25.0-alpha.0",
+  "version": "11.24.6",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "license": "BSD-3-Clause",
@@ -63,7 +63,7 @@
     "react": "^16.0.0 || ^17.0.0",
     "react-dom": "^16.0.0 || ^17.0.0",
     "styled-components": "^5.0.0",
-    "y-websocket": "^1.4.4"
+    "y-websocket": "^1.4.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",

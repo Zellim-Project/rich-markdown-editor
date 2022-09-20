@@ -94,8 +94,13 @@ export type Props = {
   id?: string;
   value?: string;
   defaultValue: string;
+<<<<<<< HEAD
   yXmlFragment: YXmlFragment;
   yProvider: unknown;
+=======
+  yXmlFragment?: YXmlFragment;
+  yProvider?: WebsocketProvider;
+>>>>>>> 762f3f25a8d2861c0d1009059e2bdefb5172ba3b
   placeholder: string;
   extensions?: Extension[];
   disableExtensions?: (
