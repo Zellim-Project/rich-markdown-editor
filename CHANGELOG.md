@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [11.24.6](https://github.com/outline/rich-markdown-editor/compare/v11.24.5...v11.24.6) (2022-09-20)
+
+
+### Bug Fixes
+
+* add optional fragment ([eeef7db](https://github.com/outline/rich-markdown-editor/commit/eeef7db09a6a1fe4000ec20d650e32b35500ee73))
+
 ### [11.24.5](https://github.com/outline/rich-markdown-editor/compare/v11.24.4...v11.24.5) (2022-09-08)
 
 ### [11.24.4](https://github.com/outline/rich-markdown-editor/compare/v11.24.3...v11.24.4) (2022-09-08)
