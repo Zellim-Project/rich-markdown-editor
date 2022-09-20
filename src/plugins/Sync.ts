@@ -28,17 +28,20 @@ export default class Sync extends Extension {
   }
 
   get plugins(): Plugin[] {
-    return [
-      ySyncPlugin(this.options.yXmlFragment),
-      yCursorPlugin(
-        this.options.yProvider.awareness,
-        {
-          cursorBuilder,
-          getSelection: (state) => state.selection,
-          selectionBuilder,
-        },
-        "cursor"
-      ),
-    ];
+    if (this.options.yXmlFragment && this.options.yProvider) {
+      return [
+        ySyncPlugin(this.options.yXmlFragment),
+        yCursorPlugin(
+          this.options.yProvider.awareness,
+          {
+            cursorBuilder,
+            getSelection: (state) => state.selection,
+            selectionBuilder,
+          },
+          "cursor"
+        ),
+      ];
+    }
+    return [];
   }
 }
