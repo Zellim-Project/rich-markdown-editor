@@ -571,7 +571,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     const isEditingCheckbox = (tr) => {
       return tr.steps.some(
         (step: Step) =>
-          step.slice?.content?.firstChild?.type.name ===
+          step.slice?.content?.firstChild?.type?.name ===
           this.schema.nodes.checkbox_item.name
       );
     };
