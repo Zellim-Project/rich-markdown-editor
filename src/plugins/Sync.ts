@@ -9,16 +9,16 @@ function cursorBuilder(userInfo: Record<string, string>): HTMLElement {
   const cursor = document.createElement("span");
   const editorCursor = EditorCursor({
     userName: userInfo.name,
-    userColor: userInfo.color,
+    userColor: userInfo.color
   });
   ReactDOM.render(editorCursor as ReactElement, cursor);
   return cursor;
 }
 
-const selectionBuilder = (user) => {
+const selectionBuilder = user => {
   return {
-    style: `background-color: ${user.color}70`,
-    class: "ProseMirror-yjs-selection",
+    style: `background-color: ${user.color}bd`,
+    class: "ProseMirror-yjs-selection"
   };
 };
 
@@ -35,11 +35,11 @@ export default class Sync extends Extension {
           this.options.yProvider.awareness,
           {
             cursorBuilder,
-            getSelection: (state) => state.selection,
-            selectionBuilder,
+            getSelection: state => state.selection,
+            selectionBuilder
           },
           "cursor"
-        ),
+        )
       ];
     }
     return [];
