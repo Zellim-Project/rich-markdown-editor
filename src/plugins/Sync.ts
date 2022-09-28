@@ -16,6 +16,7 @@ function cursorBuilder(userInfo: Record<string, string>): HTMLElement {
 }
 
 const selectionBuilder = user => {
+  console.log(user.color)
   return {
     style: `background-color: ${user.color}bd`,
     class: "ProseMirror-yjs-selection"
