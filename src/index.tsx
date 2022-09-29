@@ -412,10 +412,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           }),
           new Strikethrough(),
           new OrderedList(),
-          new Sync({
-            yProvider: this.props.yProvider,
-            yXmlFragment: this.props.yXmlFragment,
-          }),
           new History(),
           new Folding(),
           new SmartText(),
@@ -448,8 +444,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             maxLength: this.props.maxLength,
           }),
         ].filter((extension) => {
-          console.log(this.props.disableExtensions, extension.name);
-          // Optionaly disable extensions
           if (this.props.disableExtensions) {
             return !(this.props.disableExtensions as string[]).includes(
               extension.name
