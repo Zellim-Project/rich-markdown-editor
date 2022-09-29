@@ -28,6 +28,7 @@ export default class Sync extends Extension {
   }
 
   get plugins(): Plugin[] {
+    console.log({ options: this.options })
     if (this.options.yXmlFragment && this.options.yProvider) {
       return [
         ySyncPlugin(this.options.yXmlFragment),
