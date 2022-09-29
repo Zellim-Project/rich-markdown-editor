@@ -132,6 +132,7 @@ export type Props = {
     | "container_project"
     | "container_task"
     | "container_file"
+    | "history"
   )[];
   autoFocus?: boolean;
   readOnly?: boolean;
@@ -412,6 +413,10 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           }),
           new Strikethrough(),
           new OrderedList(),
+          new Sync({
+            yProvider: this.props.yProvider,
+            yXmlFragment: this.props.yXmlFragment,
+          }),
           new History(),
           new Folding(),
           new SmartText(),
