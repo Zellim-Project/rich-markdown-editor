@@ -128,6 +128,10 @@ export type Props = {
     | "th"
     | "tr"
     | "emoji"
+    | "sync"
+    | "container_project"
+    | "container_task"
+    | "container_file"
   )[];
   autoFocus?: boolean;
   readOnly?: boolean;
