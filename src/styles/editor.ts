@@ -380,7 +380,7 @@ export const StyledEditor = styled("div")<{
     background: #FFFFFF1A;
     padding: 10px;
   }
-  .embed-block .icon svg {
+  .embed-block .icon svg, .embed-block .mentioned-icon svg {
     height: 18px;
     width: 18px;
   }
@@ -400,34 +400,27 @@ export const StyledEditor = styled("div")<{
     border-radius: 8px;
   }
 
+  .embed-block .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   .embed-block .info .title {
     color: ${props => props.theme.blockToolbarIconSelected};
     font-size: 14px;
     font-weight: 700;
-    margin-top: 12px;
     margin-right: 12px;
     line-height: 20px;
     letter-spacing: 0.1px;
   }
+  
 
-  .embed-block .info .task-id {
-    display: none;
-  }
-
-  .embed-block .info .mimeType {
-    display: none;
-  }
-
-  .embed-block .info .filename {
-    display: none;
-  }
-
-  .embed-block .info .project-id {
+  .embed-block .info .task-id, .mimeType, .filename, .project-id, doc-id {
     display: none;
   }
 
   .embed-block .info .subtitle {
-    margin-bottom: 12px;
     margin-right: 12px;
     font-weight: 600;
     font-size: 11px;

@@ -52,6 +52,7 @@ import Notice from "./nodes/Notice";
 import FileDoc from "./nodes/FileDoc";
 import EmbedTask from "./nodes/embedTask";
 import EmbedProject from "./nodes/embedProject";
+import LinkDocument from "./nodes/linkDocument";
 import OrderedList from "./nodes/OrderedList";
 import Paragraph from "./nodes/Paragraph";
 import Table from "./nodes/Table";
@@ -84,6 +85,7 @@ import PasteHandler from "./plugins/PasteHandler";
 import { PluginSimple } from "markdown-it";
 
 import { ITask } from "./commands/embedATask";
+import { IDoc } from "./commands/linkDocument";
 import { IProject } from "./commands/embedAProject";
 import { WebsocketProvider } from "y-websocket";
 
@@ -155,6 +157,8 @@ export type Props = {
   downloadAFile?: (url: string) => Promise<void>;
   embedAProject?: () => Promise<IProject>;
   openAProject?: (val: { projectId: string }) => Promise<void>;
+  linkDocument?: () => Promise<IDoc>;
+  openDocument?: (val: { docId: string }) => Promise<void>;
   onBlur?: () => void;
   onFocus?: () => void;
   onSave?: ({ done }: { done: boolean }) => void;
@@ -375,6 +379,12 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             dictionary,
             embedAProject: this.props.embedAProject,
             openAProject: this.props.openAProject,
+            onShowToast: this.props.onShowToast,
+          }),
+          new LinkDocument({
+            dictionary,
+            linkDocument: this.props.linkDocument,
+            openDocument: this.props.openDocument,
             onShowToast: this.props.onShowToast,
           }),
           new Heading({
@@ -852,6 +862,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
                   uploadFile={this.props.uploadFile}
                   embedATask={this.props.embedATask}
                   embedAProject={this.props.embedAProject}
+                  linkDocument={this.props.linkDocument}
                   onLinkToolbarOpen={this.handleOpenLinkMenu}
                   onImageUploadStart={this.props.onImageUploadStart}
                   onImageUploadStop={this.props.onImageUploadStop}

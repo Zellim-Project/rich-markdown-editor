@@ -12,6 +12,7 @@ import filterExcessSeparators from "../lib/filterExcessSeparators";
 import insertFiles from "../commands/insertFiles";
 import insertAllFiles from "../commands/insertAllFiles";
 import embedATaskCommand, { ITask } from "../commands/embedATask";
+import linkDocumentCommand, { IDoc } from "../commands/linkDocument";
 import embedAProjectCommand, { IProject } from "../commands/embedAProject";
 import baseDictionary from "../dictionary";
 
@@ -39,6 +40,7 @@ export type Props<T extends MenuItem = MenuItem> = {
   onFileUploadStop?: () => void;
   embedATask?: () => Promise<ITask>;
   embedAProject?: () => Promise<IProject>;
+  linkDocument?: () => Promise<IDoc>;
   onShowToast?: (message: string, id: string) => void;
   onLinkToolbarOpen?: () => void;
   onClose: () => void;
@@ -72,6 +74,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   fileInputRef = React.createRef<HTMLInputElement>();
   embedTaskRef = React.createRef<HTMLInputElement>();
   embedProjectRef = React.createRef<HTMLInputElement>();
+  linkDocumentRef = React.createRef<HTMLInputElement>();
 
   state: State = {
     left: -1000,
@@ -194,6 +197,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         return this.triggerEmbedATask();
       case "container_project":
         return this.triggerEmbedAProject();
+      case "link_doc":
+        return this.triggerLinkDocument();
       case "embed":
         return this.triggerLinkInput(item);
       case "link": {
@@ -286,6 +291,12 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   triggerEmbedAProject = () => {
     if (this.embedProjectRef.current) {
       this.embedProjectRef.current.click();
+    }
+  };
+
+  triggerLinkDocument = () => {
+    if (this.linkDocumentRef.current) {
+      this.linkDocumentRef.current.click();
     }
   };
 
@@ -411,6 +422,30 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClose();
   };
 
+  handleLinkDocument = (event) => {
+    const { view, linkDocument, onShowToast } = this.props;
+    const { state, dispatch } = view;
+    const parent = findParentNode((node) => !!node)(state.selection);
+
+    if (parent) {
+      dispatch(
+        state.tr.insertText(
+          "",
+          parent.pos,
+          parent.pos + parent.node.textContent.length + 1
+        )
+      );
+
+      linkDocumentCommand(view, event, parent.pos, {
+        linkDocument,
+        onShowToast,
+        dictionary: this.props.dictionary,
+      });
+    }
+
+    this.props.onClose();
+  };
+
   clearSearch = () => {
     this.props.onClearSearch();
   };
@@ -521,6 +556,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       uploadFile,
       embedATask,
       embedAProject,
+      linkDocument,
       commands,
       filterable = true,
     } = this.props;
@@ -567,6 +603,9 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       // If no embedAProject callback has been passed, filter the file block out
       if (!embedAProject && item.name === "container_project") return false;
 
+      // If no embedAProject callback has been passed, filter the file block out
+      if (!linkDocument && item.name === "link_doc") return false;
+
       // some items (defaultHidden) are not visible until a search query exists
       if (!search) return !item.defaultHidden;
 
@@ -591,6 +630,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       uploadFile,
       embedATask,
       embedAProject,
+      linkDocument,
     } = this.props;
     const items = this.filtered;
     const { insertItem, ...positioning } = this.state;
@@ -680,6 +720,14 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
               <div
                 ref={this.embedProjectRef}
                 onClick={this.handleEmbedAProject}
+              />
+            </VisuallyHidden>
+          )}
+          {linkDocument && (
+            <VisuallyHidden>
+              <div
+                ref={this.linkDocumentRef}
+                onClick={this.handleLinkDocument}
               />
             </VisuallyHidden>
           )}
