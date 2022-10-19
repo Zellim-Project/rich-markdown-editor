@@ -80,7 +80,7 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^)-)-)-$/, type)];
+    return [wrappingInputRule(/^\)-\)-\)-$/, type)];
   }
 
   toMarkdown(state, node) {
