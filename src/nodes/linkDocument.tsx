@@ -1,7 +1,7 @@
 import { wrappingInputRule } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
-import { Union } from "../lib/icons";
+import { LinkedDoc } from "../lib/icons";
 import * as React from "react";
 import { linkDocumentPlaceholder } from "../lib/embedSimplePlaceHolder";
 import Node from "./Node";
@@ -9,7 +9,7 @@ import linkDocumentRules from "../rules/linkDocument";
 
 export default class EmbedTask extends Node {
   get name() {
-    return "link_doc";
+    return "container_link_doc";
   }
 
   get schema() {
@@ -61,7 +61,7 @@ export default class EmbedTask extends Node {
         onClick={() => openDocument?.(docId)}
       >
         <div className="mentioned-icon my-4">
-          {icon ? <span className="emoji">{icon}</span> : <Union />}
+          {icon ? <span className="emoji">{icon}</span> : <LinkedDoc />}
         </div>
         <div className="mentioned-info">
           <p className="doc-id">{docId}</p>
@@ -105,7 +105,7 @@ export default class EmbedTask extends Node {
 
   parseMarkdown() {
     return {
-      block: "link_doc",
+      block: "container_link_doc",
       getAttrs: (token) => {
         const file_regex = /\[(?<docId>[^]*?)\]\((?<docName>[^]*?)\)/g;
         const result = file_regex.exec(token.info);

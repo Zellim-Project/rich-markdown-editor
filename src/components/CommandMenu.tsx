@@ -197,7 +197,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         return this.triggerEmbedATask();
       case "container_project":
         return this.triggerEmbedAProject();
-      case "link_doc":
+      case "container_link_doc":
         return this.triggerLinkDocument();
       case "embed":
         return this.triggerLinkInput(item);
@@ -604,7 +604,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       if (!embedAProject && item.name === "container_project") return false;
 
       // If no embedAProject callback has been passed, filter the file block out
-      if (!linkDocument && item.name === "link_doc") return false;
+      if (!linkDocument && item.name === "container_link_doc") return false;
 
       // some items (defaultHidden) are not visible until a search query exists
       if (!search) return !item.defaultHidden;

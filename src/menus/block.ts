@@ -137,7 +137,7 @@ export default function blockMenuItems(
       keywords: "project embed"
     },
     {
-      name: "link_doc",
+      name: "container_link_doc",
       title: dictionary.linkDocument,
       icon: DocumentIcon,
       keywords: "link document page"

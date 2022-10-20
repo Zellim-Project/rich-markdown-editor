@@ -64,7 +64,7 @@ const linkDocument = function(
         .replaceWith(
           pos,
           pos,
-          schema.nodes.link_doc.create({ docId, docName, icon })
+          schema.nodes.container_link_doc.create({ docId, docName, icon })
         )
         .setMeta(linkDocumentPlaceholder, { remove: { id } });
 
