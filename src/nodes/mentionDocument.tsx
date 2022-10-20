@@ -60,8 +60,8 @@ export default class EmbedTask extends Node {
         className="embed-block mentioned-document"
         onClick={() => openDocument?.(docId)}
       >
-        <div className="mentioned-icon my-2 ms-2">
-          {icon ? <span className="me-3 emoji">{icon}</span> : <Union />}
+        <div className="mentioned-icon m4">
+          {icon ? <span className="emoji">{icon}</span> : <Union />}
         </div>
         <div className="mentioned-info">
           <p className="doc-id">{docId}</p>

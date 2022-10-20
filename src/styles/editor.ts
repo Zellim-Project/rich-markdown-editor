@@ -423,7 +423,7 @@ export const StyledEditor = styled("div")<{
   }
   
 
-  .embed-block .info .task-id, .embed-block .info .mimeType, .embed-block .info .filename, .embed-block .info .project-id, .embed-block .info doc-id {
+  .embed-block .info .task-id, .embed-block .info .mimeType, .embed-block .info .filename, .embed-block .info .project-id, .embed-block .mentioned-info doc-id {
     display: none;
   }
 
