@@ -31,7 +31,7 @@ export default class EmbedTask extends Node {
       draggable: false,
       parseDOM: [
         {
-          tag: "div.embed-block",
+          tag: "div.embed-block.mentioned-document",
           preserveWhitespace: "full",
           contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => ({
@@ -44,7 +44,7 @@ export default class EmbedTask extends Node {
       toDOM: (node) => {
         return [
           "div",
-          { class: "embed-block" },
+          { class: "embed-block mentioned-document" },
           ["p", { ...node.attrs, contentEditable: false }],
         ];
       },
@@ -57,11 +57,11 @@ export default class EmbedTask extends Node {
     return (
       <div
         contentEditable={false}
-        className="embed-block"
+        className="embed-block mentioned-document"
         onClick={() => openDocument?.(docId)}
       >
-        <div className="mentioned-icon my-2 ms-2">
-          {icon ? <span className="me-3 emoji">{icon}</span> : <Union />}
+        <div className="mentioned-icon my-4">
+          {icon ? <span className="emoji">{icon}</span> : <Union />}
         </div>
         <div className="mentioned-info">
           <p className="doc-id">{docId}</p>
@@ -80,14 +80,14 @@ export default class EmbedTask extends Node {
   }
 
   inputRules({ type }) {
-    return [wrappingInputRule(/^\)-\)-\)-$/, type)];
+    return [wrappingInputRule(/^\$-\$-\$-$/, type)];
   }
 
   toMarkdown(state, node) {
     state.ensureNewLine();
     state.write("\\\\");
     state.ensureNewLine();
-    state.write(")-)-)-");
+    state.write("$-$-$-");
     state.write(
       "[" +
         state.esc(node.attrs.docId) +
@@ -99,7 +99,7 @@ export default class EmbedTask extends Node {
         ")"
     );
     state.ensureNewLine();
-    state.write(")-)-)-");
+    state.write("$-$-$-");
     state.closeBlock(node);
   }
 
