@@ -362,6 +362,13 @@ export const StyledEditor = styled("div")<{
     width: fit-content;
   }
 
+  .mentioned-document {
+    min-height: 36px;
+    display: flex,
+    align-items: center;
+    justify-content: center;
+  }
+
   @media (min-width: 576px) {
     .embed-block {
       min-width: 295px;
@@ -416,7 +423,7 @@ export const StyledEditor = styled("div")<{
   }
   
 
-  .embed-block .info .task-id, .mimeType, .filename, .project-id, doc-id {
+  .embed-block .info .task-id, .embed-block .info .mimeType, .embed-block .info .filename, .embed-block .info .project-id, .embed-block .info doc-id {
     display: none;
   }
 
