@@ -31,7 +31,7 @@ export default class EmbedTask extends Node {
       draggable: false,
       parseDOM: [
         {
-          tag: "div.embed-block",
+          tag: "div.embed-block.mentioned-document",
           preserveWhitespace: "full",
           contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => ({
@@ -44,7 +44,7 @@ export default class EmbedTask extends Node {
       toDOM: (node) => {
         return [
           "div",
-          { class: "embed-block" },
+          { class: "embed-block mentioned-document" },
           ["p", { ...node.attrs, contentEditable: false }],
         ];
       },
@@ -57,7 +57,7 @@ export default class EmbedTask extends Node {
     return (
       <div
         contentEditable={false}
-        className="embed-block"
+        className="embed-block mentioned-document"
         onClick={() => openDocument?.(docId)}
       >
         <div className="mentioned-icon my-2 ms-2">

@@ -363,7 +363,7 @@ export const StyledEditor = styled("div")<{
   }
 
   .mentioned-document {
-    min-height: 36px;
+    min-height: 36px!important;
     display: flex,
     align-items: center;
     justify-content: center;
