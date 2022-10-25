@@ -364,6 +364,7 @@ export const StyledEditor = styled("div")<{
 
   .mentioned-document {
     min-height: 36px!important;
+    min-width: 0!important;
     display: flex;
     align-items: center;
   }
@@ -394,6 +395,10 @@ export const StyledEditor = styled("div")<{
   .embed-block .mentioned-icon svg {
     height: 20px;
     width: 20px;
+  }
+
+  .mentioned-icon .emoji {
+    font-size: 20px;
   }
 
   .embed-block .file-icon img {
