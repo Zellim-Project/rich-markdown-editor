@@ -15,7 +15,7 @@ export default class HardBreak extends Node {
       parseDOM: [{ tag: "br" }],
       toDOM() {
         return ["br"];
-      },
+      }
     };
   }
 
@@ -36,7 +36,7 @@ export default class HardBreak extends Node {
         if (!isInTable(state)) return false;
         dispatch(state.tr.replaceSelectionWith(type.create()).scrollIntoView());
         return true;
-      },
+      }
     };
   }
 
