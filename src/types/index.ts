@@ -1,9 +1,9 @@
 import * as React from "react";
-import { EditorState } from "prosemirror-state";
+import { EditorState, Transaction } from "prosemirror-state";
 
 export enum ToastType {
   Error = "error",
-  Info = "info",
+  Info = "info"
 }
 
 export type MenuItem = {
@@ -23,3 +23,5 @@ export type EmbedDescriptor = MenuItem & {
   matcher: (url: string) => boolean | [] | RegExpMatchArray;
   component: typeof React.Component | React.FC<any>;
 };
+
+export type Dispatch = (tr: Transaction) => void;

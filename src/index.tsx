@@ -33,55 +33,10 @@ import { StyledEditor } from "./styles/editor";
 
 // nodes
 import ReactNode from "./nodes/ReactNode";
-import Doc from "./nodes/Doc";
-import Text from "./nodes/Text";
-import Blockquote from "./nodes/Blockquote";
-import BulletList from "./nodes/BulletList";
-import CodeBlock from "./nodes/CodeBlock";
-import CodeFence from "./nodes/CodeFence";
-import CheckboxList from "./nodes/CheckboxList";
-import Emoji from "./nodes/Emoji";
-import CheckboxItem from "./nodes/CheckboxItem";
-import Embed from "./nodes/Embed";
-import HardBreak from "./nodes/HardBreak";
-import Heading from "./nodes/Heading";
-import HorizontalRule from "./nodes/HorizontalRule";
-import Image from "./nodes/Image";
-import ListItem from "./nodes/ListItem";
-import Notice from "./nodes/Notice";
-import FileDoc from "./nodes/FileDoc";
-import EmbedTask from "./nodes/embedTask";
-import EmbedProject from "./nodes/embedProject";
-import LinkDocument from "./nodes/linkDocument";
-import OrderedList from "./nodes/OrderedList";
-import Paragraph from "./nodes/Paragraph";
-import Table from "./nodes/Table";
-import TableCell from "./nodes/TableCell";
-import TableHeadCell from "./nodes/TableHeadCell";
-import TableRow from "./nodes/TableRow";
 
-// marks
-import Bold from "./marks/Bold";
-import Code from "./marks/Code";
-import Highlight from "./marks/Highlight";
-import Italic from "./marks/Italic";
-import Link from "./marks/Link";
-import Strikethrough from "./marks/Strikethrough";
-import TemplatePlaceholder from "./marks/Placeholder";
-import Underline from "./marks/Underline";
-import Sync from "./plugins/Sync";
+// extensions
+import fullPackage from "./packages/full";
 
-// plugins
-import BlockMenuTrigger from "./plugins/BlockMenuTrigger";
-import EmojiTrigger from "./plugins/EmojiTrigger";
-import Folding from "./plugins/Folding";
-import History from "./plugins/History";
-import Keys from "./plugins/Keys";
-import MaxLength from "./plugins/MaxLength";
-import Placeholder from "./plugins/Placeholder";
-import SmartText from "./plugins/SmartText";
-import TrailingNode from "./plugins/TrailingNode";
-import PasteHandler from "./plugins/PasteHandler";
 import { PluginSimple } from "markdown-it";
 
 import { ITask } from "./commands/embedATask";
@@ -333,132 +288,10 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   createExtensions() {
-    const dictionary = this.dictionary(this.props.dictionary);
-
     // adding nodes here? Update schema.ts for serialization on the server
     return new ExtensionManager(
       [
-        ...[
-          new Doc(),
-          new HardBreak(),
-          new Paragraph(),
-          new Blockquote(),
-          new CodeBlock({
-            dictionary,
-            onShowToast: this.props.onShowToast,
-          }),
-          new CodeFence({
-            dictionary,
-            onShowToast: this.props.onShowToast,
-          }),
-          new Emoji(),
-          new Text(),
-          new CheckboxList(),
-          new CheckboxItem(),
-          new BulletList(),
-          new Embed({ embeds: this.props.embeds }),
-          new ListItem(),
-          new Notice({
-            dictionary,
-          }),
-          new FileDoc({
-            dictionary,
-            uploadFile: this.props.uploadFile,
-            downloadAFile: this.props.downloadAFile,
-            onFileUploadStart: this.props.onFileUploadStart,
-            onFileUploadStop: this.props.onFileUploadStop,
-            onShowToast: this.props.onShowToast,
-          }),
-          new EmbedTask({
-            dictionary,
-            embedATask: this.props.embedATask,
-            openATask: this.props.openATask,
-            onShowToast: this.props.onShowToast,
-          }),
-          new EmbedProject({
-            dictionary,
-            embedAProject: this.props.embedAProject,
-            openAProject: this.props.openAProject,
-            onShowToast: this.props.onShowToast,
-          }),
-          new LinkDocument({
-            dictionary,
-            linkDocument: this.props.linkDocument,
-            openDocument: this.props.openDocument,
-            onShowToast: this.props.onShowToast,
-          }),
-          new Heading({
-            dictionary,
-            onShowToast: this.props.onShowToast,
-            offset: this.props.headingsOffset,
-          }),
-          new HorizontalRule(),
-          new Image({
-            dictionary,
-            uploadImage: this.props.uploadImage,
-            onImageUploadStart: this.props.onImageUploadStart,
-            onImageUploadStop: this.props.onImageUploadStop,
-            onShowToast: this.props.onShowToast,
-          }),
-          new Table(),
-          new TableCell({
-            onSelectTable: this.handleSelectTable,
-            onSelectRow: this.handleSelectRow,
-          }),
-          new TableHeadCell({
-            onSelectColumn: this.handleSelectColumn,
-          }),
-          new TableRow(),
-          new Bold(),
-          new Code(),
-          new Highlight(),
-          new Italic(),
-          new TemplatePlaceholder(),
-          new Underline(),
-          new Link({
-            onKeyboardShortcut: this.handleOpenLinkMenu,
-            onClickLink: this.props.onClickLink,
-            onClickHashtag: this.props.onClickHashtag,
-            onHoverLink: this.props.onHoverLink,
-          }),
-          new Strikethrough(),
-          new OrderedList(),
-          new Sync({
-            yProvider: this.props.yProvider,
-            yXmlFragment: this.props.yXmlFragment,
-          }),
-          new History(),
-          new Folding(),
-          new SmartText(),
-          new TrailingNode(),
-          new PasteHandler(),
-          new Keys({
-            onBlur: this.handleEditorBlur,
-            onFocus: this.handleEditorFocus,
-            onSave: this.handleSave,
-            onSaveAndExit: this.handleSaveAndExit,
-            onCancel: this.props.onCancel,
-          }),
-          new BlockMenuTrigger({
-            dictionary,
-            onOpen: this.handleOpenBlockMenu,
-            onClose: this.handleCloseBlockMenu,
-          }),
-          new EmojiTrigger({
-            onOpen: (search: string) => {
-              this.setState({ emojiMenuOpen: true, blockMenuSearch: search });
-            },
-            onClose: () => {
-              this.setState({ emojiMenuOpen: false });
-            },
-          }),
-          new Placeholder({
-            placeholder: this.props.placeholder,
-          }),
-          new MaxLength({
-            maxLength: this.props.maxLength,
-          }),
-        ].filter((extension) => {
+        ...((fullPackage as unknown) as Extension[]).filter((extension) => {
           if (this.props.disableExtensions) {
             return !(this.props.disableExtensions as string[]).includes(
               extension.name
