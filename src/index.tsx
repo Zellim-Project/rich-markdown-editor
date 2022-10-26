@@ -30,6 +30,7 @@ import { YXmlFragment } from "yjs/dist/src/internals";
 
 // styles
 import { StyledEditor } from "./styles/editor";
+import GlobalStyles from "./styles/globalStyles";
 
 // nodes
 import ReactNode from "./nodes/ReactNode";
@@ -726,6 +727,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 }
 
-export { ExtensionManager, fullPackage };
+export { ExtensionManager, fullPackage, StyledEditor, GlobalStyles };
 
 export default RichMarkdownEditor;
