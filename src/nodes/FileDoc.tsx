@@ -94,7 +94,9 @@ export default class File extends Node {
   get schema() {
     return {
       attrs: {
-        key: {},
+        key: {
+          default: "",
+        },
         fileName: {
           default: "",
         },
@@ -119,7 +121,7 @@ export default class File extends Node {
           contentElement: "div:last-child",
           getAttrs: (dom: HTMLDivElement) => ({
             fileName: dom.getElementsByClassName("title")[0].textContent,
-            key: dom.getElementsByClassName("key")[0].textContent,
+            key: dom.getElementsByClassName("doc-key")[0].textContent,
             size: dom.getElementsByClassName("file-size")[0].textContent,
             type: dom.getElementsByClassName("file-type")[0].textContent,
             mimeType: dom.getElementsByClassName("mimeType")[0].textContent,
@@ -138,6 +140,7 @@ export default class File extends Node {
 
   component = (props) => {
     const { fileName, key, size, type, mimeType } = props.node.attrs;
+    console.log({ fileName, key, size, type, mimeType });
     const { downloadAFile } = this.editor.props;
     return (
       <div
@@ -153,7 +156,7 @@ export default class File extends Node {
         </div>
         <div className="info">
           <span className="mimetype">{mimeType}</span>
-          <span className="key">{key}</span>
+          <span className="doc-key">{key}</span>
           <p className="title">{fileName}</p>
           <p className="subtitle">
             <span className="file-size">{formatBytes(Number(size))} </span>•{" "}
@@ -173,6 +176,7 @@ export default class File extends Node {
   }
 
   toMarkdown(state, node) {
+    console.log(123);
     state.ensureNewLine();
     state.write("\\\\");
     state.ensureNewLine();
