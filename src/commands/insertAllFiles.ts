@@ -1,5 +1,5 @@
 import uploadFilePlaceholderPlugin, {
-  findPlaceholder,
+  findPlaceholder
 } from "../lib/uploadFilePlaceholder";
 import { ToastType } from "../types";
 
@@ -11,7 +11,7 @@ const insertAllFiles = function(view, event, pos, files, options) {
     uploadFile,
     onFileUploadStart,
     onFileUploadStop,
-    onShowToast,
+    onShowToast
   } = options;
 
   if (!uploadFile) {
@@ -41,7 +41,7 @@ const insertAllFiles = function(view, event, pos, files, options) {
 
     // insert a placeholder at this position
     tr.setMeta(uploadFilePlaceholderPlugin, {
-      add: { id, file, pos },
+      add: { id, file, pos }
     });
     view.dispatch(tr);
 
@@ -49,7 +49,7 @@ const insertAllFiles = function(view, event, pos, files, options) {
     // to allow all placeholders to be entered at once with the uploads
     // happening in the background in parallel.
     uploadFile(file)
-      .then(fileName => {
+      .then(key => {
         const pos = findPlaceholder(view.state, id);
 
         // if the content around the placeholder has been deleted
@@ -61,11 +61,11 @@ const insertAllFiles = function(view, event, pos, files, options) {
             pos,
             pos,
             schema.nodes.container_file.create({
-              fileName,
-              alt: file.name,
+              key,
+              fileName: file.name,
               size: String(file?.size || ""),
               type: file?.name?.split(".")?.reverse()?.[0],
-              mimetype: file?.type,
+              mimetype: file?.type
             })
           )
           .setMeta(uploadFilePlaceholderPlugin, { remove: { id } });
@@ -77,7 +77,7 @@ const insertAllFiles = function(view, event, pos, files, options) {
 
         // cleanup the placeholder if there is a failure
         const transaction = view.state.tr.setMeta(uploadFilePlaceholderPlugin, {
-          remove: { id },
+          remove: { id }
         });
         view.dispatch(transaction);
 

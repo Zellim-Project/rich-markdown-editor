@@ -21,7 +21,7 @@ function formatBytes(bytes, decimals = 2) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
 }
 
-const uploadPlugin = options =>
+const uploadPlugin = (options) =>
   new Plugin({
     props: {
       handleDOMEvents: {
@@ -38,8 +38,8 @@ const uploadPlugin = options =>
           // check if we actually pasted any files
           const files = Array.prototype.slice
             .call(event.clipboardData.items)
-            .map(dt => dt.getAsFile())
-            .filter(file => file);
+            .map((dt) => dt.getAsFile())
+            .filter((file) => file);
 
           if (files.length === 0) return false;
 
@@ -94,8 +94,8 @@ export default class File extends Node {
   get schema() {
     return {
       attrs: {
-        fileName: {},
-        alt: {
+        key: {},
+        fileName: {
           default: "",
         },
         size: {
@@ -118,15 +118,15 @@ export default class File extends Node {
           preserveWhitespace: "full",
           contentElement: "div:last-child",
           getAttrs: (dom: HTMLDivElement) => ({
-            alt: dom.getElementsByClassName("title")[0].textContent,
-            fileName: dom.getElementsByClassName("filename")[0].textContent,
+            fileName: dom.getElementsByClassName("title")[0].textContent,
+            key: dom.getElementsByClassName("key")[0].textContent,
             size: dom.getElementsByClassName("file-size")[0].textContent,
             type: dom.getElementsByClassName("file-type")[0].textContent,
             mimeType: dom.getElementsByClassName("mimeType")[0].textContent,
           }),
         },
       ],
-      toDOM: node => {
+      toDOM: (node) => {
         return [
           "div",
           { class: "embed-block" },
@@ -136,25 +136,25 @@ export default class File extends Node {
     };
   }
 
-  component = props => {
-    const { alt, fileName, size, type, mimeType } = props.node.attrs;
+  component = (props) => {
+    const { fileName, key, size, type, mimeType } = props.node.attrs;
     const { downloadAFile } = this.editor.props;
     return (
       <div
         contentEditable={false}
         className="embed-block"
-        onClick={() => downloadAFile?.(fileName)}
+        onClick={() => downloadAFile?.({ key, fileName })}
       >
         <div className="file-icon">
           <img
-            src={`/assets/images/files${getIcon(alt, mimeType)}`}
+            src={`/assets/images/files${getIcon(fileName, mimeType)}`}
             alt="file-icon"
           />
         </div>
         <div className="info">
           <span className="mimetype">{mimeType}</span>
-          <span className="filename">{fileName}</span>
-          <p className="title">{alt}</p>
+          <span className="key">{key}</span>
+          <p className="title">{fileName}</p>
           <p className="subtitle">
             <span className="file-size">{formatBytes(Number(size))} </span>•{" "}
             <span className="file-type">{type.toUpperCase()}</span>
@@ -165,7 +165,7 @@ export default class File extends Node {
   };
 
   commands({ type }) {
-    return attrs => toggleWrap(type, attrs);
+    return (attrs) => toggleWrap(type, attrs);
   }
 
   inputRules({ type }) {
@@ -179,10 +179,10 @@ export default class File extends Node {
     state.write("\n@@@");
     state.write(
       "[" +
-        state.esc(node.attrs.alt) +
+        state.esc(node.attrs.fileName) +
         "]" +
         "(" +
-        state.esc(node.attrs.fileName) +
+        state.esc(node.attrs.key) +
         "&-&" +
         state.esc(node.attrs.size) +
         "&-&" +
@@ -199,16 +199,16 @@ export default class File extends Node {
   parseMarkdown() {
     return {
       block: "container_file",
-      getAttrs: token => {
+      getAttrs: (token) => {
         const file_regex = /\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
-        const [fileName, size, type, mimeType] = result?.[2].split("&-&") || [];
+        const [key, size, type, mimeType] = result?.[2].split("&-&") || [];
         return {
-          fileName: result ? fileName : null,
+          key: result ? key : null,
           size: result ? size : null,
           type: result ? type : null,
           mimeType: result ? mimeType : null,
-          alt: result ? result[1] : null,
+          fileName: result ? result[1] : null,
         };
       },
     };
