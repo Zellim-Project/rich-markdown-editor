@@ -159,10 +159,10 @@ export const fullPackage = props => [
   }),
   new EmojiTrigger({
     onOpen: (search: string) => {
-      props.setState({ emojiMenuOpen: true, blockMenuSearch: search });
+      props?.setState({ emojiMenuOpen: true, blockMenuSearch: search });
     },
     onClose: () => {
-      props.setState({ emojiMenuOpen: false });
+      props?.setState({ emojiMenuOpen: false });
     }
   }),
   new Placeholder({

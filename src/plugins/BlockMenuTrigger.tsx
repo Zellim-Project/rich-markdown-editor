@@ -52,7 +52,7 @@ export default class BlockMenuTrigger extends Extension {
       new Plugin({
         props: {
           handleClick: () => {
-            this.options.onClose();
+            this.options?.onClose();
             return false;
           },
           handleKeyDown: (view, event) => {
@@ -68,7 +68,7 @@ export default class BlockMenuTrigger extends Extension {
                   if (match) {
                     this.options.onOpen(match[1]);
                   } else {
-                    this.options.onClose();
+                    this.options?.onClose();
                   }
                   return null;
                 });
@@ -93,9 +93,9 @@ export default class BlockMenuTrigger extends Extension {
 
             return false;
           },
-          decorations: state => {
+          decorations: (state) => {
             const parent = findParentNode(
-              node => node.type.name === "paragraph"
+              (node) => node.type.name === "paragraph"
             )(state.selection);
 
             if (!parent) {
@@ -173,7 +173,7 @@ export default class BlockMenuTrigger extends Extension {
       // /word<space>
       new InputRule(CLOSE_REGEX, (state, match) => {
         if (match) {
-          this.options.onClose();
+          this.options?.onClose();
         }
         return null;
       }),

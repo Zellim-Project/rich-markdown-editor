@@ -17,7 +17,7 @@ export default class EmojiTrigger extends Extension {
       new Plugin({
         props: {
           handleClick: () => {
-            this.options.onClose();
+            this.options?.onClose();
             return false;
           },
           handleKeyDown: (view, event) => {
@@ -31,9 +31,9 @@ export default class EmojiTrigger extends Extension {
                 const { pos } = view.state.selection.$from;
                 return run(view, pos, pos, OPEN_REGEX, (state, match) => {
                   if (match) {
-                    this.options.onOpen(match[1]);
+                    this.options?.onOpen(match[1]);
                   } else {
-                    this.options.onClose();
+                    this.options?.onClose();
                   }
                   return null;
                 });
@@ -73,7 +73,7 @@ export default class EmojiTrigger extends Extension {
           state.selection.$from.parent.type.name === "paragraph" &&
           !isInCode(state)
         ) {
-          this.options.onOpen(match[1]);
+          this.options?.onOpen(match[1]);
         }
         return null;
       }),
@@ -84,7 +84,7 @@ export default class EmojiTrigger extends Extension {
       // :)
       new InputRule(CLOSE_REGEX, (state, match) => {
         if (match) {
-          this.options.onClose();
+          this.options?.onClose();
         }
         return null;
       }),
