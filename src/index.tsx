@@ -494,7 +494,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       const y = element.getBoundingClientRect().top + window.scrollY;
       console.log(y);
     }
-    location.href = hash;
+    location.href = location.origin + location.pathname + hash;
     /* try {
       const element = document.querySelector(hash);
       if (element) {
