@@ -200,7 +200,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     this.init();
-
+    console.log(this.props.scrollTo);
     if (this.props.scrollTo) {
       this.scrollToAnchor(this.props.scrollTo);
     }
@@ -478,10 +478,12 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   scrollToAnchor(hash: string) {
+    console.log({ hash });
     if (!hash) return;
 
     try {
       const element = document.querySelector(hash);
+      console.log({ element });
       if (element) element.scrollIntoView({ behavior: "smooth" });
     } catch (err) {
       // querySelector will throw an error if the hash begins with a number
