@@ -38,7 +38,6 @@ import Sync from "./plugins/Sync";
 
 // plugins
 import BlockMenuTrigger from "./plugins/BlockMenuTrigger";
-import EmojiTrigger from "./plugins/EmojiTrigger";
 import Folding from "./plugins/Folding";
 import History from "./plugins/History";
 import Keys from "./plugins/Keys";
@@ -154,16 +153,8 @@ export const fullPackage = props => [
   }),
   new BlockMenuTrigger({
     dictionary,
-    onOpen: props.handleOpenBlockMenu,
-    onClose: props.handleCloseBlockMenu
-  }),
-  new EmojiTrigger({
-    onOpen: (search: string) => {
-      props?.setState({ emojiMenuOpen: true, blockMenuSearch: search });
-    },
-    onClose: () => {
-      props?.setState({ emojiMenuOpen: false });
-    }
+    onOpen: props?.handleOpenBlockMenu,
+    onClose: props?.handleCloseBlockMenu
   }),
   new Placeholder({
     placeholder: props.placeholder

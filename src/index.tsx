@@ -37,6 +37,7 @@ import ReactNode from "./nodes/ReactNode";
 import { PluginSimple } from "markdown-it";
 
 //fullpackage
+import EmojiTrigger from "./plugins/EmojiTrigger";
 import { fullPackage } from "./fullPackage";
 
 import { ITask } from "./commands/embedATask";
@@ -200,7 +201,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   componentDidMount() {
     this.init();
-    console.log(this.props.scrollTo);
     if (this.props.scrollTo) {
       this.scrollToAnchor(this.props.scrollTo);
     }
@@ -305,7 +305,17 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     // adding nodes here? Update schema.ts for serialization on the server
     return new ExtensionManager(
       [
-        ...fullPackage(props).filter((extension) => {
+        ...[
+          ...fullPackage(props),
+          new EmojiTrigger({
+            onOpen: (search: string) => {
+              this.setState({ emojiMenuOpen: true, blockMenuSearch: search });
+            },
+            onClose: () => {
+              this.setState({ emojiMenuOpen: false });
+            },
+          }),
+        ].filter((extension) => {
           if (this.props.disableExtensions) {
             return !(this.props.disableExtensions as string[]).includes(
               extension.name
@@ -478,13 +488,16 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   scrollToAnchor(hash: string) {
-    console.log({ hash });
     if (!hash) return;
 
     try {
       const element = document.querySelector(hash);
-      console.log({ element });
-      if (element) element.scrollIntoView({ behavior: "smooth" });
+      if (element)
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+          inline: "nearest",
+        });
     } catch (err) {
       // querySelector will throw an error if the hash begins with a number
       // or contains a period. This is protected against now by safeSlugify
