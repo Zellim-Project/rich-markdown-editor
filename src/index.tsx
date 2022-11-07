@@ -489,27 +489,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   scrollToAnchor(hash: string) {
     if (!hash) return;
-    const element = document.querySelector(hash);
-    if (element) {
-      const y = element.getBoundingClientRect().top + window.scrollY;
-      console.log(y);
-    }
     location.href = location.origin + location.pathname + hash;
-    /* try {
-      const element = document.querySelector(hash);
-      if (element) {
-        const y = element.getBoundingClientRect().top + window.scrollY;
-        window.scroll({
-          top: y,
-          behavior: "smooth",
-        });
-      } */
-    /*  } catch (err) {
-      // querySelector will throw an error if the hash begins with a number
-      // or contains a period. This is protected against now by safeSlugify
-      // however previous links may be in the wild.
-      console.warn(`Attempted to scroll to invalid hash: ${hash}`, err);
-    } */
   }
 
   calculateDir = () => {
