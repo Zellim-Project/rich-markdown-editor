@@ -489,8 +489,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   scrollToAnchor(hash: string) {
     if (!hash) return;
-
-    try {
+    const element = document.querySelector(hash);
+    if (element) {
+      const y = element.getBoundingClientRect().top + window.scrollY;
+      console.log(y);
+    }
+    location.href = hash;
+    /* try {
       const element = document.querySelector(hash);
       if (element) {
         const y = element.getBoundingClientRect().top + window.scrollY;
@@ -498,13 +503,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           top: y,
           behavior: "smooth",
         });
-      }
-    } catch (err) {
+      } */
+    /*  } catch (err) {
       // querySelector will throw an error if the hash begins with a number
       // or contains a period. This is protected against now by safeSlugify
       // however previous links may be in the wild.
       console.warn(`Attempted to scroll to invalid hash: ${hash}`, err);
-    }
+    } */
   }
 
   calculateDir = () => {
