@@ -61,16 +61,16 @@ export default class Embed extends Node {
     const hit = cache[node.attrs.href];
     let Component = hit ? hit.Component : undefined;
     let matches = hit ? hit.matches : undefined;
-    const embed = hit ? hit.embed : undefined;
-    console.log(embed, hit);
+    let embed = hit ? hit.embed : undefined;
 
     if (!Component) {
-      for (const embed of embeds) {
-        const m = embed.matcher(node.attrs.href);
+      for (const e of embeds) {
+        const m = e.matcher(node.attrs.href);
         if (m) {
-          Component = embed.component;
+          Component = e.component;
           matches = m;
-          cache[node.attrs.href] = { Component, matches };
+          embed = e;
+          cache[node.attrs.href] = { Component, matches, embed };
         }
       }
     }
