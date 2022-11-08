@@ -199,6 +199,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   marks: { [name: string]: MarkSpec };
   commands: Record<string, any>;
   rulePlugins: PluginSimple[];
+  embedsDisabledProp?: boolean;
 
   componentDidMount() {
     this.init();
@@ -213,6 +214,8 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     if (this.props.autoFocus) {
       this.focusAtEnd();
     }
+
+    this.embedsDisabledProp = this.props.embedsDisabled;
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -228,6 +231,11 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         ...this.view.props,
         editable: () => !this.props.readOnly,
       });
+    }
+
+    // pass readOnly changes through to underlying editor instance
+    if (this.props.embedsDisabled !== this.embedsDisabledProp) {
+      this.init();
     }
 
     if (this.props.scrollTo && this.props.scrollTo !== prevProps.scrollTo) {
