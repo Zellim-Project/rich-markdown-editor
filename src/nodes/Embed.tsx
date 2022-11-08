@@ -1,6 +1,7 @@
 import * as React from "react";
 import Node from "./Node";
 import embedsRule from "../rules/embeds";
+import DisabledEmbed from "../components/DisabledEmbed";
 
 const cache = {};
 
@@ -39,7 +40,7 @@ export default class Embed extends Node {
           },
         },
       ],
-      toDOM: node => [
+      toDOM: (node) => [
         "iframe",
         { class: "embed", src: node.attrs.href, contentEditable: false },
         0,
@@ -52,7 +53,7 @@ export default class Embed extends Node {
   }
 
   component({ isEditable, isSelected, theme, node }) {
-    const { embeds } = this.editor.props;
+    const { embeds, embedsDisabled } = this.editor.props;
 
     // matches are cached in module state to avoid re running loops and regex
     // here. Unfortuantely this function is not compatible with React.memo or
@@ -60,6 +61,7 @@ export default class Embed extends Node {
     const hit = cache[node.attrs.href];
     let Component = hit ? hit.Component : undefined;
     let matches = hit ? hit.matches : undefined;
+    const embed = hit ? hit.embed : undefined;
 
     if (!Component) {
       for (const embed of embeds) {
@@ -76,18 +78,31 @@ export default class Embed extends Node {
       return null;
     }
 
+    if (embedsDisabled) {
+      return (
+        <DisabledEmbed
+          attrs={{ href: node.attrs.href, matches }}
+          isEditable={isEditable}
+          isSelected={isSelected}
+          theme={theme}
+          embed={embed}
+        />
+      );
+    }
+
     return (
       <Component
         attrs={{ ...node.attrs, matches }}
         isEditable={isEditable}
         isSelected={isSelected}
         theme={theme}
+        embed={embed}
       />
     );
   }
 
   commands({ type }) {
-    return attrs => (state, dispatch) => {
+    return (attrs) => (state, dispatch) => {
       dispatch(
         state.tr.replaceSelectionWith(type.create(attrs)).scrollIntoView()
       );
@@ -106,7 +121,7 @@ export default class Embed extends Node {
   parseMarkdown() {
     return {
       node: "embed",
-      getAttrs: token => ({
+      getAttrs: (token) => ({
         href: token.attrGet("href"),
       }),
     };

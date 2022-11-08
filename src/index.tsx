@@ -131,6 +131,7 @@ export type Props = {
   onClickHashtag?: (tag: string, event: MouseEvent) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
   embeds: EmbedDescriptor[];
+  embedsDisabled?: boolean;
   onShowToast?: (message: string, code: ToastType) => void;
   tooltip: typeof React.Component | React.FC<any>;
   className?: string;
