@@ -62,6 +62,7 @@ export default class Embed extends Node {
     let Component = hit ? hit.Component : undefined;
     let matches = hit ? hit.matches : undefined;
     const embed = hit ? hit.embed : undefined;
+    console.log(embed, hit);
 
     if (!Component) {
       for (const embed of embeds) {
