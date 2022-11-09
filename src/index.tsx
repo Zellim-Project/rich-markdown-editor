@@ -235,7 +235,9 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
     // pass readOnly changes through to underlying editor instance
     if (this.props.embedsDisabled !== this.embedsDisabledProp) {
-      this.init();
+      this.nodes = this.createNodes();
+      const newState = this.createState(this.props.value);
+      this.view.updateState(newState);
       this.embedsDisabledProp = this.props.embedsDisabled;
     }
 
