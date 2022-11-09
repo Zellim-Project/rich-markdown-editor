@@ -308,7 +308,7 @@ export default class Image extends Node {
     }
     markdown += ")";
     state.ensureNewLine();
-    state.write("\\\n\n");
+    state.write("\n\n\\\n\\\\\n\n");
     state.ensureNewLine();
     state.write(markdown);
     state.closeBlock(node);
