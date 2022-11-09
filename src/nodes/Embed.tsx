@@ -54,7 +54,6 @@ export default class Embed extends Node {
 
   component({ isEditable, isSelected, theme, node }) {
     const { embeds, embedsDisabled } = this.editor.props;
-    console.log(embedsDisabled);
     // matches are cached in module state to avoid re running loops and regex
     // here. Unfortuantely this function is not compatible with React.memo or
     // we would use that instead.
