@@ -220,9 +220,13 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     // Allow changes to the 'value' prop to update the editor from outside
-    if (this.props.value && prevProps.value !== this.props.value) {
+    if (
+      (this.props.value && prevProps.value !== this.props.value) ||
+      this.props.embedsDisabled !== this.embedsDisabledProp
+    ) {
       const newState = this.createState(this.props.value);
       this.view.updateState(newState);
+      this.embedsDisabledProp = this.props.embedsDisabled;
     }
 
     // pass readOnly changes through to underlying editor instance
@@ -231,11 +235,6 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
         ...this.view.props,
         editable: () => !this.props.readOnly,
       });
-    }
-
-    // pass readOnly changes through to underlying editor instance
-    if (this.props.embedsDisabled !== this.embedsDisabledProp) {
-      this.init();
     }
 
     if (this.props.scrollTo && this.props.scrollTo !== prevProps.scrollTo) {
