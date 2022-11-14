@@ -173,9 +173,6 @@ export default class File extends Node {
   }
 
   toMarkdown(state, node) {
-    state.ensureNewLine();
-    state.write("\\\\");
-    state.ensureNewLine();
     state.write("\n@@@");
     state.write(
       "[" +

@@ -84,10 +84,7 @@ export default class EmbedTask extends Node {
   }
 
   toMarkdown(state, node) {
-    state.ensureNewLine();
-    state.write("\\\\");
-    state.ensureNewLine();
-    state.write("$-$-$-");
+    state.write("\n$-$-$-");
     state.write(
       "[" +
         state.esc(node.attrs.docId) +

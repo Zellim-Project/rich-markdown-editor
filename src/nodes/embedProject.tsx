@@ -60,7 +60,7 @@ export default class EmbedProject extends Node {
           }),
         },
       ],
-      toDOM: node => {
+      toDOM: (node) => {
         return [
           "div",
           { class: "embed-block" },
@@ -70,7 +70,7 @@ export default class EmbedProject extends Node {
     };
   }
 
-  component = props => {
+  component = (props) => {
     const {
       projectName,
       projectId,
@@ -101,7 +101,7 @@ export default class EmbedProject extends Node {
   };
 
   commands({ type }) {
-    return attrs => toggleWrap(type, attrs);
+    return (attrs) => toggleWrap(type, attrs);
   }
 
   get rulePlugins() {
@@ -113,10 +113,7 @@ export default class EmbedProject extends Node {
   }
 
   toMarkdown(state, node) {
-    state.ensureNewLine();
-    state.write("\\\\");
-    state.ensureNewLine();
-    state.write("#-#-#-");
+    state.write("\n#-#-#-");
     state.write(
       "[" +
         "projectId-" +
@@ -140,7 +137,7 @@ export default class EmbedProject extends Node {
   parseMarkdown() {
     return {
       block: "container_project",
-      getAttrs: token => {
+      getAttrs: (token) => {
         const file_regex = /\[(?<projectId>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         const [projectName, members, projectImg, projectColor] =
