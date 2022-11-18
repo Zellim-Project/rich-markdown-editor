@@ -69,8 +69,18 @@ export default class EmbedTask extends Node {
         <div className="info">
           <p className="task-id">{taskId}</p>
           <p className="project-id">{projectId}</p>
-          <p className="title">{taskName}</p>
-          <p className="subtitle">{projectName}</p>
+          <p
+            className={`title ${taskId === "deleted" &&
+              "text-decoration-line-through"}`}
+          >
+            {taskName}
+          </p>
+          <p
+            className={`subtitle ${taskId === "deleted" &&
+              "text-decoration-line-through"}`}
+          >
+            {projectName}
+          </p>
         </div>
       </div>
     );

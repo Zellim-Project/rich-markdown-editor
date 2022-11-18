@@ -93,8 +93,18 @@ export default class EmbedProject extends Node {
         )}
         <div className="info">
           <p className="project-id">{projectId}</p>
-          <p className="title">{projectName}</p>
-          <p className="subtitle">{members} Members</p>
+          <p
+            className={`title ${projectId === "deteled" &&
+              "text-decoration-line-through"}`}
+          >
+            {projectName}
+          </p>
+          <p
+            className={`subtitle ${projectId === "deteled" &&
+              "text-decoration-line-through"}`}
+          >
+            {members} Members
+          </p>
         </div>
       </div>
     );
