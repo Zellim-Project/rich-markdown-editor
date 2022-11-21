@@ -66,7 +66,7 @@ export default class EmbedTask extends Node {
         <div className="mentioned-info me-4">
           <p className="doc-id">{docId}</p>
           <p
-            className={`title fw-bold ${docId === "deleted" &&
+            className={`title fw-bold ${docId.includes("deleted") &&
               "text-decoration-line-through"}`}
           >
             {docName}
