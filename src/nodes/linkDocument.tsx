@@ -113,7 +113,7 @@ export default class EmbedTask extends Node {
         const file_regex = /\[(?<docId>[^]*?)\]\((?<docName>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         const [docName, icon] = result?.[2]?.split("&-&") || [];
-        const [, ...docId] = result?.[1].split("-") || [];
+        const docId = result?.[1].replace("docId-", "") || "";
         return {
           docId: result ? docId : null,
           docName: result ? docName : null,
