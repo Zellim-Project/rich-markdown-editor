@@ -94,13 +94,13 @@ export default class EmbedProject extends Node {
         <div className="info">
           <p className="project-id">{projectId}</p>
           <p
-            className={`title ${projectId === "deteled" &&
+            className={`title ${projectId === "deleted" &&
               "text-decoration-line-through"}`}
           >
             {projectName}
           </p>
           <p
-            className={`subtitle ${projectId === "deteled" &&
+            className={`subtitle ${projectId === "deleted" &&
               "text-decoration-line-through"}`}
           >
             {members} Members
