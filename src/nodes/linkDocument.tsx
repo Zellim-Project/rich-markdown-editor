@@ -92,6 +92,7 @@ export default class EmbedTask extends Node {
     state.write("\n$-$-$-");
     state.write(
       "[" +
+        "docId-" +
         state.esc(node.attrs.docId) +
         "]" +
         "(" +
