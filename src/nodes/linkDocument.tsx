@@ -114,6 +114,7 @@ export default class EmbedTask extends Node {
         const result = file_regex.exec(token.info);
         const [docName, icon] = result?.[2]?.split("&-&") || [];
         const [, docId] = result?.[1].split("-") || [];
+        console.log(docId, result?.[1]);
         return {
           docId: result ? docId : null,
           docName: result ? docName : null,
