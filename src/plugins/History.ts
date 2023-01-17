@@ -1,5 +1,5 @@
 import { undoInputRule } from "prosemirror-inputrules";
-import { history, undo, redo } from "prosemirror-history";
+import { yUndoPlugin, undo, redo } from "y-prosemirror";
 import Extension from "../lib/Extension";
 
 export default class History extends Extension {
@@ -17,6 +17,6 @@ export default class History extends Extension {
   }
 
   get plugins() {
-    return [history()];
+    return [yUndoPlugin()];
   }
 }

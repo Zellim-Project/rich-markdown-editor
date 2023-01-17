@@ -308,6 +308,7 @@ export default class Image extends Node {
     }
     markdown += ")";
     state.write(markdown);
+    state.closeBlock(node);
   }
 
   parseMarkdown() {

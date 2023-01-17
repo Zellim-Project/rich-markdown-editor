@@ -11,6 +11,7 @@ import getDataTransferFiles from "../lib/getDataTransferFiles";
 import filterExcessSeparators from "../lib/filterExcessSeparators";
 import insertFiles from "../commands/insertFiles";
 import insertAllFiles from "../commands/insertAllFiles";
+import embedATaskCommand, { ITask } from "../commands/embedATask";
 import baseDictionary from "../dictionary";
 
 const SSR = typeof window === "undefined";
@@ -35,6 +36,7 @@ export type Props<T extends MenuItem = MenuItem> = {
   uploadFile?: (file: File) => Promise<string>;
   onFileUploadStart?: () => void;
   onFileUploadStop?: () => void;
+  embedATask?: () => Promise<ITask>;
   onShowToast?: (message: string, id: string) => void;
   onLinkToolbarOpen?: () => void;
   onClose: () => void;
@@ -66,6 +68,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   menuRef = React.createRef<HTMLDivElement>();
   inputRef = React.createRef<HTMLInputElement>();
   fileInputRef = React.createRef<HTMLInputElement>();
+  embedTaskRef = React.createRef<HTMLInputElement>();
 
   state: State = {
     left: -1000,
@@ -178,12 +181,14 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  insertItem = item => {
+  insertItem = (item) => {
     switch (item.name) {
       case "image":
         return this.triggerImagePick();
       case "container_file":
         return this.triggerFilePick();
+      case "container_task":
+        return this.triggerEmbedATask();
       case "embed":
         return this.triggerLinkInput(item);
       case "link": {
@@ -267,11 +272,17 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  triggerLinkInput = item => {
+  triggerEmbedATask = () => {
+    if (this.embedTaskRef.current) {
+      this.embedTaskRef.current.click();
+    }
+  };
+
+  triggerLinkInput = (item) => {
     this.setState({ insertItem: item });
   };
 
-  handleImagePicked = event => {
+  handleImagePicked = (event) => {
     const files = getDataTransferFiles(event);
 
     const {
@@ -282,7 +293,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       onShowToast,
     } = this.props;
     const { state } = view;
-    const parent = findParentNode(node => !!node)(state.selection);
+    const parent = findParentNode((node) => !!node)(state.selection);
 
     this.clearSearch();
 
@@ -307,7 +318,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClose();
   };
 
-  handleFilePicked = event => {
+  handleFilePicked = (event) => {
     const files = getDataTransferFiles(event);
 
     const {
@@ -318,7 +329,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       onShowToast,
     } = this.props;
     const { state, dispatch } = view;
-    const parent = findParentNode(node => !!node)(state.selection);
+    const parent = findParentNode((node) => !!node)(state.selection);
 
     if (parent) {
       dispatch(
@@ -333,6 +344,30 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         uploadFile,
         onFileUploadStart,
         onFileUploadStop,
+        onShowToast,
+        dictionary: this.props.dictionary,
+      });
+    }
+
+    this.props.onClose();
+  };
+
+  handleEmbedATask = (event) => {
+    const { view, embedATask, onShowToast } = this.props;
+    const { state, dispatch } = view;
+    const parent = findParentNode((node) => !!node)(state.selection);
+
+    if (parent) {
+      dispatch(
+        state.tr.insertText(
+          "",
+          parent.pos,
+          parent.pos + parent.node.textContent.length + 1
+        )
+      );
+
+      embedATaskCommand(view, event, parent.pos, {
+        embedATask,
         onShowToast,
         dictionary: this.props.dictionary,
       });
@@ -449,6 +484,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       search = "",
       uploadImage,
       uploadFile,
+      embedATask,
       commands,
       filterable = true,
     } = this.props;
@@ -471,7 +507,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       items = items.concat(embedItems);
     }
 
-    const filtered = items.filter(item => {
+    const filtered = items.filter((item) => {
       if (item.name === "separator") return true;
 
       // Some extensions may be disabled, remove corresponding menu items
@@ -487,7 +523,10 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       if (!uploadImage && item.name === "image") return false;
 
       // If no file upload callback has been passed, filter the file block out
-      if (!uploadFile && item.name === "file") return false;
+      if (!uploadFile && item.name === "container_file") return false;
+
+      // If no file upload callback has been passed, filter the file block out
+      if (!embedATask && item.name === "container_task") return false;
 
       // some items (defaultHidden) are not visible until a search query exists
       if (!search) return !item.defaultHidden;
@@ -506,7 +545,13 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   render() {
-    const { dictionary, isActive, uploadImage, uploadFile } = this.props;
+    const {
+      dictionary,
+      isActive,
+      uploadImage,
+      uploadFile,
+      embedATask,
+    } = this.props;
     const items = this.filtered;
     const { insertItem, ...positioning } = this.state;
 
@@ -584,6 +629,11 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
               />
             </VisuallyHidden>
           )}
+          {embedATask && (
+            <VisuallyHidden>
+              <div ref={this.embedTaskRef} onClick={this.handleEmbedATask} />
+            </VisuallyHidden>
+          )}
         </Wrapper>
       </Portal>
     );
@@ -597,7 +647,7 @@ const LinkInputWrapper = styled.div`
 const LinkInput = styled(Input)`
   height: 36px;
   width: 100%;
-  color: ${props => props.theme.blockToolbarText};
+  color: ${(props) => props.theme.blockToolbarText};
 `;
 
 const List = styled.ol`
@@ -616,7 +666,7 @@ const ListItem = styled.li`
 const Empty = styled.div`
   display: flex;
   align-items: center;
-  color: ${props => props.theme.textSecondary};
+  color: ${(props) => props.theme.textSecondary};
   font-weight: 500;
   font-size: 14px;
   height: 36px;
@@ -630,14 +680,14 @@ export const Wrapper = styled.div<{
   left?: number;
   isAbove: boolean;
 }>`
-  color: ${props => props.theme.text};
-  font-family: ${props => props.theme.fontFamily};
+  color: ${(props) => props.theme.text};
+  font-family: ${(props) => props.theme.fontFamily};
   position: absolute;
-  z-index: ${props => props.theme.zIndex + 100};
-  ${props => props.top !== undefined && `top: ${props.top}px`};
-  ${props => props.bottom !== undefined && `bottom: ${props.bottom}px`};
-  left: ${props => props.left}px;
-  background-color: ${props => props.theme.blockToolbarBackground};
+  z-index: ${(props) => props.theme.zIndex + 100};
+  ${(props) => props.top !== undefined && `top: ${props.top}px`};
+  ${(props) => props.bottom !== undefined && `bottom: ${props.bottom}px`};
+  left: ${(props) => props.left}px;
+  background-color: ${(props) => props.theme.blockToolbarBackground};
   border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px,
     rgba(0, 0, 0, 0.08) 0px 4px 8px, rgba(0, 0, 0, 0.08) 0px 2px 4px;
@@ -662,7 +712,7 @@ export const Wrapper = styled.div<{
   hr {
     border: 0;
     height: 0;
-    border-top: 1px solid ${props => props.theme.blockToolbarDivider};
+    border-top: 1px solid ${(props) => props.theme.blockToolbarDivider};
   }
 
   ${({ active, isAbove }) =>

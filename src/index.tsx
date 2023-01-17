@@ -26,6 +26,8 @@ import Extension from "./lib/Extension";
 import ExtensionManager from "./lib/ExtensionManager";
 import ComponentView from "./lib/ComponentView";
 import headingToSlug from "./lib/headingToSlug";
+import { YXmlFragment } from "yjs/dist/src/internals";
+import { WebsocketProvider } from "y-websocket";
 
 // styles
 import { StyledEditor } from "./styles/editor";
@@ -49,6 +51,7 @@ import Image from "./nodes/Image";
 import ListItem from "./nodes/ListItem";
 import Notice from "./nodes/Notice";
 import FileDoc from "./nodes/FileDoc";
+import EmbedTask from "./nodes/embedTask";
 import OrderedList from "./nodes/OrderedList";
 import Paragraph from "./nodes/Paragraph";
 import Table from "./nodes/Table";
@@ -65,6 +68,7 @@ import Link from "./marks/Link";
 import Strikethrough from "./marks/Strikethrough";
 import TemplatePlaceholder from "./marks/Placeholder";
 import Underline from "./marks/Underline";
+import Sync from "./plugins/Sync";
 
 // plugins
 import BlockMenuTrigger from "./plugins/BlockMenuTrigger";
@@ -79,7 +83,7 @@ import TrailingNode from "./plugins/TrailingNode";
 import PasteHandler from "./plugins/PasteHandler";
 import { PluginSimple } from "markdown-it";
 
-export { schema, parser, serializer, renderToHtml } from "./server";
+import { ITask } from "./commands/embedATask";
 
 export { default as Extension } from "./lib/Extension";
 
@@ -89,6 +93,8 @@ export type Props = {
   id?: string;
   value?: string;
   defaultValue: string;
+  yXmlFragment?: YXmlFragment;
+  yProvider?: WebsocketProvider;
   placeholder: string;
   extensions?: Extension[];
   disableExtensions?: (
@@ -137,9 +143,11 @@ export type Props = {
   };
   uploadImage?: (file: File) => Promise<string>;
   uploadFile?: (file: File) => Promise<string>;
+  embedATask?: () => Promise<ITask>;
+  openATask?: (val: { taskId: string; projectId: string }) => Promise<void>;
   onBlur?: () => void;
   onFocus?: () => void;
-  onSave?: ({ done: boolean }) => void;
+  onSave?: ({ done }: { done: boolean }) => void;
   onCancel?: () => void;
   onChange?: (value: () => string) => void;
   onImageUploadStart?: () => void;
@@ -346,6 +354,12 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
             onFileUploadStop: this.props.onFileUploadStop,
             onShowToast: this.props.onShowToast,
           }),
+          new EmbedTask({
+            dictionary,
+            embedATask: this.props.embedATask,
+            openATask: this.props.openATask,
+            onShowToast: this.props.onShowToast,
+          }),
           new Heading({
             dictionary,
             onShowToast: this.props.onShowToast,
@@ -382,6 +396,10 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
           }),
           new Strikethrough(),
           new OrderedList(),
+          new Sync({
+            yProvider: this.props.yProvider,
+            yXmlFragment: this.props.yXmlFragment,
+          }),
           new History(),
           new Folding(),
           new SmartText(),
@@ -816,6 +834,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
                   onClose={this.handleCloseBlockMenu}
                   uploadImage={this.props.uploadImage}
                   uploadFile={this.props.uploadFile}
+                  embedATask={this.props.embedATask}
                   onLinkToolbarOpen={this.handleOpenLinkMenu}
                   onImageUploadStart={this.props.onImageUploadStart}
                   onImageUploadStop={this.props.onImageUploadStop}
