@@ -18,21 +18,18 @@ const NameDiv = styled.div<{
   userColor: string;
 }>`
   position: absolute;
-  top: -1.05em;
+  top: -1.3em;
   left: -1px;
-  font-size: 13px;
+  font-size: 12px;
   background-color: ${(props) => props.userColor};
-  border-radius: 2px;
-  font-family: serif;
+  border-radius: 3px;
+  font-family: nunito, helvetica, sans-serif;
   font-style: normal;
   font-weight: normal;
   line-height: normal;
   user-select: none;
   color: white;
-  padding-left: 2px;
-  padding-right: 2px;
-  padding-top: 1px;
-  padding-bottom: 1px;
+  padding: 2px 5px;
   white-space: nowrap;
 `;
 

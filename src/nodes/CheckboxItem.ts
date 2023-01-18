@@ -1,7 +1,7 @@
 import {
   splitListItem,
   sinkListItem,
-  liftListItem,
+  liftListItem
 } from "prosemirror-schema-list";
 import Node from "./Node";
 import checkboxRule from "../rules/checkboxes";
@@ -15,8 +15,8 @@ export default class CheckboxItem extends Node {
     return {
       attrs: {
         checked: {
-          default: false,
-        },
+          default: false
+        }
       },
       content: "paragraph block*",
       defining: true,
@@ -25,9 +25,9 @@ export default class CheckboxItem extends Node {
         {
           tag: `li[data-type="${this.name}"]`,
           getAttrs: (dom: HTMLLIElement) => ({
-            checked: dom.className.includes("checked"),
-          }),
-        },
+            checked: dom.className.includes("checked")
+          })
+        }
       ],
       toDOM: node => {
         const input = document.createElement("input");
@@ -43,18 +43,18 @@ export default class CheckboxItem extends Node {
           "li",
           {
             "data-type": this.name,
-            class: node.attrs.checked ? "checked" : undefined,
+            class: node.attrs.checked ? "checked" : undefined
           },
           [
             "span",
             {
-              contentEditable: false,
+              contentEditable: false
             },
-            input,
+            input
           ],
-          ["div", 0],
+          ["div", 0]
         ];
-      },
+      }
     };
   }
 
@@ -67,11 +67,12 @@ export default class CheckboxItem extends Node {
     const { tr } = view.state;
     const { top, left } = event.target.getBoundingClientRect();
     const result = view.posAtCoords({ top, left });
-
+    console.log(result, top, left);
     if (result) {
       const transaction = tr.setNodeMarkup(result.inside, undefined, {
-        checked: event.target.checked,
+        checked: event.target.checked
       });
+      console.log(transaction);
       view.dispatch(transaction);
     }
   };
@@ -82,7 +83,7 @@ export default class CheckboxItem extends Node {
       Tab: sinkListItem(type),
       "Shift-Tab": liftListItem(type),
       "Mod-]": sinkListItem(type),
-      "Mod-[": liftListItem(type),
+      "Mod-[": liftListItem(type)
     };
   }
 
@@ -95,8 +96,8 @@ export default class CheckboxItem extends Node {
     return {
       block: "checkbox_item",
       getAttrs: tok => ({
-        checked: tok.attrGet("checked") ? true : undefined,
-      }),
+        checked: tok.attrGet("checked") ? true : undefined
+      })
     };
   }
 }

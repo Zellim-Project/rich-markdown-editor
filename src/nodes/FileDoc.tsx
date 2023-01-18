@@ -1,16 +1,27 @@
 import { wrappingInputRule } from "prosemirror-inputrules";
 import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
-import { LinkIcon } from "outline-icons";
 import * as React from "react";
-import ReactDOM from "react-dom";
 import Node from "./Node";
 import filesRule from "../rules/files";
 import uploadFilePlaceholderPlugin from "../lib/uploadFilePlaceholder";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import insertAllFiles from "../commands/insertAllFiles";
+import { getIcon } from "../lib/parseIcon";
 
-const uploadPlugin = options =>
+function formatBytes(bytes, decimals = 2) {
+  if (bytes === 0) return "0 Bytes";
+
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
+}
+
+const uploadPlugin = (options) =>
   new Plugin({
     props: {
       handleDOMEvents: {
@@ -27,8 +38,8 @@ const uploadPlugin = options =>
           // check if we actually pasted any files
           const files = Array.prototype.slice
             .call(event.clipboardData.items)
-            .map(dt => dt.getAsFile())
-            .filter(file => file);
+            .map((dt) => dt.getAsFile())
+            .filter((file) => file);
 
           if (files.length === 0) return false;
 
@@ -83,8 +94,17 @@ export default class File extends Node {
   get schema() {
     return {
       attrs: {
-        src: {},
+        fileName: {},
         alt: {
+          default: "",
+        },
+        size: {
+          default: "",
+        },
+        type: {
+          default: "",
+        },
+        mimeType: {
           default: "",
         },
       },
@@ -98,35 +118,54 @@ export default class File extends Node {
           preserveWhitespace: "full",
           contentElement: "div:last-child",
           getAttrs: (dom: HTMLDivElement) => ({
-            alt: dom.className.includes("a"),
+            alt: dom.getElementsByClassName("title")[0].textContent,
+            fileName: dom.getElementsByClassName("filename")[0].textContent,
+            size: dom.getElementsByClassName("file-size")[0].textContent,
+            type: dom.getElementsByClassName("file-type")[0].textContent,
+            mimeType: dom.getElementsByClassName("mimeType")[0].textContent,
           }),
         },
       ],
-      toDOM: node => {
-        const a = document.createElement("a");
-        a.href = node.attrs.src;
-        const fileName = document.createTextNode(node.attrs.alt);
-        a.appendChild(fileName);
-
-        const component = <LinkIcon color="#898E9A" />;
-
-        const icon = document.createElement("div");
-        icon.className = "icon";
-        ReactDOM.render(component, icon);
-
+      toDOM: (node) => {
         return [
           "div",
-          { class: `file-block` },
-          icon,
-          a,
-          ["div", { contentEditable: true }],
+          { class: "embed-block" },
+          ["div", { ...node.attrs, contentEditable: true }],
         ];
       },
     };
   }
 
+  component = (props) => {
+    const { alt, fileName, size, type, mimeType } = props.node.attrs;
+    const { downloadAFile } = this.editor.props;
+    return (
+      <div
+        contentEditable={false}
+        className="embed-block"
+        onClick={() => downloadAFile?.({ key: fileName, fileName: alt })}
+      >
+        <div className="file-icon">
+          <img
+            src={`/assets/images/files${getIcon(alt, mimeType)}`}
+            alt="file-icon"
+          />
+        </div>
+        <div className="info">
+          <span className="mimetype">{mimeType}</span>
+          <span className="filename">{fileName}</span>
+          <p className="title">{alt}</p>
+          <p className="subtitle">
+            <span className="file-size">{formatBytes(Number(size))} </span>•{" "}
+            <span className="file-type">{type.toUpperCase()}</span>
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   commands({ type }) {
-    return attrs => toggleWrap(type, attrs);
+    return (attrs) => toggleWrap(type, attrs);
   }
 
   inputRules({ type }) {
@@ -140,7 +179,13 @@ export default class File extends Node {
         state.esc(node.attrs.alt) +
         "]" +
         "(" +
-        state.esc(node.attrs.src) +
+        state.esc(node.attrs.fileName) +
+        "&-&" +
+        state.esc(node.attrs.size) +
+        "&-&" +
+        state.esc(node.attrs.type) +
+        "&-&" +
+        state.esc(node.attrs.mimeType) +
         ")"
     );
     state.ensureNewLine();
@@ -151,11 +196,15 @@ export default class File extends Node {
   parseMarkdown() {
     return {
       block: "container_file",
-      getAttrs: token => {
+      getAttrs: (token) => {
         const file_regex = /\[(?<alt>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
+        const [fileName, size, type, mimeType] = result?.[2].split("&-&") || [];
         return {
-          src: result ? result[2] : null,
+          fileName: result ? fileName : null,
+          size: result ? size : null,
+          type: result ? type : null,
+          mimeType: result ? mimeType : null,
           alt: result ? result[1] : null,
         };
       },

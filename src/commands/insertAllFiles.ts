@@ -49,7 +49,7 @@ const insertAllFiles = function(view, event, pos, files, options) {
     // to allow all placeholders to be entered at once with the uploads
     // happening in the background in parallel.
     uploadFile(file)
-      .then(src => {
+      .then(fileName => {
         const pos = findPlaceholder(view.state, id);
 
         // if the content around the placeholder has been deleted
@@ -60,7 +60,13 @@ const insertAllFiles = function(view, event, pos, files, options) {
           .replaceWith(
             pos,
             pos,
-            schema.nodes.container_file.create({ src, alt: file.name })
+            schema.nodes.container_file.create({
+              fileName,
+              alt: file.name,
+              size: String(file?.size || ""),
+              type: file?.name?.split(".")?.reverse()?.[0],
+              mimetype: file?.type,
+            })
           )
           .setMeta(uploadFilePlaceholderPlugin, { remove: { id } });
 

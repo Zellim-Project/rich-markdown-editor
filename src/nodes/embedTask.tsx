@@ -3,9 +3,9 @@ import { Plugin } from "prosemirror-state";
 import toggleWrap from "../commands/toggleWrap";
 import { Union } from "../lib/icons";
 import * as React from "react";
-import embedTaskPlaceHolder from "../lib/embedTaskPlaceHolder";
+import { embedTaskPlaceholder } from "../lib/embedSimplePlaceHolder";
 import Node from "./Node";
-import taskRUles from "../rules/embedTask";
+import taskRules from "../rules/embedTask";
 export default class EmbedTask extends Node {
   get name() {
     return "container_task";
@@ -33,7 +33,7 @@ export default class EmbedTask extends Node {
       draggable: false,
       parseDOM: [
         {
-          tag: "div.task-block",
+          tag: "div.embed-block",
           preserveWhitespace: "full",
           contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => ({
@@ -44,23 +44,23 @@ export default class EmbedTask extends Node {
           }),
         },
       ],
-      toDOM: node => {
+      toDOM: (node) => {
         return [
           "div",
-          { class: "task-block" },
+          { class: "embed-block" },
           ["p", { ...node.attrs, contentEditable: false }],
         ];
       },
     };
   }
 
-  component = props => {
+  component = (props) => {
     const { taskId, projectId, taskName, projectName } = props.node.attrs;
     const { openATask } = this.editor.props;
     return (
       <div
         contentEditable={false}
-        className="task-block"
+        className="embed-block"
         onClick={() => openATask?.({ taskId, projectId })}
       >
         <div className="icon">
@@ -69,19 +69,29 @@ export default class EmbedTask extends Node {
         <div className="info">
           <p className="task-id">{taskId}</p>
           <p className="project-id">{projectId}</p>
-          <p className="title">{taskName}</p>
-          <p className="subtitle">{projectName}</p>
+          <p
+            className={`title ${taskId === "deleted" &&
+              "text-decoration-line-through"}`}
+          >
+            {taskName}
+          </p>
+          <p
+            className={`subtitle ${taskId === "deleted" &&
+              "text-decoration-line-through"}`}
+          >
+            {projectName}
+          </p>
         </div>
       </div>
     );
   };
 
   commands({ type }) {
-    return attrs => toggleWrap(type, attrs);
+    return (attrs) => toggleWrap(type, attrs);
   }
 
   get rulePlugins() {
-    return [taskRUles];
+    return [taskRules];
   }
 
   inputRules({ type }) {
@@ -89,11 +99,12 @@ export default class EmbedTask extends Node {
   }
 
   toMarkdown(state, node) {
-    state.write("&&&");
+    state.write("\n&&&");
     state.write(
       "[" +
         "taskId-" +
         state.esc(node.attrs.taskId) +
+        "-" +
         state.esc(node.attrs.projectId) +
         "]" +
         "(" +
@@ -110,7 +121,7 @@ export default class EmbedTask extends Node {
   parseMarkdown() {
     return {
       block: "container_task",
-      getAttrs: token => {
+      getAttrs: (token) => {
         const file_regex = /\[(?<taskId>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         const [taskName, projectName] = result?.[2].split("&-&") || [];
@@ -126,6 +137,6 @@ export default class EmbedTask extends Node {
   }
 
   get plugins() {
-    return [embedTaskPlaceHolder, new Plugin({})];
+    return [embedTaskPlaceholder, new Plugin({})];
   }
 }
