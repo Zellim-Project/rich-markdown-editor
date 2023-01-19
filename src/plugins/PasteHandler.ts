@@ -6,6 +6,7 @@ import isUrl from "../lib/isUrl";
 import isMarkdown from "../lib/isMarkdown";
 import selectionIsInCode from "../queries/isInCode";
 import { LANGUAGES } from "./Prism";
+import { Slice } from "prosemirror-model";
 
 /**
  * Add support for additional syntax that users paste even though it isn't
@@ -64,7 +65,7 @@ export default class PasteHandler extends Extension {
                   const matches = embed.matcher(text);
                   if (matches) {
                     this.editor.commands.embed({
-                      href: text,
+                      href: text
                     });
                     return true;
                   }
@@ -107,7 +108,7 @@ export default class PasteHandler extends Extension {
                     view.state.schema.nodes.code_fence.create({
                       language: Object.keys(LANGUAGES).includes(vscodeMeta.mode)
                         ? vscodeMeta.mode
-                        : null,
+                        : null
                     })
                   )
                   .insertText(text)
@@ -134,9 +135,11 @@ export default class PasteHandler extends Extension {
               const paste = this.editor.pasteParser.parse(
                 normalizePastedMarkdown(text)
               );
-              const slice = paste.slice(0);
+              const slice = paste?.slice(0);
 
-              const transaction = view.state.tr.replaceSelection(slice);
+              const transaction = view.state.tr.replaceSelection(
+                slice as Slice
+              );
               view.dispatch(transaction);
               return true;
             }
@@ -144,9 +147,9 @@ export default class PasteHandler extends Extension {
             // otherwise use the default HTML parser which will handle all paste
             // "from the web" events
             return false;
-          },
-        },
-      }),
+          }
+        }
+      })
     ];
   }
 }

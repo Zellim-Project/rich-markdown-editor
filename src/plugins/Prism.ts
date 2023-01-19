@@ -25,7 +25,7 @@ export const LANGUAGES = {
   rust: "Rust",
   sql: "SQL",
   typescript: "TypeScript",
-  yaml: "YAML",
+  yaml: "YAML"
 };
 
 type ParsedNode = {
@@ -53,7 +53,7 @@ function getDecorations({ doc, name }: { doc: Node; name: string }) {
 
       return {
         text: node.value,
-        classes: classNames,
+        classes: classNames
       };
     });
   }
@@ -77,19 +77,19 @@ function getDecorations({ doc, name }: { doc: Node; name: string }) {
           return {
             ...node,
             from,
-            to,
+            to
           };
         })
         .filter(node => node.classes && node.classes.length)
         .map(node =>
           Decoration.inline(node.from, node.to, {
-            class: node.classes.join(" "),
+            class: node.classes.join(" ")
           })
         );
 
       cache[block.pos] = {
         node: block.node,
-        decorations: _decorations,
+        decorations: _decorations
       };
     }
     cache[block.pos].decorations.forEach(decoration => {
@@ -112,7 +112,7 @@ export default function Prism({ name }) {
   return new Plugin({
     key: new PluginKey("prism"),
     state: {
-      init: (_: Plugin, { doc }) => {
+      init: ({}, { doc }) => {
         return DecorationSet.create(doc, []);
       },
       apply: (transaction: Transaction, decorationSet, oldState, state) => {
@@ -128,7 +128,7 @@ export default function Prism({ name }) {
         }
 
         return decorationSet.map(transaction.mapping, transaction.doc);
-      },
+      }
     },
     view: view => {
       if (!highlighted) {
@@ -145,7 +145,7 @@ export default function Prism({ name }) {
     props: {
       decorations(state) {
         return this.getState(state);
-      },
-    },
+      }
+    }
   });
 }
