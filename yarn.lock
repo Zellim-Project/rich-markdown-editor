@@ -11133,7 +11133,7 @@ prosemirror-utils@^0.9.6:
   resolved "https://registry.yarnpkg.com/prosemirror-utils/-/prosemirror-utils-0.9.6.tgz#3d97bd85897e3b535555867dc95a51399116a973"
   integrity sha512-UC+j9hQQ1POYfMc5p7UFxBTptRiGPR7Kkmbl3jVvU8VgQbkI89tR/GK+3QYC8n+VvBZrtAoCrJItNhWSxX3slA==
 
-prosemirror-view@*, prosemirror-view@^1.27.0, prosemirror-view@ˆ1.29.2:
+prosemirror-view@*, prosemirror-view@1.29.2, prosemirror-view@^1.27.0:
   version "1.29.2"
   resolved "https://registry.yarnpkg.com/prosemirror-view/-/prosemirror-view-1.29.2.tgz#0c59605d8dffc252054721a641e0bc574f6668e5"
   integrity sha512-T4Wm+eTpTH0N9gBJfJR6iecjRX2hYTKewoJUwa92hQOoEz2bYVZy6sYeN+hfnRR506TRvRcuZYqftp4KA8dN+Q==
