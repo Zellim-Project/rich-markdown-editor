@@ -89,7 +89,7 @@ const uploadPlugin = (options) =>
       decorations: (state: EditorState) => {
         const decorations: Decoration[] = [];
         decorations.push(
-          Decoration.node(state.selection.from, state.doc.nodeSize, {
+          Decoration.node(state.selection.from, state.doc.nodeSize + 1, {
             class: "placeholder",
             "data-empty-text": options.dictionary.newLineEmpty,
           })
