@@ -175,7 +175,7 @@ export default class Image extends Node {
           ? `image image-${node.attrs.layoutClass}`
           : "image";
         return [
-          "span",
+          "div",
           {
             class: className,
           },
