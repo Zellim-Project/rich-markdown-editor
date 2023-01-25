@@ -81,7 +81,7 @@ const uploadPlugin = (options) =>
         },
         decorations: (view) => {
           view.state.tr.insert(
-            view.state.selection.from,
+            view.state.selection.from + 1,
             view.state.schema.nodes.paragraph.create({})
           );
         },
