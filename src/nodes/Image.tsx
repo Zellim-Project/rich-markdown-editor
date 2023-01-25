@@ -122,7 +122,6 @@ export default class Image extends Node {
 
   get schema() {
     return {
-      inline: true,
       attrs: {
         src: {},
         alt: {
