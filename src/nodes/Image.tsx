@@ -79,6 +79,12 @@ const uploadPlugin = (options) =>
 
           return false;
         },
+        decorations: (view) => {
+          view.state.tr.insert(
+            view.state.selection.from,
+            view.state.schema.nodes.paragraph.create({})
+          );
+        },
       },
     },
   });
