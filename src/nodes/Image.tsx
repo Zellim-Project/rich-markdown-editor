@@ -1,6 +1,11 @@
 import * as React from "react";
 import { DownloadIcon } from "outline-icons";
-import { Plugin, TextSelection, NodeSelection } from "prosemirror-state";
+import {
+  Plugin,
+  TextSelection,
+  NodeSelection,
+  EditorState,
+} from "prosemirror-state";
 import { InputRule } from "prosemirror-inputrules";
 import styled from "styled-components";
 import ImageZoom from "react-medium-image-zoom";
@@ -8,6 +13,7 @@ import getDataTransferFiles from "../lib/getDataTransferFiles";
 import uploadPlaceholderPlugin from "../lib/uploadPlaceholder";
 import insertFiles from "../commands/insertFiles";
 import Node from "./Node";
+import { Decoration, DecorationSet } from "prosemirror-view";
 
 /**
  * Matches following attributes in Markdown-typed image: [, alt, src, class]
@@ -79,12 +85,17 @@ const uploadPlugin = (options) =>
 
           return false;
         },
-        decorations: (view) => {
-          view.state.tr.insert(
-            view.state.selection.from + 1,
-            view.state.schema.nodes.paragraph.create({})
-          );
-        },
+      },
+      decorations: (state: EditorState) => {
+        const decorations: Decoration[] = [];
+        decorations.push(
+          Decoration.node(state.selection.from, state.doc.nodeSize, {
+            class: "placeholder",
+            "data-empty-text": options.dictionary.newLineEmpty,
+          })
+        );
+
+        return DecorationSet.create(state.doc, decorations);
       },
     },
   });
