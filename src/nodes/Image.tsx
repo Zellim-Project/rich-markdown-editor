@@ -254,7 +254,7 @@ export default class Image extends Node {
     const className = layoutClass ? `image image-${layoutClass}` : "image";
 
     return (
-      <span contentEditable={false} className={className}>
+      <div contentEditable={false} className={className}>
         <ImageWrapper
           className={isSelected ? "ProseMirror-selectednode" : ""}
           onClick={this.handleSelect(props)}
@@ -291,7 +291,7 @@ export default class Image extends Node {
         >
           {alt}
         </Caption>
-      </span>
+      </div>
     );
   };
 
@@ -309,7 +309,6 @@ export default class Image extends Node {
     markdown += ")";
     state.ensureNewLine();
     state.write(markdown);
-    state.ensureNewLine();
     state.closeBlock(node);
   }
 
