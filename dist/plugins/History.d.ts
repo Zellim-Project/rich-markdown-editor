@@ -1,0 +1,18 @@
+import { undo, redo } from "y-prosemirror";
+import Extension from "../lib/Extension";
+export default class History extends Extension {
+    get name(): string;
+    keys(): {
+        "Mod-z": typeof undo;
+        "Mod-y": typeof redo;
+        "Shift-Mod-z": typeof redo;
+        Backspace: import("prosemirror-state").Command;
+    };
+    get plugins(): import("prosemirror-state").Plugin<{
+        undoManager: any;
+        prevSel: any;
+        hasUndoOps: boolean;
+        hasRedoOps: boolean;
+    }>[];
+}
+//# sourceMappingURL=History.d.ts.map
