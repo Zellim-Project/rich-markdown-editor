@@ -422,7 +422,7 @@ export default class Image extends Node {
       new InputRule(IMAGE_INPUT_REGEX, (state, match, start, end) => {
         const [okay, alt, src, matchedTitle] = match;
         const { tr } = state;
-
+        console.log(match);
         if (okay) {
           tr.replaceWith(
             start - 1,
