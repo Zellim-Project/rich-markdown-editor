@@ -1,6 +1,6 @@
 import { EditorView } from "prosemirror-view";
 import uploadPlaceholderPlugin, {
-  findPlaceholder,
+  findPlaceholder
 } from "../lib/uploadPlaceholder";
 import { ToastType } from "../types";
 import baseDictionary from "../dictionary";
@@ -31,7 +31,7 @@ const insertFiles = function(
     uploadImage,
     onImageUploadStart,
     onImageUploadStop,
-    onShowToast,
+    onShowToast
   } = options;
 
   if (!uploadImage) {
@@ -66,8 +66,8 @@ const insertFiles = function(
         id,
         file,
         pos,
-        replaceExisting: options.replaceExisting,
-      },
+        replaceExisting: options.replaceExisting
+      }
     });
     view.dispatch(tr);
 
@@ -92,7 +92,11 @@ const insertFiles = function(
           const [from, to] = result;
           view.dispatch(
             view.state.tr
-              .replaceWith(from, to || from, schema.nodes.image.create({ src }))
+              .replaceWith(
+                from,
+                to || from,
+                schema.nodes.container_image.create({ src })
+              )
               .setMeta(uploadPlaceholderPlugin, { remove: { id } })
           );
 
@@ -119,7 +123,7 @@ const insertFiles = function(
 
         // cleanup the placeholder if there is a failure
         const transaction = view.state.tr.setMeta(uploadPlaceholderPlugin, {
-          remove: { id },
+          remove: { id }
         });
         view.dispatch(transaction);
 

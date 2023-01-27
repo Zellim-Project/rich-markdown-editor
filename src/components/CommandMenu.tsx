@@ -189,7 +189,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
   insertItem = (item) => {
     switch (item.name) {
-      case "image":
+      case "container_image":
         return this.triggerImagePick();
       case "container_file":
         return this.triggerFilePick();
@@ -592,7 +592,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       }
 
       // If no image upload callback has been passed, filter the image block out
-      if (!uploadImage && item.name === "image") return false;
+      if (!uploadImage && item.name === "container_image") return false;
 
       // If no file upload callback has been passed, filter the file block out
       if (!uploadFile && item.name === "container_file") return false;
