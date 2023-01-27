@@ -6,6 +6,7 @@ export default function image(md): void {
     validate: () => true,
     render: function(tokens, idx) {
       const { info } = tokens[idx];
+      console.log(md.utils.escapeHtml(info), "image");
       if (tokens[idx].nesting === 1) {
         // opening tag
         return `<div class="image image-${md.utils.escapeHtml(info)}">\n`;

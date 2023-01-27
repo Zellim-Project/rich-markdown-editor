@@ -320,8 +320,8 @@ export default class Image extends Node {
   }
 
   commands({ type }) {
-    return (attrs) => toggleWrap(type, attrs);
-    /* return {
+    return {
+      container_image: (attrs) => toggleWrap(type, attrs),
       downloadImage: () => async (state) => {
         const { node } = state.selection;
 
@@ -403,7 +403,7 @@ export default class Image extends Node {
         dispatch(transaction);
         return true;
       },
-    }; */
+    };
   }
 
   get rulePlugins() {
