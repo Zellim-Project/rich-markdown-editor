@@ -134,11 +134,11 @@ export default class Image extends Node {
           default: null,
         },
       },
-      content: "text*",
-      marks: "",
+      content: "block+",
       group: "block",
       selectable: true,
-      draggable: true,
+      defining: true,
+      draggable: false,
       parseDOM: [
         {
           tag: "div[class~=image]",
