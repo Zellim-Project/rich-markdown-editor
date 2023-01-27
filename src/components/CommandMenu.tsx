@@ -590,7 +590,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       ) {
         return false;
       }
-
+      console.log(uploadImage, item.name === "container_image", item.name);
       // If no image upload callback has been passed, filter the image block out
       if (!uploadImage && item.name === "container_image") return false;
 

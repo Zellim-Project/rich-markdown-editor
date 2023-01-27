@@ -18,15 +18,15 @@ const uploadPlaceholder = new Plugin({
         if (action.add.replaceExisting) {
           const $pos = tr.doc.resolve(action.add.pos);
 
-          if ($pos.nodeAfter?.type.name === "image") {
+          if ($pos.nodeAfter?.type.name === "container_image") {
             const deco = Decoration.node(
               $pos.pos,
               $pos.pos + $pos.nodeAfter.nodeSize,
               {
-                class: "image-replacement-uploading",
+                class: "image-replacement-uploading"
               },
               {
-                id: action.add.id,
+                id: action.add.id
               }
             );
             set = set.add(tr.doc, [deco]);
@@ -41,7 +41,7 @@ const uploadPlaceholder = new Plugin({
           element.appendChild(img);
 
           const deco = Decoration.widget(action.add.pos, element, {
-            id: action.add.id,
+            id: action.add.id
           });
           set = set.add(tr.doc, [deco]);
         }
@@ -53,13 +53,13 @@ const uploadPlaceholder = new Plugin({
         );
       }
       return set;
-    },
+    }
   },
   props: {
     decorations(state) {
       return this.getState(state);
-    },
-  },
+    }
+  }
 });
 
 export default uploadPlaceholder;
