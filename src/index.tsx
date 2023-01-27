@@ -76,7 +76,7 @@ export type Props = {
     | "br"
     | "heading"
     | "hr"
-    | "container_image"
+    | "image"
     | "list_item"
     | "container_notice"
     | "ordered_list"

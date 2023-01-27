@@ -18,7 +18,7 @@ const uploadPlaceholder = new Plugin({
         if (action.add.replaceExisting) {
           const $pos = tr.doc.resolve(action.add.pos);
 
-          if ($pos.nodeAfter?.type.name === "container_image") {
+          if ($pos.nodeAfter?.type.name === "image") {
             const deco = Decoration.node(
               $pos.pos,
               $pos.pos + $pos.nodeAfter.nodeSize,
