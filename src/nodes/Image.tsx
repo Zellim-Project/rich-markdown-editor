@@ -123,6 +123,7 @@ export default class Image extends Node {
 
   get schema() {
     return {
+      inline: true,
       attrs: {
         src: {},
         alt: {
@@ -136,7 +137,7 @@ export default class Image extends Node {
         },
       },
       content: "text*",
-      group: "block",
+      group: "inline",
       selectable: true,
       draggable: false,
       parseDOM: [
@@ -418,11 +419,12 @@ export default class Image extends Node {
   }
 
   inputRules({ type }) {
+    console.log(type);
     return [
       new InputRule(IMAGE_INPUT_REGEX, (state, match, start, end) => {
         const [okay, alt, src, matchedTitle] = match;
         const { tr } = state;
-        console.log(match);
+        console.log({ match });
         if (okay) {
           tr.replaceWith(
             start - 1,
