@@ -1,15 +1,23 @@
 import * as React from "react";
-import toggleWrap from "../commands/toggleWrap";
 import { DownloadIcon } from "outline-icons";
 import { Plugin, TextSelection, NodeSelection } from "prosemirror-state";
-import { wrappingInputRule } from "prosemirror-inputrules";
+import { InputRule } from "prosemirror-inputrules";
 import styled from "styled-components";
 import ImageZoom from "react-medium-image-zoom";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import uploadPlaceholderPlugin from "../lib/uploadPlaceholder";
 import insertFiles from "../commands/insertFiles";
 import Node from "./Node";
-import imageRules from "../rules/embedImage";
+
+/**
+ * Matches following attributes in Markdown-typed image: [, alt, src, class]
+ *
+ * Example:
+ * ![Lorem](image.jpg) -> [, "Lorem", "image.jpg"]
+ * ![](image.jpg "class") -> [, "", "image.jpg", "small"]
+ * ![Lorem](image.jpg "class") -> [, "Lorem", "image.jpg", "small"]
+ */
+const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 
 const uploadPlugin = (options) =>
   new Plugin({
@@ -109,11 +117,12 @@ const downloadImageNode = async (node) => {
 
 export default class Image extends Node {
   get name() {
-    return "container_image";
+    return "image";
   }
 
   get schema() {
     return {
+      inline: true,
       attrs: {
         src: {},
         alt: {
@@ -126,15 +135,14 @@ export default class Image extends Node {
           default: null,
         },
       },
-      content: "block+",
-      group: "block",
-      defining: true,
-      draggable: false,
+      content: "text*",
+      marks: "",
+      group: "inline",
+      selectable: true,
+      draggable: true,
       parseDOM: [
         {
           tag: "div[class~=image]",
-          preserveWhitespace: "full",
-          contentElement: "img",
           getAttrs: (dom: HTMLDivElement) => {
             const img = dom.getElementsByTagName("img")[0];
             const className = dom.className;
@@ -143,17 +151,21 @@ export default class Image extends Node {
             const layoutClass = layoutClassMatched
               ? layoutClassMatched[1]
               : null;
-            console.log({
-              src: img?.getAttribute("src"),
-              alt: img?.getAttribute("alt"),
-              title: img?.getAttribute("title"),
-              layoutClass: layoutClass,
-            });
             return {
               src: img?.getAttribute("src"),
               alt: img?.getAttribute("alt"),
               title: img?.getAttribute("title"),
               layoutClass: layoutClass,
+            };
+          },
+        },
+        {
+          tag: "img",
+          getAttrs: (dom: HTMLImageElement) => {
+            return {
+              src: dom.getAttribute("src"),
+              alt: dom.getAttribute("alt"),
+              title: dom.getAttribute("title"),
             };
           },
         },
@@ -284,37 +296,30 @@ export default class Image extends Node {
   };
 
   toMarkdown(state, node) {
-    state.write("\n&-&-&-");
-    state.write(
-      "[" +
-        state.esc((node.attrs.alt || "").replace("\n", "") || "") +
-        "](" +
-        state.esc(node.attrs.src)
-    );
+    let markdown =
+      " ![" +
+      state.esc((node.attrs.alt || "").replace("\n", "") || "") +
+      "](" +
+      state.esc(node.attrs.src);
     if (node.attrs.layoutClass) {
-      state.write("&-&" + state.esc(node.attrs.layoutClass));
+      markdown += ' "' + state.esc(node.attrs.layoutClass) + '"';
     } else if (node.attrs.title) {
-      state.write("&-&" + state.esc(node.attrs.title));
+      markdown += ' "' + state.esc(node.attrs.title) + '"';
     }
-    state.write(")");
+    markdown += ")";
     state.ensureNewLine();
-    state.write("&-&-&-");
+    state.write(markdown);
     state.closeBlock(node);
   }
 
   parseMarkdown() {
     return {
-      block: "container_image",
-      node: "container_image",
-      noCloseToken: true,
+      block: "image",
       getAttrs: (token) => {
-        const file_regex = /\[(?<projectId>[^]*?)\]\((?<filename>[^]*?)\)/g;
-        const result = file_regex.exec(token.info);
-        const [src, title] = result?.[2].split("&-&") || [];
         return {
-          src: src,
-          alt: result?.[1],
-          ...getLayoutAndTitle(title),
+          src: token.attrGet("src"),
+          alt: (token.children[0] && token.children[0].content) || null,
+          ...getLayoutAndTitle(token.attrGet("title")),
         };
       },
     };
@@ -322,11 +327,10 @@ export default class Image extends Node {
 
   commands({ type }) {
     return {
-      container_image: (attrs) => toggleWrap(type, attrs),
       downloadImage: () => async (state) => {
         const { node } = state.selection;
 
-        if (node.type.name !== "container_image") {
+        if (node.type.name !== "image") {
           return false;
         }
 
@@ -407,12 +411,27 @@ export default class Image extends Node {
     };
   }
 
-  get rulePlugins() {
-    return [imageRules];
-  }
-
   inputRules({ type }) {
-    return [wrappingInputRule(/^&-&-&-$/, type)];
+    return [
+      new InputRule(IMAGE_INPUT_REGEX, (state, match, start, end) => {
+        const [okay, alt, src, matchedTitle] = match;
+        const { tr } = state;
+
+        if (okay) {
+          tr.replaceWith(
+            start - 1,
+            end,
+            type.create({
+              src,
+              alt,
+              ...getLayoutAndTitle(matchedTitle),
+            })
+          );
+        }
+
+        return tr;
+      }),
+    ];
   }
 
   get plugins() {

@@ -112,7 +112,7 @@ export default function blockMenuItems(
       attrs: { markup: "***" }
     },
     {
-      name: "container_image",
+      name: "image",
       title: dictionary.image,
       icon: ImageIcon,
       keywords: "picture photo"

@@ -91,11 +91,7 @@ const insertFiles = function(
           const [from, to] = result;
           view.dispatch(
             view.state.tr
-              .replaceWith(
-                from,
-                to || from,
-                schema.nodes.container_image.create({ src })
-              )
+              .replaceWith(from, to || from, schema.nodes.image.create({ src }))
               .setMeta(uploadPlaceholderPlugin, { remove: { id } })
           );
 

@@ -76,7 +76,7 @@ export type Props = {
     | "br"
     | "heading"
     | "hr"
-    | "container_image"
+    | "image"
     | "list_item"
     | "container_notice"
     | "ordered_list"
@@ -400,18 +400,12 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   createParser() {
-    console.log(
-      this.extensions.parser({
-        schema: this.schema,
-        plugins: this.rulePlugins,
-      }),
-      this.schema,
-      this.rulePlugins
-    );
-    return this.extensions.parser({
+    const parser = this.extensions.parser({
       schema: this.schema,
       plugins: this.rulePlugins,
     });
+    console.log(parser, this.schema, this.rulePlugins);
+    return parser;
   }
 
   createPasteParser() {
