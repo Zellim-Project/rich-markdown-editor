@@ -284,7 +284,7 @@ export default class Image extends Node {
   };
 
   toMarkdown(state, node) {
-    state.write("\n#-#-#-");
+    state.write("\n&-&-&-");
     state.write(
       "[" +
         state.esc((node.attrs.alt || "").replace("\n", "") || "") +
@@ -298,7 +298,7 @@ export default class Image extends Node {
     }
     state.write(")");
     state.ensureNewLine();
-    state.write("#-#-#-");
+    state.write("&-&-&-");
     state.closeBlock(node);
   }
 
