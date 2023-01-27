@@ -28,7 +28,7 @@ export default class ExtensionManager {
       .reduce(
         (nodes, node: Node) => ({
           ...nodes,
-          [node.name]: node.schema,
+          [node.name]: node.schema
         }),
         {}
       );
@@ -40,7 +40,7 @@ export default class ExtensionManager {
       .reduce(
         (nodes, extension: Node) => ({
           ...nodes,
-          [extension.name]: extension.toMarkdown,
+          [extension.name]: extension.toMarkdown
         }),
         {}
       );
@@ -50,7 +50,7 @@ export default class ExtensionManager {
       .reduce(
         (marks, extension: Mark) => ({
           ...marks,
-          [extension.name]: extension.toMarkdown,
+          [extension.name]: extension.toMarkdown
         }),
         {}
       );
@@ -61,7 +61,7 @@ export default class ExtensionManager {
   parser({
     schema,
     rules,
-    plugins,
+    plugins
   }: {
     schema: any;
     rules?: Record<string, any>;
@@ -77,7 +77,7 @@ export default class ExtensionManager {
 
         return {
           ...nodes,
-          [extension.markdownToken || extension.name]: md,
+          [extension.markdownToken || extension.name]: md
         };
       }, {});
 
@@ -90,7 +90,7 @@ export default class ExtensionManager {
       .reduce(
         (marks, { name, schema }: Mark) => ({
           ...marks,
-          [name]: schema,
+          [name]: schema
         }),
         {}
       );
@@ -108,7 +108,7 @@ export default class ExtensionManager {
       .reduce(
         (allRulePlugins, { rulePlugins }) => [
           ...allRulePlugins,
-          ...rulePlugins,
+          ...rulePlugins
         ],
         []
       );
@@ -126,13 +126,13 @@ export default class ExtensionManager {
       .map(extension =>
         extension.keys({
           type: schema[`${extension.type}s`][extension.name],
-          schema,
+          schema
         })
       );
 
     return [
       ...extensionKeymaps,
-      ...nodeMarkKeymaps,
+      ...nodeMarkKeymaps
     ].map((keys: Record<string, any>) => keymap(keys));
   }
 
@@ -148,7 +148,7 @@ export default class ExtensionManager {
       .map(extension =>
         extension.inputRules({
           type: schema[`${extension.type}s`][extension.name],
-          schema,
+          schema
         })
       );
 
@@ -168,9 +168,9 @@ export default class ExtensionManager {
           schema,
           ...(["node", "mark"].includes(type)
             ? {
-                type: schema[`${type}s`][name],
+                type: schema[`${type}s`][name]
               }
-            : {}),
+            : {})
         });
 
         const apply = (callback, attrs) => {
@@ -198,9 +198,11 @@ export default class ExtensionManager {
           handle(name, value);
         }
 
+        console.log(allCommands, commands);
+
         return {
           ...allCommands,
-          ...commands,
+          ...commands
         };
       }, {});
   }
