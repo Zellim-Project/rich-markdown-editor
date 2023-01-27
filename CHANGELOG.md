@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [11.25.1-beta.28](https://github.com/outline/rich-markdown-editor/compare/v11.25.1-beta.27...v11.25.1-beta.28) (2023-01-27)
+
 ### [11.25.1-beta.27](https://github.com/outline/rich-markdown-editor/compare/v11.25.1-beta.26...v11.25.1-beta.27) (2023-01-27)
 
 ### [11.25.1-beta.26](https://github.com/outline/rich-markdown-editor/compare/v11.25.1-beta.25...v11.25.1-beta.26) (2023-01-27)
