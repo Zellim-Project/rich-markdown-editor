@@ -123,7 +123,6 @@ export default class Image extends Node {
 
   get schema() {
     return {
-      inline: true,
       attrs: {
         src: {},
         alt: {
@@ -136,8 +135,9 @@ export default class Image extends Node {
           default: null,
         },
       },
-      content: "block*",
-      group: "inline",
+      content: "text*",
+      group: "block",
+      inline: false,
       selectable: true,
       draggable: false,
       parseDOM: [
