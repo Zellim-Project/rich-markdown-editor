@@ -117,6 +117,7 @@ const downloadImageNode = async (node) => {
 
 export default class Image extends Node {
   get name() {
+    console.log("name");
     return "image";
   }
 
@@ -140,7 +141,7 @@ export default class Image extends Node {
       draggable: false,
       parseDOM: [
         {
-          tag: "div.image",
+          tag: "div[class~=image]",
           getAttrs: (dom: HTMLDivElement) => {
             const img = dom.getElementsByTagName("img")[0];
             const className = dom.className;
@@ -149,6 +150,12 @@ export default class Image extends Node {
             const layoutClass = layoutClassMatched
               ? layoutClassMatched[1]
               : null;
+            console.log({
+              src: img?.getAttribute("src"),
+              alt: img?.getAttribute("alt"),
+              title: img?.getAttribute("title"),
+              layoutClass: layoutClass,
+            });
             return {
               src: img?.getAttribute("src"),
               alt: img?.getAttribute("alt"),
