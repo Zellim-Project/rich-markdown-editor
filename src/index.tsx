@@ -400,6 +400,14 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   }
 
   createParser() {
+    console.log(
+      this.extensions.parser({
+        schema: this.schema,
+        plugins: this.rulePlugins,
+      }),
+      this.schema,
+      this.rulePlugins
+    );
     return this.extensions.parser({
       schema: this.schema,
       plugins: this.rulePlugins,

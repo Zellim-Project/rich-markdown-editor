@@ -304,7 +304,8 @@ export default class Image extends Node {
 
   parseMarkdown() {
     return {
-      node: "container_image",
+      block: "container_image",
+      noCloseToken: true,
       getAttrs: (token) => {
         const file_regex = /\[(?<projectId>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);

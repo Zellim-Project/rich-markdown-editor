@@ -49,7 +49,6 @@ const insertFiles = function(
   if (onImageUploadStart) onImageUploadStart();
 
   const { schema } = view.state;
-  console.log(schema, schema.nodes);
   // we'll use this to track of how many images have succeeded or failed
   let complete = 0;
 
