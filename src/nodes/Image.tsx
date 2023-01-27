@@ -1,5 +1,5 @@
 import * as React from "react";
-import toggleWrap from "../commands/toggleWrap";
+import toggleBlockType from "../commands/toggleBlockType";
 import { DownloadIcon } from "outline-icons";
 import { Plugin, TextSelection, NodeSelection } from "prosemirror-state";
 import { wrappingInputRule } from "prosemirror-inputrules";
@@ -115,7 +115,9 @@ export default class Image extends Node {
   get schema() {
     return {
       attrs: {
-        src: {},
+        src: {
+          default: "",
+        },
         alt: {
           default: null,
         },
@@ -312,9 +314,10 @@ export default class Image extends Node {
     };
   }
 
-  commands({ type }) {
+  commands({ type, schema }) {
     return {
-      container_image: (attrs) => toggleWrap(type, attrs),
+      container_image: (attrs) =>
+        toggleBlockType(type, schema.nodes.container_image, attrs),
       downloadImage: () => async (state) => {
         const { node } = state.selection;
 
