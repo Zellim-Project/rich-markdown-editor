@@ -1,4 +1,5 @@
 import * as React from "react";
+import toggleWrap from "../commands/toggleWrap";
 import { DownloadIcon } from "outline-icons";
 import { Plugin, TextSelection, NodeSelection } from "prosemirror-state";
 import { wrappingInputRule } from "prosemirror-inputrules";
@@ -319,11 +320,12 @@ export default class Image extends Node {
   }
 
   commands({ type }) {
-    return {
+    return (attrs) => toggleWrap(type, attrs);
+    /* return {
       downloadImage: () => async (state) => {
         const { node } = state.selection;
 
-        if (node.type.name !== "image") {
+        if (node.type.name !== "container_image") {
           return false;
         }
 
@@ -401,7 +403,7 @@ export default class Image extends Node {
         dispatch(transaction);
         return true;
       },
-    };
+    }; */
   }
 
   get rulePlugins() {
