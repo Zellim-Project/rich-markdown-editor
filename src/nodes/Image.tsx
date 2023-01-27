@@ -136,8 +136,7 @@ export default class Image extends Node {
       },
       content: "block+",
       marks: "",
-      group: "inline",
-      inline: true,
+      group: "block",
       selectable: true,
       draggable: true,
       parseDOM: [
@@ -314,7 +313,7 @@ export default class Image extends Node {
 
   parseMarkdown() {
     return {
-      node: "image",
+      block: "image",
       getAttrs: (token) => {
         return {
           src: token.attrGet("src"),
