@@ -1,0 +1,16 @@
+export default function filterExcessSeparators(items) {
+    return items.reduce((acc, item, index) => {
+        if (item.name === "separator" && index === 0)
+            return acc;
+        if (item.name === "separator" && index === items.length - 1)
+            return acc;
+        const prev = items[index - 1];
+        if (prev && prev.name === "separator" && item.name === "separator")
+            return acc;
+        const next = items[index + 1];
+        if (next && next.name === "separator" && item.name === "separator")
+            return acc;
+        return [...acc, item];
+    }, []);
+}
+//# sourceMappingURL=filterExcessSeparators.js.map
