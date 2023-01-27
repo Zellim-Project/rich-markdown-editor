@@ -1,23 +1,14 @@
 import * as React from "react";
 import { DownloadIcon } from "outline-icons";
 import { Plugin, TextSelection, NodeSelection } from "prosemirror-state";
-import { InputRule } from "prosemirror-inputrules";
+import { wrappingInputRule } from "prosemirror-inputrules";
 import styled from "styled-components";
 import ImageZoom from "react-medium-image-zoom";
 import getDataTransferFiles from "../lib/getDataTransferFiles";
 import uploadPlaceholderPlugin from "../lib/uploadPlaceholder";
 import insertFiles from "../commands/insertFiles";
 import Node from "./Node";
-
-/**
- * Matches following attributes in Markdown-typed image: [, alt, src, class]
- *
- * Example:
- * ![Lorem](image.jpg) -> [, "Lorem", "image.jpg"]
- * ![](image.jpg "class") -> [, "", "image.jpg", "small"]
- * ![Lorem](image.jpg "class") -> [, "Lorem", "image.jpg", "small"]
- */
-const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
+import imageRules from "../rules/embedImage";
 
 const uploadPlugin = (options) =>
   new Plugin({
@@ -117,8 +108,7 @@ const downloadImageNode = async (node) => {
 
 export default class Image extends Node {
   get name() {
-    console.log("name");
-    return "image";
+    return "container_image";
   }
 
   get schema() {
@@ -135,14 +125,15 @@ export default class Image extends Node {
           default: null,
         },
       },
-      content: "text*",
+      content: "block+",
       group: "block",
-      inline: false,
-      selectable: true,
+      defining: true,
       draggable: false,
       parseDOM: [
         {
           tag: "div[class~=image]",
+          preserveWhitespace: "full",
+          contentElement: "img",
           getAttrs: (dom: HTMLDivElement) => {
             const img = dom.getElementsByTagName("img")[0];
             const className = dom.className;
@@ -162,16 +153,6 @@ export default class Image extends Node {
               alt: img?.getAttribute("alt"),
               title: img?.getAttribute("title"),
               layoutClass: layoutClass,
-            };
-          },
-        },
-        {
-          tag: "img",
-          getAttrs: (dom: HTMLImageElement) => {
-            return {
-              src: dom.getAttribute("src"),
-              alt: dom.getAttribute("alt"),
-              title: dom.getAttribute("title"),
             };
           },
         },
@@ -302,31 +283,36 @@ export default class Image extends Node {
   };
 
   toMarkdown(state, node) {
-    let markdown =
-      " ![" +
-      state.esc((node.attrs.alt || "").replace("\n", "") || "") +
-      "](" +
-      state.esc(node.attrs.src);
+    state.write("\n#-#-#-");
+    state.write(
+      "[" +
+        state.esc((node.attrs.alt || "").replace("\n", "") || "") +
+        "](" +
+        state.esc(node.attrs.src)
+    );
     if (node.attrs.layoutClass) {
-      markdown += ' "' + state.esc(node.attrs.layoutClass) + '"';
+      state.write("&-&" + state.esc(node.attrs.layoutClass));
     } else if (node.attrs.title) {
-      markdown += ' "' + state.esc(node.attrs.title) + '"';
+      state.write("&-&" + state.esc(node.attrs.title));
     }
-    markdown += ")";
+    state.write(")");
     state.ensureNewLine();
-    state.write(markdown);
+    state.write("#-#-#-");
     state.closeBlock(node);
   }
 
   parseMarkdown() {
     return {
-      node: "image",
+      node: "container_image",
       getAttrs: (token) => {
+        const file_regex = /\[(?<projectId>[^]*?)\]\((?<filename>[^]*?)\)/g;
+        const result = file_regex.exec(token.info);
+        const [src, title] = result?.[2].split("&-&") || [];
         console.log(token);
         return {
-          src: token.attrGet("src"),
-          alt: (token.children[0] && token.children[0].content) || null,
-          ...getLayoutAndTitle(token.attrGet("title")),
+          src: src,
+          alt: result?.[1],
+          ...getLayoutAndTitle(title),
         };
       },
     };
@@ -418,28 +404,12 @@ export default class Image extends Node {
     };
   }
 
-  inputRules({ type }) {
-    console.log(type);
-    return [
-      new InputRule(IMAGE_INPUT_REGEX, (state, match, start, end) => {
-        const [okay, alt, src, matchedTitle] = match;
-        const { tr } = state;
-        console.log({ match });
-        if (okay) {
-          tr.replaceWith(
-            start - 1,
-            end,
-            type.create({
-              src,
-              alt,
-              ...getLayoutAndTitle(matchedTitle),
-            })
-          );
-        }
+  get rulePlugins() {
+    return [imageRules];
+  }
 
-        return tr;
-      }),
-    ];
+  inputRules({ type }) {
+    return [wrappingInputRule(/^&-&-&-$/, type)];
   }
 
   get plugins() {
