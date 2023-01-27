@@ -6,7 +6,6 @@ export default function project(md): void {
     validate: () => true,
     render: function(tokens, idx) {
       const { info } = tokens[idx];
-      console.log(md.utils.escapeHtml(info), "project");
       if (tokens[idx].nesting === 1) {
         // opening tag
         return `<div class="project project-${md.utils.escapeHtml(info)}">\n`;

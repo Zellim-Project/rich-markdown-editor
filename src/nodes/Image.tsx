@@ -143,12 +143,6 @@ export default class Image extends Node {
             const layoutClass = layoutClassMatched
               ? layoutClassMatched[1]
               : null;
-            console.log({
-              src: img?.getAttribute("src"),
-              alt: img?.getAttribute("alt"),
-              title: img?.getAttribute("title"),
-              layoutClass: layoutClass,
-            });
             return {
               src: img?.getAttribute("src"),
               alt: img?.getAttribute("alt"),
