@@ -309,7 +309,6 @@ export default class Image extends Node {
         const file_regex = /\[(?<projectId>[^]*?)\]\((?<filename>[^]*?)\)/g;
         const result = file_regex.exec(token.info);
         const [src, title] = result?.[2].split("&-&") || [];
-        console.log(token);
         return {
           src: src,
           alt: result?.[1],

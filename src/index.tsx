@@ -303,6 +303,8 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
       handleCloseBlockMenu: this.handleCloseBlockMenu,
       setState: this.setState,
     };
+
+    console.log(fullPackage(props));
     // adding nodes here? Update schema.ts for serialization on the server
     return new ExtensionManager(
       [

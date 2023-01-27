@@ -9,7 +9,7 @@ export default function toggleList(listType: NodeType, itemType: NodeType) {
     const { schema, selection } = state;
     const { $from, $to } = selection;
     const range = $from.blockRange($to);
-    console.log(range);
+
     if (!range) {
       return false;
     }

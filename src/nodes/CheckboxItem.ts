@@ -67,12 +67,11 @@ export default class CheckboxItem extends Node {
     const { tr } = view.state;
     const { top, left } = event.target.getBoundingClientRect();
     const result = view.posAtCoords({ top, left });
-    console.log(result, top, left);
+
     if (result) {
       const transaction = tr.setNodeMarkup(result.inside, undefined, {
         checked: event.target.checked
       });
-      console.log(transaction);
       view.dispatch(transaction);
     }
   };

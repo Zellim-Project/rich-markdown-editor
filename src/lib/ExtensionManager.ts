@@ -198,8 +198,6 @@ export default class ExtensionManager {
           handle(name, value);
         }
 
-        console.log(allCommands, commands);
-
         return {
           ...allCommands,
           ...commands
