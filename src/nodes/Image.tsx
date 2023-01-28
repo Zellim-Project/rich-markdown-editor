@@ -314,7 +314,7 @@ export default class Image extends Node {
 
   parseMarkdown() {
     return {
-      block: "image",
+      node: "image",
       getAttrs: (token) => {
         return {
           src: token.attrGet("src"),
