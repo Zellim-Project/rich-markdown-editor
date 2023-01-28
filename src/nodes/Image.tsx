@@ -135,8 +135,6 @@ export default class Image extends Node {
         },
       },
       content: "block+",
-      group: "inline",
-      inline: true,
       selectable: true,
       defining: true,
       draggable: false,
