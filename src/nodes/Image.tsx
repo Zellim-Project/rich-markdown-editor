@@ -134,7 +134,7 @@ export default class Image extends Node {
           default: null,
         },
       },
-      content: "Block*",
+      content: "block*",
       group: "inline",
       inline: true,
       selectable: true,
@@ -144,7 +144,7 @@ export default class Image extends Node {
         {
           tag: "div[class~=image]",
           preserveWhitespace: "full",
-          contentElement: "img",
+          contentElement: "div.info",
           getAttrs: (dom: HTMLDivElement) => {
             const img = dom.getElementsByTagName("img")[0];
             const className = dom.className;
@@ -158,6 +158,16 @@ export default class Image extends Node {
               alt: img?.getAttribute("alt"),
               title: img?.getAttribute("title"),
               layoutClass: layoutClass,
+            };
+          },
+        },
+        {
+          tag: "img",
+          getAttrs: (dom: HTMLImageElement) => {
+            return {
+              src: dom.getAttribute("src"),
+              alt: dom.getAttribute("alt"),
+              title: dom.getAttribute("title"),
             };
           },
         },
