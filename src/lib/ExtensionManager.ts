@@ -105,13 +105,10 @@ export default class ExtensionManager {
   get rulePlugins() {
     return this.extensions
       .filter(extension => "rulePlugins" in extension)
-      .reduce(
-        (allRulePlugins, { rulePlugins }) => [
-          ...allRulePlugins,
-          ...rulePlugins
-        ],
-        []
-      );
+      .reduce((allRulePlugins, { rulePlugins }) => {
+        console.log(rulePlugins);
+        return [...allRulePlugins, ...rulePlugins];
+      }, []);
   }
 
   keymaps({ schema }: { schema: Schema }) {
