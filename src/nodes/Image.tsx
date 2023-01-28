@@ -134,7 +134,9 @@ export default class Image extends Node {
           default: null,
         },
       },
-      content: "block+",
+      content: "div+",
+      group: "inline",
+      inline: true,
       selectable: true,
       defining: true,
       draggable: false,
@@ -178,7 +180,6 @@ export default class Image extends Node {
             class: className,
           },
           ["img", { ...node.attrs, contentEditable: false }],
-          ["p", { class: "caption" }, 0],
         ];
       },
     };
