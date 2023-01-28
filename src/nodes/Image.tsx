@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import * as React from "react";
 import toggleWrap from "../commands/toggleWrap";
 import { DownloadIcon } from "outline-icons";
@@ -115,7 +116,9 @@ export default class Image extends Node {
   get schema() {
     return {
       attrs: {
-        src: {},
+        src: {
+          default: "",
+        },
         alt: {
           default: null,
         },
@@ -168,7 +171,6 @@ export default class Image extends Node {
             class: className,
           },
           ["img", { ...node.attrs, contentEditable: false }],
-          ["p", { class: "caption" }, 0],
         ];
       },
     };
@@ -305,7 +307,6 @@ export default class Image extends Node {
   parseMarkdown() {
     return {
       block: "container_image",
-      node: "container_image",
       noCloseToken: true,
       getAttrs: (token) => {
         const file_regex = /\[(?<projectId>[^]*?)\]\((?<filename>[^]*?)\)/g;
@@ -322,7 +323,6 @@ export default class Image extends Node {
 
   commands({ type }) {
     return {
-      container_image: (attrs) => toggleWrap(type, attrs),
       downloadImage: () => async (state) => {
         const { node } = state.selection;
 
@@ -416,7 +416,7 @@ export default class Image extends Node {
   }
 
   get plugins() {
-    return [uploadPlaceholderPlugin, uploadPlugin(this.options)];
+    return [uploadPlaceholderPlugin, new Plugin({})];
   }
 }
 
