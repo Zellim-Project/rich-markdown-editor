@@ -130,6 +130,7 @@ export type Props = {
   onHoverLink?: (event: MouseEvent) => boolean;
   onClickHashtag?: (tag: string, event: MouseEvent) => void;
   onKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+  editorLoaded?: () => void;
   embeds: EmbedDescriptor[];
   embedsDisabled?: boolean;
   onShowToast?: (message: string, code: ToastType) => void;
@@ -213,7 +214,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     if (this.props.autoFocus) {
       this.focusAtEnd();
     }
-    console.log(this.getHeadings());
+    this.props.editorLoaded?.();
   }
 
   componentDidUpdate(prevProps: Props) {
