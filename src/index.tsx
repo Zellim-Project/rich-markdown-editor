@@ -213,6 +213,7 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
     if (this.props.autoFocus) {
       this.focusAtEnd();
     }
+    console.log(this.getHeadings());
   }
 
   componentDidUpdate(prevProps: Props) {
