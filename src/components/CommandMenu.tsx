@@ -366,7 +366,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (parent) {
       dispatch(
         state.tr.insertText(
-          "",
+          "\f",
           parent.pos,
           parent.pos + parent.node.textContent.length + 1
         )
@@ -392,7 +392,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (parent) {
       dispatch(
         state.tr.insertText(
-          "",
+          "\f",
           parent.pos,
           parent.pos + parent.node.textContent.length + 1
         )
@@ -416,7 +416,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (parent) {
       dispatch(
         state.tr.insertText(
-          "",
+          "\f",
           parent.pos,
           parent.pos + parent.node.textContent.length + 1
         )
@@ -440,7 +440,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (parent) {
       dispatch(
         state.tr.insertText(
-          "",
+          "\f",
           parent.pos,
           parent.pos + parent.node.textContent.length + 1
         )
