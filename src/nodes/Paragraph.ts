@@ -11,13 +11,13 @@ export default class Paragraph extends Node {
       content: "inline*",
       group: "block",
       parseDOM: [{ tag: "p" }],
-      toDOM: () => ["p", 0],
+      toDOM: () => ["p", 0]
     };
   }
 
   keys({ type }) {
     return {
-      "Shift-Ctrl-0": setBlockType(type),
+      "Shift-Ctrl-0": setBlockType(type)
     };
   }
 

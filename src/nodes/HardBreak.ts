@@ -1,7 +1,11 @@
 import Node from "./Node";
-import { isInTable } from "prosemirror-tables";
 import breakRule from "../rules/breaks";
+import { chainCommands, exitCode } from "prosemirror-commands";
 
+const mac =
+  typeof navigator !== "undefined"
+    ? /Mac|iP(hone|[oa]d)/.test(navigator.platform)
+    : false;
 export default class HardBreak extends Node {
   get name() {
     return "br";
@@ -31,13 +35,17 @@ export default class HardBreak extends Node {
   }
 
   keys({ type }) {
-    return {
-      "Shift-Enter": (state, dispatch) => {
-        if (!isInTable(state)) return false;
+    const cmd = chainCommands(exitCode, (state, dispatch) => {
+      if (dispatch)
         dispatch(state.tr.replaceSelectionWith(type.create()).scrollIntoView());
-        return true;
-      }
+      return true;
+    });
+
+    const commands = {
+      "Shift-Enter": cmd
     };
+    if (mac) commands["Ctrl-Enter"] = cmd;
+    return commands;
   }
 
   toMarkdown(state) {

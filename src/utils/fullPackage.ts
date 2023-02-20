@@ -1,52 +1,52 @@
-import Doc from "./nodes/Doc";
-import Text from "./nodes/Text";
-import Blockquote from "./nodes/Blockquote";
-import BulletList from "./nodes/BulletList";
-import CodeBlock from "./nodes/CodeBlock";
-import CodeFence from "./nodes/CodeFence";
-import CheckboxList from "./nodes/CheckboxList";
-import Emoji from "./nodes/Emoji";
-import CheckboxItem from "./nodes/CheckboxItem";
-import Embed from "./nodes/Embed";
-import HardBreak from "./nodes/HardBreak";
-import Heading from "./nodes/Heading";
-import HorizontalRule from "./nodes/HorizontalRule";
-import Image from "./nodes/Image";
-import ListItem from "./nodes/ListItem";
-import Notice from "./nodes/Notice";
-import FileDoc from "./nodes/FileDoc";
-import EmbedTask from "./nodes/embedTask";
-import EmbedProject from "./nodes/embedProject";
-import LinkDocument from "./nodes/linkDocument";
-import OrderedList from "./nodes/OrderedList";
-import Paragraph from "./nodes/Paragraph";
-import Table from "./nodes/Table";
-import TableCell from "./nodes/TableCell";
-import TableHeadCell from "./nodes/TableHeadCell";
-import TableRow from "./nodes/TableRow";
+import Doc from "../nodes/Doc";
+import Text from "../nodes/Text";
+import Blockquote from "../nodes/Blockquote";
+import BulletList from "../nodes/BulletList";
+import CodeBlock from "../nodes/CodeBlock";
+import CodeFence from "../nodes/CodeFence";
+import CheckboxList from "../nodes/CheckboxList";
+import Emoji from "../nodes/Emoji";
+import CheckboxItem from "../nodes/CheckboxItem";
+import Embed from "../nodes/Embed";
+import HardBreak from "../nodes/HardBreak";
+import Heading from "../nodes/Heading";
+import HorizontalRule from "../nodes/HorizontalRule";
+import Image from "../nodes/Image";
+import ListItem from "../nodes/ListItem";
+import Notice from "../nodes/Notice";
+import FileDoc from "../nodes/FileDoc";
+import EmbedTask from "../nodes/embedTask";
+import EmbedProject from "../nodes/embedProject";
+import LinkDocument from "../nodes/linkDocument";
+import OrderedList from "../nodes/OrderedList";
+import Paragraph from "../nodes/Paragraph";
+import Table from "../nodes/Table";
+import TableCell from "../nodes/TableCell";
+import TableHeadCell from "../nodes/TableHeadCell";
+import TableRow from "../nodes/TableRow";
 
 // marks
-import Bold from "./marks/Bold";
-import Code from "./marks/Code";
-import Highlight from "./marks/Highlight";
-import Italic from "./marks/Italic";
-import Link from "./marks/Link";
-import Strikethrough from "./marks/Strikethrough";
-import TemplatePlaceholder from "./marks/Placeholder";
-import Underline from "./marks/Underline";
-import Sync from "./plugins/Sync";
+import Bold from "../marks/Bold";
+import Code from "../marks/Code";
+import Highlight from "../marks/Highlight";
+import Italic from "../marks/Italic";
+import Link from "../marks/Link";
+import Strikethrough from "../marks/Strikethrough";
+import TemplatePlaceholder from "../marks/Placeholder";
+import Underline from "../marks/Underline";
+import Sync from "../plugins/Sync";
 
 // plugins
-import BlockMenuTrigger from "./plugins/BlockMenuTrigger";
-import Folding from "./plugins/Folding";
-import History from "./plugins/History";
-import Keys from "./plugins/Keys";
-import MaxLength from "./plugins/MaxLength";
-import Placeholder from "./plugins/Placeholder";
-import SmartText from "./plugins/SmartText";
-import TrailingNode from "./plugins/TrailingNode";
-import PasteHandler from "./plugins/PasteHandler";
-import baseDictionary from "./dictionary";
+import BlockMenuTrigger from "../plugins/BlockMenuTrigger";
+import Folding from "../plugins/Folding";
+import History from "../plugins/History";
+import Keys from "../plugins/Keys";
+import MaxLength from "../plugins/MaxLength";
+import Placeholder from "../plugins/Placeholder";
+import SmartText from "../plugins/SmartText";
+import TrailingNode from "../plugins/TrailingNode";
+import PasteHandler from "../plugins/PasteHandler";
+import baseDictionary from "../dictionary";
 
 const dictionary = baseDictionary;
 
@@ -152,9 +152,7 @@ export const fullPackage = props => [
     onCancel: props.onCancel
   }),
   new BlockMenuTrigger({
-    dictionary,
-    onOpen: props?.handleOpenBlockMenu,
-    onClose: props?.handleCloseBlockMenu
+    dictionary
   }),
   new Placeholder({
     placeholder: props.placeholder

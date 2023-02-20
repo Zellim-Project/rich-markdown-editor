@@ -16,8 +16,6 @@ import linkDocumentCommand, { IDoc } from "../commands/linkDocument";
 import embedAProjectCommand, { IProject } from "../commands/embedAProject";
 import baseDictionary from "../dictionary";
 
-const SSR = typeof window === "undefined";
-
 const defaultPosition = {
   left: -1000,
   top: 0,
@@ -86,9 +84,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   };
 
   componentDidMount() {
-    if (!SSR) {
-      window.addEventListener("keydown", this.handleKeyDown);
-    }
+    window.addEventListener("mousedown", this.handleMouseDown);
+    window.addEventListener("keydown", this.handleKeyDown);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -101,6 +98,9 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
   componentDidUpdate(prevProps) {
     if (!prevProps.isActive && this.props.isActive) {
+      if (this.menuRef.current) {
+        this.menuRef.current.scroll({ top: 0 });
+      }
       const position = this.calculatePosition(this.props);
 
       this.setState({
@@ -114,10 +114,20 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   componentWillUnmount() {
-    if (!SSR) {
-      window.removeEventListener("keydown", this.handleKeyDown);
-    }
+    window.removeEventListener("mousedown", this.handleMouseDown);
+    window.removeEventListener("keydown", this.handleKeyDown);
   }
+
+  handleMouseDown = (event: MouseEvent) => {
+    if (
+      !this.menuRef.current ||
+      this.menuRef.current.contains(event.target as Element)
+    ) {
+      return;
+    }
+
+    this.props.onClose();
+  };
 
   handleKeyDown = (event: KeyboardEvent) => {
     if (!this.props.isActive) return;
@@ -173,7 +183,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
         this.setState({
           selectedIndex: Math.min(
-            next && next.name === "separator" ? nextIndex + 1 : nextIndex,
+            next?.name === "separator" ? nextIndex + 1 : nextIndex,
             total
           ),
         });
@@ -187,7 +197,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  insertItem = (item) => {
+  insertItem = (item: MenuItem | EmbedDescriptor): void => {
     switch (item.name) {
       case "image":
         return this.triggerImagePick();
@@ -450,11 +460,10 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClearSearch();
   };
 
-  insertBlock(item) {
+  insertBlock(item: MenuItem | EmbedDescriptor): void {
     this.clearSearch();
 
-    const command = this.props.commands[item.name];
-
+    const command = item.name ? this.props.commands[item.name] : undefined;
     if (command) {
       command(item.attrs);
     } else {
@@ -516,8 +525,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (
       !props.isActive ||
       !paragraph.node ||
-      !paragraph.node.getBoundingClientRect ||
-      SSR
+      !paragraph.node.getBoundingClientRect
     ) {
       return defaultPosition;
     }

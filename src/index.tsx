@@ -14,9 +14,10 @@ import { selectColumn, selectRow, selectTable } from "prosemirror-utils";
 import { ThemeProvider } from "styled-components";
 import { light as lightTheme, dark as darkTheme } from "./styles/theme";
 import baseDictionary from "./dictionary";
+import EventEmitter from "./utils/events";
 import Flex from "./components/Flex";
 import { SearchResult } from "./components/LinkEditor";
-import { EmbedDescriptor, ToastType } from "./types";
+import { EmbedDescriptor, EventType, ToastType } from "./types";
 import SelectionToolbar from "./components/SelectionToolbar";
 import BlockMenu from "./components/BlockMenu";
 import EmojiMenu from "./components/EmojiMenu";
@@ -38,7 +39,7 @@ import { PluginSimple } from "markdown-it";
 
 //fullpackage
 import EmojiTrigger from "./plugins/EmojiTrigger";
-import { fullPackage } from "./fullPackage";
+import { fullPackage } from "./utils/fullPackage";
 
 import { ITask } from "./commands/embedATask";
 import { IDoc } from "./commands/linkDocument";
@@ -200,6 +201,15 @@ class RichMarkdownEditor extends React.PureComponent<Props, State> {
   marks: { [name: string]: MarkSpec };
   commands: Record<string, any>;
   rulePlugins: PluginSimple[];
+  events = new EventEmitter();
+
+  public constructor(props: Props) {
+    super(props);
+    this.events.on(EventType.linkMenuOpen, this.handleOpenLinkMenu);
+    this.events.on(EventType.linkMenuClose, this.handleCloseLinkMenu);
+    this.events.on(EventType.blockMenuOpen, this.handleOpenBlockMenu);
+    this.events.on(EventType.blockMenuClose, this.handleCloseBlockMenu);
+  }
 
   componentDidMount() {
     this.init();
