@@ -1,6 +1,7 @@
 import Node from "./Node";
 import breakRule from "../rules/breaks";
 import { chainCommands, exitCode } from "prosemirror-commands";
+import { isInTable } from "prosemirror-tables";
 
 const mac =
   typeof navigator !== "undefined"
@@ -36,6 +37,7 @@ export default class HardBreak extends Node {
 
   keys({ type }) {
     const cmd = chainCommands(exitCode, (state, dispatch) => {
+      if (!isInTable(state)) return false;
       if (dispatch)
         dispatch(state.tr.replaceSelectionWith(type.create()).scrollIntoView());
       return true;

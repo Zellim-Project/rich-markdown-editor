@@ -411,6 +411,27 @@ export default class Image extends Node {
     };
   }
 
+  keys() {
+    return {
+      "Shift-Enter": () => {
+        const { state, dispatch } = this.editor.view;
+        const sel = state.selection,
+          { $from, $to } = sel;
+        const side = (!$from.parentOffset && $to.index() < $to.parent.childCount
+          ? $from
+          : $to
+        ).pos;
+        const tr = state.tr.insert(
+          side,
+          this.editor.schema.nodes.paragraph.createAndFill() as any
+        );
+
+        tr.setSelection(TextSelection.create(tr.doc, side + 2));
+        dispatch(tr.scrollIntoView());
+      },
+    };
+  }
+
   inputRules({ type }) {
     return [
       new InputRule(IMAGE_INPUT_REGEX, (state, match, start, end) => {

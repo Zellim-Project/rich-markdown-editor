@@ -119,9 +119,10 @@ export default class BlockMenuTrigger extends Extension {
 
             const decorations: Decoration[] = [];
             const isEmptyNode = parent && parent.node.content.size === 0;
-            const isSlash = parent && parent.node.textContent === "/";
+            const nodeTex = parent.node.textContent;
+            const isSlash = ["/", "\f\f/"].includes(nodeTex);
 
-            if (isEmptyNode) {
+            if (isEmptyNode || !nodeTex || ["\f\f", "\f"].includes(nodeTex)) {
               decorations.push(
                 Decoration.widget(
                   parent.pos,
