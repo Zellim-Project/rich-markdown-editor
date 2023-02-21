@@ -10,8 +10,8 @@ import Extension from "../lib/Extension";
 import { EventType } from "../types";
 
 const MAX_MATCH = 500;
-const OPEN_REGEX = /^\/(\w+)?$/;
-const CLOSE_REGEX = /(^(?!\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
+const OPEN_REGEX = /^(\f{1,2})?\/(\w+)?$/;
+const CLOSE_REGEX = /(^(?!(\f{1,2})?\/(\w+)?)(.*)$|^\/(([\w\W]+)\s.*|\s)$|^\/((\W)+)$)/;
 
 // based on the input rules code in Prosemirror, here:
 // https://github.com/ProseMirror/prosemirror-inputrules/blob/master/src/inputrules.js
@@ -76,7 +76,7 @@ export default class BlockMenuTrigger extends Extension {
                 const { pos } = view.state.selection.$from;
                 return run(view, pos, pos, OPEN_REGEX, (state, match) => {
                   if (match) {
-                    this.editor.events.emit(EventType.blockMenuOpen, match[1]);
+                    this.editor.events.emit(EventType.blockMenuOpen, match[2]);
                   } else {
                     this.editor.events.emit(EventType.blockMenuClose);
                   }
@@ -170,7 +170,7 @@ export default class BlockMenuTrigger extends Extension {
           state.selection.$from.parent.type.name === "paragraph" &&
           !isInTable(state)
         ) {
-          this.editor.events.emit(EventType.blockMenuOpen, match[1]);
+          this.editor.events.emit(EventType.blockMenuOpen, match[2]);
         }
         return null;
       }),
