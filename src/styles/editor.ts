@@ -348,6 +348,13 @@ export const StyledEditor = styled("div")<{
     width: fit-content;
   }
 
+  .embed-block:hover {
+    background: ${props => props.theme.blockToolbarHoverBackground};
+    .info .title {
+      color: ${props => props.theme.blockToolbarIconSelected};
+    }
+  }
+
   .mentioned-document {
     min-height: 36px!important;
     min-width: 0!important;
@@ -409,14 +416,13 @@ export const StyledEditor = styled("div")<{
   }
 
   .embed-block .info .title {
-    color: ${props => props.theme.blockToolbarIconSelected};
+    color: ${props => props.theme.blockToolbarText};
     font-size: 14px;
     font-weight: 700;
     margin-right: 12px;
     line-height: 20px;
     letter-spacing: 0.1px;
   }
-  
 
   .embed-block .info .task-id, .embed-block .info .mimeType, .embed-block .info .filename, .embed-block .info .project-id, .embed-block .mentioned-info .doc-id {
     display: none;
