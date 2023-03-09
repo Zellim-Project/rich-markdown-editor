@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.25.0-alpha.74](https://github.com/outline/rich-markdown-editor/compare/v11.25.0-alpha.73...v11.25.0-alpha.74) (2023-03-09)
+
+
+### Bug Fixes
+
+* inserting quote ([2080694](https://github.com/outline/rich-markdown-editor/commit/20806942f17e5f211271a7a0c3580275da1068b3))
+
 ## [11.25.0-alpha.73](https://github.com/outline/rich-markdown-editor/compare/v11.25.0-alpha.72...v11.25.0-alpha.73) (2023-02-24)
 
 ## [11.25.0-alpha.72](https://github.com/outline/rich-markdown-editor/compare/v11.25.0-alpha.71...v11.25.0-alpha.72) (2023-02-21)
