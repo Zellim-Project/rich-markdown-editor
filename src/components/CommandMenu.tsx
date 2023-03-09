@@ -42,7 +42,7 @@ export type Props<T extends MenuItem = MenuItem> = {
   onShowToast?: (message: string, id: string) => void;
   onLinkToolbarOpen?: () => void;
   onClose: () => void;
-  onClearSearch: () => void;
+  onClearSearch: (blockName?: string) => void;
   embeds?: EmbedDescriptor[];
   renderMenuItem: (
     item: T,
@@ -456,12 +456,12 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClose();
   };
 
-  clearSearch = () => {
-    this.props.onClearSearch();
+  clearSearch = (blockName?: string): void => {
+    this.props.onClearSearch(blockName);
   };
 
   insertBlock(item: MenuItem | EmbedDescriptor): void {
-    this.clearSearch();
+    this.clearSearch(item.name as string);
 
     const command = item.name ? this.props.commands[item.name] : undefined;
     if (command) {
