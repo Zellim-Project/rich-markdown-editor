@@ -101,7 +101,7 @@ const downloadImageNode = async (node) => {
   const image = await fetch(node.attrs.src);
   const imageBlob = await image.blob();
   const imageURL = URL.createObjectURL(imageBlob);
-  const extension = node.attrs.type;
+  const extension = node.attrs.type || "png";
   const potentialName = node.attrs.alt || "image";
 
   // create a temporary link node and click it with our image data
