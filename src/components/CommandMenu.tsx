@@ -12,9 +12,9 @@ import filterExcessSeparators from "../lib/filterExcessSeparators";
 import insertFiles from "../commands/insertFiles";
 import insertAllFiles from "../commands/insertAllFiles";
 import embedATaskCommand, { ITask } from "../commands/embedATask";
+import linkDocumentCommand, { IDoc } from "../commands/linkDocument";
+import embedAProjectCommand, { IProject } from "../commands/embedAProject";
 import baseDictionary from "../dictionary";
-
-const SSR = typeof window === "undefined";
 
 const defaultPosition = {
   left: -1000,
@@ -30,17 +30,19 @@ export type Props<T extends MenuItem = MenuItem> = {
   dictionary: typeof baseDictionary;
   view: EditorView;
   search: string;
-  uploadImage?: (file: File) => Promise<string>;
+  uploadImage?: (file: File) => Promise<{ src: string; type: string }>;
   onImageUploadStart?: () => void;
   onImageUploadStop?: () => void;
   uploadFile?: (file: File) => Promise<string>;
   onFileUploadStart?: () => void;
   onFileUploadStop?: () => void;
   embedATask?: () => Promise<ITask>;
+  embedAProject?: () => Promise<IProject>;
+  linkDocument?: () => Promise<IDoc>;
   onShowToast?: (message: string, id: string) => void;
   onLinkToolbarOpen?: () => void;
   onClose: () => void;
-  onClearSearch: () => void;
+  onClearSearch: (blockName?: string) => void;
   embeds?: EmbedDescriptor[];
   renderMenuItem: (
     item: T,
@@ -69,6 +71,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   inputRef = React.createRef<HTMLInputElement>();
   fileInputRef = React.createRef<HTMLInputElement>();
   embedTaskRef = React.createRef<HTMLInputElement>();
+  embedProjectRef = React.createRef<HTMLInputElement>();
+  linkDocumentRef = React.createRef<HTMLInputElement>();
 
   state: State = {
     left: -1000,
@@ -80,9 +84,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   };
 
   componentDidMount() {
-    if (!SSR) {
-      window.addEventListener("keydown", this.handleKeyDown);
-    }
+    window.addEventListener("mousedown", this.handleMouseDown);
+    window.addEventListener("keydown", this.handleKeyDown);
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -95,6 +98,9 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
   componentDidUpdate(prevProps) {
     if (!prevProps.isActive && this.props.isActive) {
+      if (this.menuRef.current) {
+        this.menuRef.current.scroll({ top: 0 });
+      }
       const position = this.calculatePosition(this.props);
 
       this.setState({
@@ -108,10 +114,20 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
   }
 
   componentWillUnmount() {
-    if (!SSR) {
-      window.removeEventListener("keydown", this.handleKeyDown);
-    }
+    window.removeEventListener("mousedown", this.handleMouseDown);
+    window.removeEventListener("keydown", this.handleKeyDown);
   }
+
+  handleMouseDown = (event: MouseEvent) => {
+    if (
+      !this.menuRef.current ||
+      this.menuRef.current.contains(event.target as Element)
+    ) {
+      return;
+    }
+
+    this.props.onClose();
+  };
 
   handleKeyDown = (event: KeyboardEvent) => {
     if (!this.props.isActive) return;
@@ -167,7 +183,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
 
         this.setState({
           selectedIndex: Math.min(
-            next && next.name === "separator" ? nextIndex + 1 : nextIndex,
+            next?.name === "separator" ? nextIndex + 1 : nextIndex,
             total
           ),
         });
@@ -181,7 +197,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
-  insertItem = (item) => {
+  insertItem = (item: MenuItem | EmbedDescriptor): void => {
     switch (item.name) {
       case "image":
         return this.triggerImagePick();
@@ -189,6 +205,10 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
         return this.triggerFilePick();
       case "container_task":
         return this.triggerEmbedATask();
+      case "container_project":
+        return this.triggerEmbedAProject();
+      case "container_link_doc":
+        return this.triggerLinkDocument();
       case "embed":
         return this.triggerLinkInput(item);
       case "link": {
@@ -278,6 +298,18 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     }
   };
 
+  triggerEmbedAProject = () => {
+    if (this.embedProjectRef.current) {
+      this.embedProjectRef.current.click();
+    }
+  };
+
+  triggerLinkDocument = () => {
+    if (this.linkDocumentRef.current) {
+      this.linkDocumentRef.current.click();
+    }
+  };
+
   triggerLinkInput = (item) => {
     this.setState({ insertItem: item });
   };
@@ -334,7 +366,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (parent) {
       dispatch(
         state.tr.insertText(
-          "",
+          "\f",
           parent.pos,
           parent.pos + parent.node.textContent.length + 1
         )
@@ -360,7 +392,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (parent) {
       dispatch(
         state.tr.insertText(
-          "",
+          "\f",
           parent.pos,
           parent.pos + parent.node.textContent.length + 1
         )
@@ -376,15 +408,62 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     this.props.onClose();
   };
 
-  clearSearch = () => {
-    this.props.onClearSearch();
+  handleEmbedAProject = (event) => {
+    const { view, embedAProject, onShowToast } = this.props;
+    const { state, dispatch } = view;
+    const parent = findParentNode((node) => !!node)(state.selection);
+
+    if (parent) {
+      dispatch(
+        state.tr.insertText(
+          "\f",
+          parent.pos,
+          parent.pos + parent.node.textContent.length + 1
+        )
+      );
+
+      embedAProjectCommand(view, event, parent.pos, {
+        embedAProject,
+        onShowToast,
+        dictionary: this.props.dictionary,
+      });
+    }
+
+    this.props.onClose();
   };
 
-  insertBlock(item) {
-    this.clearSearch();
+  handleLinkDocument = (event) => {
+    const { view, linkDocument, onShowToast } = this.props;
+    const { state, dispatch } = view;
+    const parent = findParentNode((node) => !!node)(state.selection);
 
-    const command = this.props.commands[item.name];
+    if (parent) {
+      dispatch(
+        state.tr.insertText(
+          "\f",
+          parent.pos,
+          parent.pos + parent.node.textContent.length + 1
+        )
+      );
 
+      linkDocumentCommand(view, event, parent.pos, {
+        linkDocument,
+        onShowToast,
+        dictionary: this.props.dictionary,
+      });
+    }
+
+    this.props.onClose();
+  };
+
+  clearSearch = (blockName?: string): void => {
+    this.props.onClearSearch(blockName);
+  };
+
+  insertBlock(item: MenuItem | EmbedDescriptor): void {
+    this.clearSearch(item.name as string);
+
+    const command = item.name ? this.props.commands[item.name] : undefined;
     if (command) {
       command(item.attrs);
     } else {
@@ -446,8 +525,7 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
     if (
       !props.isActive ||
       !paragraph.node ||
-      !paragraph.node.getBoundingClientRect ||
-      SSR
+      !paragraph.node.getBoundingClientRect
     ) {
       return defaultPosition;
     }
@@ -485,6 +563,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       uploadImage,
       uploadFile,
       embedATask,
+      embedAProject,
+      linkDocument,
       commands,
       filterable = true,
     } = this.props;
@@ -525,8 +605,14 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       // If no file upload callback has been passed, filter the file block out
       if (!uploadFile && item.name === "container_file") return false;
 
-      // If no file upload callback has been passed, filter the file block out
+      // If no embedATask callback has been passed, filter the file block out
       if (!embedATask && item.name === "container_task") return false;
+
+      // If no embedAProject callback has been passed, filter the file block out
+      if (!embedAProject && item.name === "container_project") return false;
+
+      // If no embedAProject callback has been passed, filter the file block out
+      if (!linkDocument && item.name === "container_link_doc") return false;
 
       // some items (defaultHidden) are not visible until a search query exists
       if (!search) return !item.defaultHidden;
@@ -551,6 +637,8 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
       uploadImage,
       uploadFile,
       embedATask,
+      embedAProject,
+      linkDocument,
     } = this.props;
     const items = this.filtered;
     const { insertItem, ...positioning } = this.state;
@@ -632,6 +720,23 @@ class CommandMenu<T = MenuItem> extends React.Component<Props<T>, State> {
           {embedATask && (
             <VisuallyHidden>
               <div ref={this.embedTaskRef} onClick={this.handleEmbedATask} />
+            </VisuallyHidden>
+          )}
+
+          {embedAProject && (
+            <VisuallyHidden>
+              <div
+                ref={this.embedProjectRef}
+                onClick={this.handleEmbedAProject}
+              />
+            </VisuallyHidden>
+          )}
+          {linkDocument && (
+            <VisuallyHidden>
+              <div
+                ref={this.linkDocumentRef}
+                onClick={this.handleLinkDocument}
+              />
             </VisuallyHidden>
           )}
         </Wrapper>

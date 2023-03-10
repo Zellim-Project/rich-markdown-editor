@@ -21,7 +21,7 @@ export default class Heading extends Node {
   get defaultOptions() {
     return {
       levels: [1, 2, 3, 4],
-      collapsed: undefined,
+      collapsed: undefined
     };
   }
 
@@ -29,11 +29,11 @@ export default class Heading extends Node {
     return {
       attrs: {
         level: {
-          default: 1,
+          default: 1
         },
         collapsed: {
-          default: undefined,
-        },
+          default: undefined
+        }
       },
       content: "inline*",
       group: "block",
@@ -42,7 +42,7 @@ export default class Heading extends Node {
       parseDOM: this.options.levels.map(level => ({
         tag: `h${level}`,
         attrs: { level },
-        contentElement: ".heading-content",
+        contentElement: ".heading-content"
       })),
       toDOM: node => {
         const anchor = document.createElement("button");
@@ -71,20 +71,20 @@ export default class Heading extends Node {
               contentEditable: false,
               class: `heading-actions ${
                 node.attrs.collapsed ? "collapsed" : ""
-              }`,
+              }`
             },
             anchor,
-            fold,
+            fold
           ],
           [
             "span",
             {
-              class: "heading-content",
+              class: "heading-content"
             },
-            0,
-          ],
+            0
+          ]
         ];
-      },
+      }
     };
   }
 
@@ -98,8 +98,8 @@ export default class Heading extends Node {
     return {
       block: "heading",
       getAttrs: (token: Record<string, any>) => ({
-        level: +token.tag.slice(1),
-      }),
+        level: +token.tag.slice(1)
+      })
     };
   }
 
@@ -136,7 +136,7 @@ export default class Heading extends Node {
 
         const transaction = tr.setNodeMarkup(result.inside, undefined, {
           ...node.attrs,
-          collapsed,
+          collapsed
         });
 
         const persistKey = headingToPersistenceKey(node, this.editor.props.id);
@@ -191,8 +191,8 @@ export default class Heading extends Node {
             type,
             schema.nodes.paragraph,
             { level }
-          ),
-        },
+          )
+        }
       }),
       {}
     );
@@ -200,7 +200,7 @@ export default class Heading extends Node {
     return {
       ...options,
       Backspace: backspaceToParagraph(type),
-      Enter: splitHeading(type),
+      Enter: splitHeading(type)
     };
   }
 
@@ -238,7 +238,7 @@ export default class Heading extends Node {
             },
             {
               side: -1,
-              key: id,
+              key: id
             }
           )
         );
@@ -254,11 +254,11 @@ export default class Heading extends Node {
         },
         apply: (tr, oldState) => {
           return tr.docChanged ? getAnchors(tr.doc) : oldState;
-        },
+        }
       },
       props: {
-        decorations: state => plugin.getState(state),
-      },
+        decorations: state => plugin.getState(state)
+      }
     });
 
     return [plugin];
@@ -267,7 +267,7 @@ export default class Heading extends Node {
   inputRules({ type }: { type: NodeType }) {
     return this.options.levels.map(level =>
       textblockTypeInputRule(new RegExp(`^(#{1,${level}})\\s$`), type, () => ({
-        level,
+        level
       }))
     );
   }

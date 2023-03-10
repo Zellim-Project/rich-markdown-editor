@@ -13,7 +13,7 @@ export default class Extension {
   constructor(options: Record<string, any> = {}) {
     this.options = {
       ...this.defaultOptions,
-      ...options,
+      ...options
     };
   }
 

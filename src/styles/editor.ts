@@ -5,8 +5,6 @@ export const StyledEditor = styled("div")<{
   readOnly?: boolean;
   readOnlyWriteCheckboxes?: boolean;
 }>`
-  color: ${props => props.theme.text};
-  background: ${props => props.theme.background};
   font-family: ${props => props.theme.fontFamily};
   font-weight: ${props => props.theme.fontWeight};
   font-size: 1em;
@@ -79,18 +77,6 @@ export const StyledEditor = styled("div")<{
     margin-right: 2em;
     margin-bottom: 1em;
     clear: initial;
-  }
-
-  .loader {
-    border: 5px solid #f3f3f3;
-    border-radius: 50%;
-    border-top: 5px solid #3498db;
-    width: 2.5em;
-    height: 2.5em;
-    margin: 80px auto;
-    position: relative;
-    -webkit-animation: spin 2s linear infinite; /* Safari */
-    animation: spin 2s linear infinite;
   }
 
   @keyframes spin {
@@ -351,47 +337,99 @@ export const StyledEditor = styled("div")<{
     top: 1px;
   }
 
-  .task-block {
+  .embed-block {
+    cursor: pointer;
     background: ${props => props.theme.blockToolbarSelectedBackground};
-    width: 295px;
+    max-width: 100%;
     display: flex;
     border-radius: 12px;
-    height: 60px;
+    min-height: 60px;
+    height: fit-content;
+    width: fit-content;
   }
 
-  .task-block .icon {
+  .embed-block:hover {
+    background: ${props => props.theme.blockToolbarHoverBackground};
+    .info .title {
+      color: ${props => props.theme.blockToolbarIconSelected};
+    }
+  }
+
+  .mentioned-document {
+    min-height: 36px!important;
+    min-width: 0!important;
     display: flex;
     align-items: center;
-    color: #898E9A;
-    background: #FFFFFF1A;
-    margin: 12px;
-    padding: 10px;
-    border-radius: 8px;
   }
 
-  .task-block .icon svg {
+  @media (min-width: 576px) {
+    .embed-block {
+      min-width: 295px;
+    }
+  }
+
+  .embed-block .icon, .embed-block .file-icon {
+    display: flex;
+    align-items: center;
+    margin: auto 12px;
+  }
+
+  .embed-block .icon {
+    border-radius: 8px;
+    color: #898E9A;
+    background: #FFFFFF1A;
+    padding: 10px;
+  }
+  .embed-block .icon svg {
     height: 18px;
     width: 18px;
   }
 
-  .task-block .info .title {
-    color: ${props => props.theme.blockToolbarIconSelected};
+  .embed-block .mentioned-icon svg {
+    height: 20px;
+    width: 20px;
+  }
+
+  .mentioned-icon .emoji {
+    font-size: 20px;
+  }
+
+  .embed-block .file-icon img {
+    height: 36px;
+    width: 36px;
+  }
+
+  .embed-block .embed-img {
+    color: #FFFFFF;
+    margin: auto 12px;
+    line-height: 32px;
+    height: 32px;
+    width: 32px;
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  .embed-block .info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .embed-block .info .title {
+    color: ${props => props.theme.blockToolbarText};
     font-size: 14px;
     font-weight: 700;
-    margin-top: 13px;
+    margin-right: 12px;
     line-height: 20px;
     letter-spacing: 0.1px;
   }
 
-  .task-block .info .task-id {
+  .embed-block .info .task-id, .embed-block .info .mimeType, .embed-block .info .filename, .embed-block .info .project-id, .embed-block .mentioned-info .doc-id {
     display: none;
   }
 
-  .task-block .info .project-id {
-    display: none;
-  }
-
-  .task-block .info .subtitle {
+  .embed-block .info .subtitle {
+    margin-right: 12px;
     font-weight: 600;
     font-size: 11px;
     line-height: 14px;

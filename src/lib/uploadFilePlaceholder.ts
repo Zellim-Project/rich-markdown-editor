@@ -15,11 +15,12 @@ const uploadFilePlaceholder = new Plugin({
       const action = tr.getMeta(this);
 
       if (action && action.add) {
-        const element = document.createElement("div");
-        element.className = "loader";
+        const element = document.createElement("img");
+        element.className = "img-fluid";
+        element.src = "/assets/logos/loading.svg";
 
         const deco = Decoration.widget(action.add.pos, element, {
-          id: action.add.id,
+          id: action.add.id
         });
         set = set.add(tr.doc, [deco]);
       } else if (action && action.remove) {
@@ -28,13 +29,13 @@ const uploadFilePlaceholder = new Plugin({
         );
       }
       return set;
-    },
+    }
   },
   props: {
     decorations(state) {
       return this.getState(state);
-    },
-  },
+    }
+  }
 });
 
 export default uploadFilePlaceholder;

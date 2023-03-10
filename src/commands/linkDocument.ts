@@ -1,33 +1,32 @@
 import { EditorView } from "prosemirror-view";
 import {
-  embedTaskPlaceholder,
-  findPlaceholder,
+  linkDocumentPlaceholder,
+  findPlaceholder
 } from "../lib/embedSimplePlaceHolder";
 import { ToastType } from "../types";
 import baseDictionary from "../dictionary";
 
-export type ITask = {
-  taskName: string;
-  projectName: string;
-  taskId: string;
-  projectId: string;
+export type IDoc = {
+  docId: string;
+  docName: string;
+  icon: string;
 };
 
-const embedATask = function(
+const linkDocument = function(
   view: EditorView,
   event: Event,
   pos: number,
   options: {
     dictionary: typeof baseDictionary;
-    embedATask?: () => Promise<ITask>;
+    linkDocument?: () => Promise<IDoc>;
     onShowToast?: (message: string, code: string) => void;
   }
 ): void {
-  const { dictionary, embedATask, onShowToast } = options;
+  const { dictionary, linkDocument, onShowToast } = options;
 
-  if (!embedATask) {
+  if (!linkDocument) {
     console.warn(
-      "embedATask callback must be defined to handle image uploads."
+      "linkDocument callback must be defined to handle mention a Docuemnt."
     );
     return;
   }
@@ -37,25 +36,25 @@ const embedATask = function(
   event.preventDefault();
 
   const { schema } = view.state;
-  const id = `embedTask`;
+  const id = `linkDocument`;
   const { tr } = view.state;
 
   // insert a placeholder at this position, or mark an existing image as being
   // replaced
-  tr.setMeta(embedTaskPlaceholder, {
+  tr.setMeta(linkDocumentPlaceholder, {
     add: {
       id,
-      pos,
-    },
+      pos
+    }
   });
   view.dispatch(tr);
 
   // start uploading the image file to the server. Using "then" syntax
   // to allow all placeholders to be entered at once with the uploads
   // happening in the background in parallel.
-  embedATask()
-    .then(({ taskName, projectName, taskId, projectId }) => {
-      const pos = findPlaceholder(view.state, id, "task");
+  linkDocument()
+    .then(({ docId, docName, icon }) => {
+      const pos = findPlaceholder(view.state, id, "linkDocument");
 
       // if the content around the placeholder has been deleted
       // then forget about inserting this file
@@ -65,14 +64,9 @@ const embedATask = function(
         .replaceWith(
           pos,
           pos,
-          schema.nodes.container_task.create({
-            taskName,
-            projectName,
-            taskId,
-            projectId,
-          })
+          schema.nodes.container_link_doc.create({ docId, docName, icon })
         )
-        .setMeta(embedTaskPlaceholder, { remove: { id } });
+        .setMeta(linkDocumentPlaceholder, { remove: { id } });
 
       view.dispatch(transaction);
     })
@@ -80,8 +74,8 @@ const embedATask = function(
       console.error(error);
 
       // cleanup the placeholder if there is a failure
-      const transaction = view.state.tr.setMeta(embedTaskPlaceholder, {
-        remove: { id },
+      const transaction = view.state.tr.setMeta(linkDocumentPlaceholder, {
+        remove: { id }
       });
       view.dispatch(transaction);
 
@@ -92,4 +86,4 @@ const embedATask = function(
     });
 };
 
-export default embedATask;
+export default linkDocument;

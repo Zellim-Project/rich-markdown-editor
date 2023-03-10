@@ -1,33 +1,34 @@
 import { EditorView } from "prosemirror-view";
 import {
-  embedTaskPlaceholder,
+  embedProjectPlaceholder,
   findPlaceholder,
 } from "../lib/embedSimplePlaceHolder";
 import { ToastType } from "../types";
 import baseDictionary from "../dictionary";
 
-export type ITask = {
-  taskName: string;
+export type IProject = {
+  projectImg?: string;
+  projectColor?: string;
+  members: string;
   projectName: string;
-  taskId: string;
   projectId: string;
 };
 
-const embedATask = function(
+const embedAProject = function(
   view: EditorView,
   event: Event,
   pos: number,
   options: {
     dictionary: typeof baseDictionary;
-    embedATask?: () => Promise<ITask>;
+    embedAProject?: () => Promise<IProject>;
     onShowToast?: (message: string, code: string) => void;
   }
 ): void {
-  const { dictionary, embedATask, onShowToast } = options;
+  const { dictionary, embedAProject, onShowToast } = options;
 
-  if (!embedATask) {
+  if (!embedAProject) {
     console.warn(
-      "embedATask callback must be defined to handle image uploads."
+      "embedAProject callback must be defined to handle image uploads."
     );
     return;
   }
@@ -37,12 +38,12 @@ const embedATask = function(
   event.preventDefault();
 
   const { schema } = view.state;
-  const id = `embedTask`;
+  const id = `embedProject`;
   const { tr } = view.state;
 
   // insert a placeholder at this position, or mark an existing image as being
   // replaced
-  tr.setMeta(embedTaskPlaceholder, {
+  tr.setMeta(embedProjectPlaceholder, {
     add: {
       id,
       pos,
@@ -53,9 +54,9 @@ const embedATask = function(
   // start uploading the image file to the server. Using "then" syntax
   // to allow all placeholders to be entered at once with the uploads
   // happening in the background in parallel.
-  embedATask()
-    .then(({ taskName, projectName, taskId, projectId }) => {
-      const pos = findPlaceholder(view.state, id, "task");
+  embedAProject()
+    .then(({ projectImg, projectName, projectId, projectColor, members }) => {
+      const pos = findPlaceholder(view.state, id, "project");
 
       // if the content around the placeholder has been deleted
       // then forget about inserting this file
@@ -65,14 +66,15 @@ const embedATask = function(
         .replaceWith(
           pos,
           pos,
-          schema.nodes.container_task.create({
-            taskName,
+          schema.nodes.container_project.create({
+            projectImg,
             projectName,
-            taskId,
             projectId,
+            projectColor,
+            members,
           })
         )
-        .setMeta(embedTaskPlaceholder, { remove: { id } });
+        .setMeta(embedProjectPlaceholder, { remove: { id } });
 
       view.dispatch(transaction);
     })
@@ -80,7 +82,7 @@ const embedATask = function(
       console.error(error);
 
       // cleanup the placeholder if there is a failure
-      const transaction = view.state.tr.setMeta(embedTaskPlaceholder, {
+      const transaction = view.state.tr.setMeta(embedProjectPlaceholder, {
         remove: { id },
       });
       view.dispatch(transaction);
@@ -92,4 +94,4 @@ const embedATask = function(
     });
 };
 
-export default embedATask;
+export default embedAProject;

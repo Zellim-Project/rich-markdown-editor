@@ -8,6 +8,8 @@ import makeRules from "./markdown/rules";
 import Node from "../nodes/Node";
 import Mark from "../marks/Mark";
 import { PluginSimple } from "markdown-it";
+import { isEmpty } from "lodash";
+import { InputRule } from "prosemirror-inputrules";
 
 export default class ExtensionManager {
   extensions: Extension[];
@@ -28,7 +30,7 @@ export default class ExtensionManager {
       .reduce(
         (nodes, node: Node) => ({
           ...nodes,
-          [node.name]: node.schema,
+          [node.name]: node.schema
         }),
         {}
       );
@@ -40,7 +42,7 @@ export default class ExtensionManager {
       .reduce(
         (nodes, extension: Node) => ({
           ...nodes,
-          [extension.name]: extension.toMarkdown,
+          [extension.name]: extension.toMarkdown
         }),
         {}
       );
@@ -50,7 +52,7 @@ export default class ExtensionManager {
       .reduce(
         (marks, extension: Mark) => ({
           ...marks,
-          [extension.name]: extension.toMarkdown,
+          [extension.name]: extension.toMarkdown
         }),
         {}
       );
@@ -61,7 +63,7 @@ export default class ExtensionManager {
   parser({
     schema,
     rules,
-    plugins,
+    plugins
   }: {
     schema: any;
     rules?: Record<string, any>;
@@ -77,7 +79,7 @@ export default class ExtensionManager {
 
         return {
           ...nodes,
-          [extension.markdownToken || extension.name]: md,
+          [extension.markdownToken || extension.name]: md
         };
       }, {});
 
@@ -90,7 +92,7 @@ export default class ExtensionManager {
       .reduce(
         (marks, { name, schema }: Mark) => ({
           ...marks,
-          [name]: schema,
+          [name]: schema
         }),
         {}
       );
@@ -108,54 +110,39 @@ export default class ExtensionManager {
       .reduce(
         (allRulePlugins, { rulePlugins }) => [
           ...allRulePlugins,
-          ...rulePlugins,
+          ...rulePlugins
         ],
         []
       );
   }
 
   keymaps({ schema }: { schema: Schema }) {
-    const extensionKeymaps = this.extensions
-      .filter(extension => ["extension"].includes(extension.type))
-      .filter(extension => extension.keys)
-      .map(extension => extension.keys({ schema }));
-
-    const nodeMarkKeymaps = this.extensions
-      .filter(extension => ["node", "mark"].includes(extension.type))
-      .filter(extension => extension.keys)
-      .map(extension =>
-        extension.keys({
-          type: schema[`${extension.type}s`][extension.name],
-          schema,
-        })
-      );
-
-    return [
-      ...extensionKeymaps,
-      ...nodeMarkKeymaps,
-    ].map((keys: Record<string, any>) => keymap(keys));
-  }
-
-  inputRules({ schema }: { schema: Schema }) {
-    const extensionInputRules = this.extensions
-      .filter(extension => ["extension"].includes(extension.type))
-      .filter(extension => extension.inputRules)
-      .map(extension => extension.inputRules({ schema }));
-
-    const nodeMarkInputRules = this.extensions
-      .filter(extension => ["node", "mark"].includes(extension.type))
-      .filter(extension => extension.inputRules)
-      .map(extension =>
-        extension.inputRules({
-          type: schema[`${extension.type}s`][extension.name],
-          schema,
-        })
-      );
-
-    return [...extensionInputRules, ...nodeMarkInputRules].reduce(
-      (allInputRules, inputRules) => [...allInputRules, ...inputRules],
+    const keyMaps = this.extensions.reduce(
+      (acc: Record<string, () => boolean>[], extension) => {
+        const extensionInputRules = extension.keys?.({
+          type: schema[`${extension.type}s`]?.[extension.name] || "",
+          schema
+        });
+        if (!isEmpty(extensionInputRules)) acc.push(extensionInputRules);
+        return acc;
+      },
       []
     );
+
+    return keyMaps.map(keys => keymap(keys));
+  }
+
+  inputRules({ schema }: { schema: Schema }): InputRule[] {
+    const inputRules = this.extensions.reduce((acc: InputRule[], extension) => {
+      const extensionInputRules = extension.inputRules?.({
+        type: schema[`${extension.type}s`]?.[extension.name] || "",
+        schema
+      });
+      if (!isEmpty(extensionInputRules)) acc.push(...extensionInputRules);
+      return acc;
+    }, []);
+
+    return inputRules;
   }
 
   commands({ schema, view }) {
@@ -168,9 +155,9 @@ export default class ExtensionManager {
           schema,
           ...(["node", "mark"].includes(type)
             ? {
-                type: schema[`${type}s`][name],
+                type: schema[`${type}s`][name]
               }
-            : {}),
+            : {})
         });
 
         const apply = (callback, attrs) => {
@@ -200,7 +187,7 @@ export default class ExtensionManager {
 
         return {
           ...allCommands,
-          ...commands,
+          ...commands
         };
       }, {});
   }

@@ -1,4 +1,4 @@
-import * as React from "react";
+/* import * as React from "react";
 import { dark, light } from "../styles/theme";
 import Editor from "..";
 
@@ -131,3 +131,4 @@ export default function Example(props) {
     </div>
   );
 }
+ */

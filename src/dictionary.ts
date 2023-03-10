@@ -33,7 +33,10 @@ export const base = {
   hr: "Divider",
   image: "Image",
   file: "File",
-  embedATask: "Embed A Task",
+  embedATask: "Embed a Task",
+  embedAProject: "Embed a Project",
+  linkDocument: "Link a Document",
+  linkADocument: "Link a Document",
   imageUploadError: "Sorry, an error occurred uploading the image",
   imageCaptionPlaceholder: "Write a caption",
   info: "Info",
@@ -60,7 +63,7 @@ export const base = {
   tip: "Tip",
   tipNotice: "Tip notice",
   warning: "Warning",
-  warningNotice: "Warning notice",
+  warningNotice: "Warning notice"
 };
 
 export default base;
