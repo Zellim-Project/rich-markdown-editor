@@ -30,7 +30,7 @@ export type Props<T extends MenuItem = MenuItem> = {
   dictionary: typeof baseDictionary;
   view: EditorView;
   search: string;
-  uploadImage?: (file: File) => Promise<string>;
+  uploadImage?: (file: File) => Promise<{ src: string; type: string }>;
   onImageUploadStart?: () => void;
   onImageUploadStop?: () => void;
   uploadFile?: (file: File) => Promise<string>;

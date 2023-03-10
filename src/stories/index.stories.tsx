@@ -1,4 +1,4 @@
-import Editor from "./index";
+/* import Editor from "./index";
 import debounce from "lodash/debounce";
 import { Props } from "..";
 import React from "react";
@@ -234,3 +234,4 @@ RTL.args = {
 - [x] آیتم اول
 - [ ] آیتم دوم`,
 };
+ */

@@ -42,6 +42,7 @@ const uploadPlugin = (options) =>
             .filter((file) => file);
 
           if (files.length === 0) return false;
+          if (["image/png", "image/jpg"].includes(files[0].type)) return false;
 
           const { tr } = view.state;
           if (!tr.selection.empty) {

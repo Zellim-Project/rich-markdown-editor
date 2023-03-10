@@ -17,7 +17,7 @@ import Node from "./Node";
  * ![](image.jpg "class") -> [, "", "image.jpg", "small"]
  * ![Lorem](image.jpg "class") -> [, "Lorem", "image.jpg", "small"]
  */
-const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]\[]*?)]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
+const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]-]*?)(?:-(?<type>[^\]-]*?))?\]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 
 const uploadPlugin = (options) =>
   new Plugin({
@@ -101,7 +101,7 @@ const downloadImageNode = async (node) => {
   const image = await fetch(node.attrs.src);
   const imageBlob = await image.blob();
   const imageURL = URL.createObjectURL(imageBlob);
-  const extension = imageBlob.type.split("/")[1];
+  const extension = node.attrs.type.split("/")[1];
   const potentialName = node.attrs.alt || "image";
 
   // create a temporary link node and click it with our image data
@@ -126,6 +126,9 @@ export default class Image extends Node {
       attrs: {
         src: {},
         alt: {
+          default: null,
+        },
+        type: {
           default: null,
         },
         layoutClass: {
@@ -154,6 +157,7 @@ export default class Image extends Node {
             return {
               src: img?.getAttribute("src"),
               alt: img?.getAttribute("alt"),
+              type: img?.getAttribute("type"),
               title: img?.getAttribute("title"),
               layoutClass: layoutClass,
             };
@@ -165,6 +169,7 @@ export default class Image extends Node {
             return {
               src: dom.getAttribute("src"),
               alt: dom.getAttribute("alt"),
+              type: dom?.getAttribute("type"),
               title: dom.getAttribute("title"),
             };
           },
@@ -215,7 +220,7 @@ export default class Image extends Node {
 
   handleBlur = ({ node, getPos }) => (event) => {
     const alt = event.target.innerText;
-    const { src, title, layoutClass } = node.attrs;
+    const { src, type, title, layoutClass } = node.attrs;
 
     if (alt === node.attrs.alt) return;
 
@@ -226,6 +231,7 @@ export default class Image extends Node {
     const pos = getPos();
     const transaction = tr.setNodeMarkup(pos, undefined, {
       src,
+      type,
       alt,
       title,
       layoutClass,
@@ -250,7 +256,7 @@ export default class Image extends Node {
 
   component = (props) => {
     const { theme, isSelected } = props;
-    const { alt, src, title, layoutClass } = props.node.attrs;
+    const { alt, type, src, title, layoutClass } = props.node.attrs;
     const className = layoutClass ? `image image-${layoutClass}` : "image";
 
     return (
@@ -269,6 +275,7 @@ export default class Image extends Node {
             image={{
               src,
               alt,
+              type,
               title,
             }}
             defaultStyles={{
@@ -299,6 +306,8 @@ export default class Image extends Node {
     let markdown =
       " ![" +
       state.esc((node.attrs.alt || "").replace("\n", "") || "") +
+      "-" +
+      state.esc((node.attrs.type || "").replace("\n", "") || "") +
       "](" +
       state.esc(node.attrs.src);
     if (node.attrs.layoutClass) {
@@ -316,6 +325,7 @@ export default class Image extends Node {
     return {
       node: "image",
       getAttrs: (token) => {
+        console.log(token);
         return {
           src: token.attrGet("src"),
           alt: (token.children[0] && token.children[0].content) || null,
@@ -435,7 +445,7 @@ export default class Image extends Node {
   inputRules({ type }) {
     return [
       new InputRule(IMAGE_INPUT_REGEX, (state, match, start, end) => {
-        const [okay, alt, src, matchedTitle] = match;
+        const [okay, alt, imageType, src, matchedTitle] = match;
         const { tr } = state;
 
         if (okay) {
@@ -444,6 +454,7 @@ export default class Image extends Node {
             end,
             type.create({
               src,
+              type: imageType,
               alt,
               ...getLayoutAndTitle(matchedTitle),
             })

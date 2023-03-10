@@ -107,7 +107,7 @@ export type Props = {
   handleDOMEvents?: {
     [name: string]: (view: EditorView, event: Event) => boolean;
   };
-  uploadImage?: (file: File) => Promise<string>;
+  uploadImage?: (file: File) => Promise<{ src: string; type: string }>;
   uploadFile?: (file: File) => Promise<string>;
   embedATask?: () => Promise<ITask>;
   openATask?: (val: { taskId: string; projectId: string }) => Promise<void>;

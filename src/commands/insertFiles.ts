@@ -16,7 +16,7 @@ const insertFiles = function(
   options: {
     dictionary: typeof baseDictionary;
     replaceExisting?: boolean;
-    uploadImage: (file: File) => Promise<string>;
+    uploadImage: (file: File) => Promise<{ src: string; type: string }>;
     onImageUploadStart?: () => void;
     onImageUploadStop?: () => void;
     onShowToast?: (message: string, code: string) => void;
@@ -75,7 +75,7 @@ const insertFiles = function(
     // to allow all placeholders to be entered at once with the uploads
     // happening in the background in parallel.
     uploadImage(file)
-      .then(src => {
+      .then(({ src, type }) => {
         // otherwise, insert it at the placeholder's position, and remove
         // the placeholder itself
         const newImg = new Image();
@@ -92,7 +92,11 @@ const insertFiles = function(
           const [from, to] = result;
           view.dispatch(
             view.state.tr
-              .replaceWith(from, to || from, schema.nodes.image.create({ src }))
+              .replaceWith(
+                from,
+                to || from,
+                schema.nodes.image.create({ src, type })
+              )
               .setMeta(uploadPlaceholderPlugin, { remove: { id } })
               .insertText("\f")
           );
