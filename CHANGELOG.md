@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.25.0-alpha.75](https://github.com/outline/rich-markdown-editor/compare/v11.25.0-alpha.74...v11.25.0-alpha.75) (2023-03-10)
+
+
+### Bug Fixes
+
+* paste images and downloading images ([6a93ee6](https://github.com/outline/rich-markdown-editor/commit/6a93ee659b0409aa4db0c36689e3e0ca5b600907))
+
 ## [11.25.0-alpha.74](https://github.com/outline/rich-markdown-editor/compare/v11.25.0-alpha.73...v11.25.0-alpha.74) (2023-03-09)
 
 
