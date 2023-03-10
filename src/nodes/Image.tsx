@@ -17,7 +17,7 @@ import Node from "./Node";
  * ![](image.jpg "class") -> [, "", "image.jpg", "small"]
  * ![Lorem](image.jpg "class") -> [, "Lorem", "image.jpg", "small"]
  */
-const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]-]*?)(?:-(?<type>[^\]-]*?))?\]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
+const IMAGE_INPUT_REGEX = /!\[(?<alt>[^\]-]*?)(?:&-&(?<type>[^\]-]*?))?\]\((?<filename>[^\]\[]*?)(?=\“|\))\“?(?<layoutclass>[^\]\[\”]+)?\”?\)$/;
 
 const uploadPlugin = (options) =>
   new Plugin({
@@ -101,7 +101,7 @@ const downloadImageNode = async (node) => {
   const image = await fetch(node.attrs.src);
   const imageBlob = await image.blob();
   const imageURL = URL.createObjectURL(imageBlob);
-  const extension = node.attrs.type.split("/")[1];
+  const extension = node.attrs.type;
   const potentialName = node.attrs.alt || "image";
 
   // create a temporary link node and click it with our image data
@@ -306,7 +306,7 @@ export default class Image extends Node {
     let markdown =
       " ![" +
       state.esc((node.attrs.alt || "").replace("\n", "") || "") +
-      "-" +
+      "&-&" +
       state.esc((node.attrs.type || "").replace("\n", "") || "") +
       "](" +
       state.esc(node.attrs.src);
@@ -325,10 +325,10 @@ export default class Image extends Node {
     return {
       node: "image",
       getAttrs: (token) => {
-        console.log(token);
         return {
           src: token.attrGet("src"),
-          alt: (token.children[0] && token.children[0].content) || null,
+          alt: token.content.split("&-&")[0],
+          type: token.content.split("&-&")[1],
           ...getLayoutAndTitle(token.attrGet("title")),
         };
       },
